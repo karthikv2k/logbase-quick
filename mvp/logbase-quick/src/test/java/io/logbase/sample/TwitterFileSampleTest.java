@@ -11,6 +11,8 @@ import io.logbase.node.Node;
 import io.logbase.node.Reader;
 import io.logbase.node.connector.NodeConnector;
 import io.logbase.node.connector.impl.SimpleRealtimeNodeConnector;
+import io.logbase.querying.optiq.LBSchema;
+import io.logbase.querying.optiq.QueryExecutor;
 import io.logbase.utils.InFilter;
 import io.logbase.utils.Utils;
 
@@ -19,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 
 /**
@@ -29,7 +33,7 @@ import java.util.Arrays;
 public class TwitterFileSampleTest {
 
   static final Logger logger = LoggerFactory
-    .getLogger(TwitterFileSampleTest.class);
+      .getLogger(TwitterFileSampleTest.class);
 
 
   @Test
@@ -65,16 +69,34 @@ public class TwitterFileSampleTest {
     View view = reader.getViewFactory().createView(new InFilter("Twitter"));
     TableIterator tableIterator = view.getIterator();
     logger.info("Columns in table: " + Arrays.toString(tableIterator.getColumnNames()));
-    logger.info("Reading all rows:");
-    int count = 0;
-    while (tableIterator.hasNext()) {
-      // System.out.println(Utils.toString(tableIterator.next()));
-      tableIterator.next();
-      count++;
-    }
-    logger.info("Sample run done, No. of rows in iterator:" + count);
-    assertEquals(count, 2000);
+    // logger.info("Reading all rows:");
+    // int count = 0;
+    // while (tableIterator.hasNext()) {
+    // tableIterator.next();
+    // count++;
+    // }
+    // logger.info("Sample run done, No. of rows in iterator:" + count);
+    // assertEquals(count, 2000);
 
+    // Testing Optiq without Push Down
+    LBSchema lbSchema = new LBSchema("TEST");
+    lbSchema.addAsTable("TWITTER", view);
+    QueryExecutor queryExec = new QueryExecutor(lbSchema);
+    String sql = "SELECT \"textStringType\", \"sourceStringType\" "
+        + " from \"TEST\".\"TWITTER\"";
+    int resultCount = 0;
+    try {
+    ResultSet results = queryExec.execute(sql);
+      while (results.next()) {
+        resultCount++;
+        // logger.info("Text is: " + results.getString("textStringType")
+        // + " Source is: " + results.getString("sourceStringType"));
+      }
+    } catch (SQLException e) {
+      logger.error("Error while executing optiq query: " + sql);
+    }
+    logger.info("Result count: " + resultCount);
+    assertEquals(resultCount, 2000);
   }
 
 }
