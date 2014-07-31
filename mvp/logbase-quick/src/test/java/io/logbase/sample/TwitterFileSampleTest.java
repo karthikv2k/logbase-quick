@@ -1,6 +1,9 @@
 package io.logbase.sample;
 
 import static org.junit.Assert.*;
+
+import com.google.common.base.Predicates;
+import com.google.common.base.Predicate;
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
 import io.logbase.datamodel.TableIterator;
@@ -23,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Loads and queries a twitter stream file.
@@ -67,8 +72,14 @@ public class TwitterFileSampleTest {
     // For testing
     logger.info("Table names in the node: " + reader.getTableNames());
     View view = reader.getViewFactory().createView(new InFilter("Twitter"));
-    TableIterator tableIterator = view.getIterator();
-    logger.info("Columns in table: " + Arrays.toString(tableIterator.getColumnNames()));
+    List<CharSequence> columns = new ArrayList<CharSequence>();
+    columns.add("text.StringType");
+    columns.add("created_at.StringType");
+    Predicate<CharSequence> columnFilter1 = Predicates.in(columns);
+    Predicate<CharSequence> columnFilter2 = Predicates.containsPattern("^retweeted_status.*(String|Double)Type");
+    Predicate<CharSequence> columnFilter = Predicates.or(columnFilter1, columnFilter2);
+    TableIterator tableIterator = view.getIterator(columnFilter);
+    logger.error("Columns in table: " + Arrays.toString(tableIterator.getColumnNames()));
     // logger.info("Reading all rows:");
     // int count = 0;
     // while (tableIterator.hasNext()) {
@@ -82,7 +93,7 @@ public class TwitterFileSampleTest {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    String sql = "SELECT \"textStringType\", \"sourceStringType\" "
+    String sql = "SELECT * "
         + " from \"TEST\".\"TWITTER\"";
     int resultCount = 0;
     try {
@@ -95,7 +106,7 @@ public class TwitterFileSampleTest {
     } catch (SQLException e) {
       logger.error("Error while executing optiq query: " + sql);
     }
-    logger.info("Result count: " + resultCount);
+    logger.error("Result count: " + resultCount);
     assertEquals(resultCount, 2000);
   }
 

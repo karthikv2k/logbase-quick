@@ -107,6 +107,11 @@ public class ListBackedColumn<E extends ColumnType> implements Column<E> {
     return new SimpleColumnIterator(maxRowNum);
   }
 
+  @Override
+  public int compareTo(Column column) {
+    return this.name.compareTo(column.getColumnName());
+  }
+
   private class SimpleColumnIterator implements ColumnIterator<Object> {
     private final long maxRowNum;
     private long rowNum = 0;

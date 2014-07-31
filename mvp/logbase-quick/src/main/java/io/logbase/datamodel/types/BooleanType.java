@@ -24,4 +24,9 @@ public class BooleanType implements ColumnType<Boolean> {
   public String toString() {
     return Boolean.toString(value);
   }
+
+  @Override
+  public int compareTo(Boolean o) {
+    return value==o ? 0 : (value==true ? 1 : -1);
+  }
 }

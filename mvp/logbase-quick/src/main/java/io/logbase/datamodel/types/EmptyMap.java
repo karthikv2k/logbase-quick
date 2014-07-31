@@ -27,4 +27,9 @@ public class EmptyMap implements ColumnType<Map> {
   public String toString() {
     return "{}";
   }
+
+  @Override
+  public int compareTo(Map o) {
+    return 0;
+  }
 }

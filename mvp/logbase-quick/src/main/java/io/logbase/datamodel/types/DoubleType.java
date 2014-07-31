@@ -24,4 +24,9 @@ public class DoubleType implements ColumnType<Double> {
   public String toString() {
     return Double.toString(value);
   }
+
+  @Override
+  public int compareTo(Double o) {
+    return value==o ? 0 : (value>o ? 1 : -1);
+  }
 }

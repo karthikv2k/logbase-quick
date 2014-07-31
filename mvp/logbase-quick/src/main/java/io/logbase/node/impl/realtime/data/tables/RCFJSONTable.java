@@ -1,5 +1,7 @@
 package io.logbase.node.impl.realtime.data.tables;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.gson.Gson;
 import io.logbase.datamodel.*;
 import io.logbase.datamodel.types.EmptyList;
@@ -10,9 +12,7 @@ import io.logbase.node.impl.realtime.data.columns.ListBackedColumn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;
 
 public class RCFJSONTable implements Table<JSONEvent> {
@@ -109,7 +109,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
     } else {
       String columnName;
       Class<? extends ColumnType> type = TypeUtils.getType(json);
-      columnName = parent.substring(1) + type.getSimpleName();
+      columnName = parent.substring(1) + "." + type.getSimpleName();
       Column columnGeneric = columns.get(columnName);
       if (columnGeneric == null) {
         columnGeneric = columnFactory.createColumn(type, columnName, arrayDepth);
@@ -143,8 +143,18 @@ public class RCFJSONTable implements Table<JSONEvent> {
   }
 
   @Override
+  public TableIterator getIterator(Predicate<CharSequence> filter) {
+    return new TableIteratorImpl(this.rowNum, filter);
+  }
+
+  @Override
   public long getLatestEventTime() {
     return latestTime;
+  }
+
+  @Override
+  public Set<String> getColumnNames() {
+    return columns.keySet();
   }
 
   @Override
@@ -165,13 +175,20 @@ public class RCFJSONTable implements Table<JSONEvent> {
     String[] columnNames;
     Column[] columns;
     ColumnIterator[] iterators;
+    private final Predicate<CharSequence> predicate;
 
     TableIteratorImpl(long maxRows) {
+      this(maxRows, Column.alwaysTrue);
+    }
+
+    TableIteratorImpl(long maxRows, Predicate<CharSequence> predicate) {
+      this.predicate = predicate;
+
       Map<String, Column> allColumns = RCFJSONTable.this.columns;
       int count = 0;
       for (Map.Entry<String, Column> entry : allColumns.entrySet()) {
         Column c = entry.getValue();
-        if (c.getStartRowNum() < maxRows) {
+        if (predicate.apply(c.getColumnName()) && c.getStartRowNum() < maxRows) {
           count++;
         }
       }
@@ -183,7 +200,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
       count = 0;
       for (Map.Entry<String, Column> entry : allColumns.entrySet()) {
         Column c = entry.getValue();
-        if (c.getStartRowNum() < maxRows) {
+        if (predicate.apply(c.getColumnName()) && c.getStartRowNum() < maxRows) {
           columnNames[count] = entry.getKey();
           columns[count] = entry.getValue();
           iterators[count] = entry.getValue().getSimpleIterator(maxRows);

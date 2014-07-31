@@ -1,4 +1,4 @@
 package io.logbase.datamodel;
 
-public interface Operand {
+public interface Operand<E> extends Comparable<E> {
 }

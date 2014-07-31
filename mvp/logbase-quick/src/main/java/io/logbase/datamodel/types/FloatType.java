@@ -24,4 +24,9 @@ public class FloatType implements ColumnType<Float> {
   public String toString() {
     return Float.toString(value);
   }
+
+  @Override
+  public int compareTo(Float o) {
+    return value==o ? 0 : (value>o ? 1 : -1);
+  }
 }

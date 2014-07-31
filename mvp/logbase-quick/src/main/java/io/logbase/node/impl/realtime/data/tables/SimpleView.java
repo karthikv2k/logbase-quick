@@ -1,5 +1,7 @@
 package io.logbase.node.impl.realtime.data.tables;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import io.logbase.datamodel.Column;
 import io.logbase.datamodel.Table;
 import io.logbase.datamodel.TableIterator;
@@ -24,6 +26,11 @@ public class SimpleView implements View {
   }
 
   @Override
+  public TableIterator getIterator(Predicate<CharSequence> filter) {
+    return new CombinedTableIterator(filter);
+  }
+
+  @Override
   public Set<String> getUnderlyingTableNames() {
     return null;
   }
@@ -33,16 +40,29 @@ public class SimpleView implements View {
     return 0;
   }
 
+  @Override
+  public Set<String> getColumnNames() {
+    Set<String> columns = new HashSet<String>();
+    for(Table t: tables){
+      columns.addAll(t.getColumnNames());
+    }
+    return columns;
+  }
+
   public class CombinedTableIterator implements TableIterator {
     String[] columnNames;
     TableIterator[] iterators;
     int[][] columnPos;
     int iteratorIdx = 0;
 
-    CombinedTableIterator() {
+    public CombinedTableIterator() {
+      this(Column.alwaysTrue);
+    }
+
+    CombinedTableIterator(Predicate<CharSequence> filter) {
       iterators = new TableIterator[tables.length];
       for (int i = 0; i < iterators.length; i++) {
-        iterators[i] = tables[i].getIterator();
+        iterators[i] = tables[i].getIterator(filter);
       }
 
       SortedSet<String> allColumns = new TreeSet<String>();
@@ -70,6 +90,7 @@ public class SimpleView implements View {
         }
       }
     }
+
 
     @Override
     public String[] getColumnNames() {

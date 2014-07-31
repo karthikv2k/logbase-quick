@@ -25,4 +25,9 @@ public class StringType implements ColumnType<String> {
   public String toString() {
     return value;
   }
+
+  @Override
+  public int compareTo(String o) {
+    return value.compareTo(o);
+  }
 }

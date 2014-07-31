@@ -30,4 +30,8 @@ public class EmptyList implements ColumnType<List> {
     return "[]";
   }
 
+  @Override
+  public int compareTo(List o) {
+    return 0;
+  }
 }

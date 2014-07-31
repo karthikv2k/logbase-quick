@@ -23,4 +23,9 @@ public class NullType implements ColumnType<Object> {
   public String toString() {
     return "null";
   }
+
+  @Override
+  public int compareTo(Object o) {
+    return 0;
+  }
 }

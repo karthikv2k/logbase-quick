@@ -1,6 +1,10 @@
 package io.logbase.datamodel;
 
-public interface Column<E extends ColumnType> extends Operand {
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
+public interface Column<E extends ColumnType> extends Operand<Column> {
+  public static Predicate<CharSequence> alwaysTrue = Predicates.alwaysTrue();
 
   /**
    * First valid row number for this column

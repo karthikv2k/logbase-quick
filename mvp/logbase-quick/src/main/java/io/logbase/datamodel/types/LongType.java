@@ -24,4 +24,9 @@ public class LongType implements ColumnType<Long> {
   public String toString() {
     return Long.toString(value);
   }
+
+  @Override
+  public int compareTo(Long o) {
+    return value==o ? 0 : (value>o ? 1 : -1);
+  }
 }

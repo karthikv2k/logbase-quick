@@ -24,4 +24,9 @@ public class IntType implements ColumnType<Integer> {
   public String toString() {
     return Integer.toString(value);
   }
+
+  @Override
+  public int compareTo(Integer o) {
+    return value==o ? 0 : (value>o ? 1 : -1);
+  }
 }
