@@ -38,7 +38,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
   public void insert(JSONEvent event) {
     latestTime = Math.max(latestTime, event.getTimestamp());
     Map json = gson.fromJson(event.getJSONString(), Map.class);
-    logger.debug("Received event data: " + gson.toJson(json));
+    // logger.debug("Received event data: " + gson.toJson(json));
     // Parse json and create / append to columns
     arrayDepth = 0;
     //traverse(data, "");

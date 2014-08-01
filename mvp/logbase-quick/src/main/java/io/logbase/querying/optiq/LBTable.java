@@ -4,6 +4,7 @@ import io.logbase.datamodel.View;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.eigenbase.rel.RelNode;
 import org.eigenbase.relopt.RelOptTable;
@@ -52,17 +53,23 @@ public class LBTable extends AbstractQueryableTable implements
   public RelDataType getRowType(RelDataTypeFactory typeFactory) {
     List<String> names = new ArrayList<String>();
     List<RelDataType> types = new ArrayList<RelDataType>();
-    String[] columnNames = view.getIterator().getColumnNames();
+    // Set<String> allColumnNames = view.getColumnNames();
+    String[] allColumnNames = view.getIterator().getColumnNames();
+    List<CharSequence> columnNames = new ArrayList<CharSequence>();
+    logger.debug("Total no. of columns in view: " + allColumnNames.length);
     RelDataType type;
     Class clazz;
-    for (String columnName : columnNames) {
+    for (String columnName : allColumnNames) {
       clazz = getJavaColumnType(columnName);
       if (clazz != null) {
         names.add(columnName);
+        columnNames.add(columnName);
         type = typeFactory.createJavaType(clazz);
         types.add(type);
       }
     }
+    logger.debug("No of columns added to table: " + columnNames.size());
+    logger.debug("Columns added to table: " + columnNames);
     return typeFactory.createStructType(Pair.zip(names, types));
   }
 
@@ -76,15 +83,15 @@ public class LBTable extends AbstractQueryableTable implements
    *         type.
    */
   private Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith("StringType"))
+    if (columnName.endsWith(".StringType"))
       return String.class;
-    if (columnName.endsWith("DoubleType"))
+    if (columnName.endsWith(".DoubleType"))
       return Double.class;
-    if (columnName.endsWith("FloatType"))
+    if (columnName.endsWith(".FloatType"))
       return Float.class;
-    if (columnName.endsWith("IntType"))
+    if (columnName.endsWith(".IntType"))
       return Integer.class;
-    if (columnName.endsWith("LongType"))
+    if (columnName.endsWith(".LongType"))
       return Long.class;
     else
       return null;
@@ -99,6 +106,8 @@ public class LBTable extends AbstractQueryableTable implements
       public Enumerator<T> enumerator() {
         // noinspection unchecked
         try {
+          logger
+.debug("Creating simple enumerator");
           LBEnumerator enumerator = new LBEnumerator(view);
           return (Enumerator<T>) enumerator;
         } catch (Exception e) {

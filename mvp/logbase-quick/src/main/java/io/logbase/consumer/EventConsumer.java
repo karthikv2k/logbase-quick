@@ -3,8 +3,6 @@ package io.logbase.consumer;
 import io.logbase.exceptions.ConsumerInitException;
 import io.logbase.node.Writer;
 
-// TODO: Auto-generated Javadoc
-
 /**
  * The Interface EventConsumer. Events can be consumed from different sources
  * like Kafka, Files etc.

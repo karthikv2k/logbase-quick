@@ -76,10 +76,13 @@ public class TwitterFileSampleTest {
     columns.add("text.StringType");
     columns.add("created_at.StringType");
     Predicate<CharSequence> columnFilter1 = Predicates.in(columns);
-    Predicate<CharSequence> columnFilter2 = Predicates.containsPattern("^retweeted_status.*(String|Double)Type");
-    Predicate<CharSequence> columnFilter = Predicates.or(columnFilter1, columnFilter2);
+    Predicate<CharSequence> columnFilter2 = Predicates
+        .containsPattern("^retweeted_status.*(String|Double)Type");
+    Predicate<CharSequence> columnFilter = Predicates.or(columnFilter1,
+        columnFilter2);
     TableIterator tableIterator = view.getIterator(columnFilter);
-    logger.error("Columns in table: " + Arrays.toString(tableIterator.getColumnNames()));
+    logger.debug("Columns in table: "
+        + Arrays.toString(tableIterator.getColumnNames()));
     // logger.info("Reading all rows:");
     // int count = 0;
     // while (tableIterator.hasNext()) {
@@ -93,21 +96,21 @@ public class TwitterFileSampleTest {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    String sql = "SELECT * "
-        + " from \"TEST\".\"TWITTER\"";
+    String sql = "SELECT \"text.StringType\", \"source.StringType\" "
+        + " from \"TEST\".\"TWITTER\" where \"id.DoubleType\" = 461506965680951296";
     int resultCount = 0;
     try {
     ResultSet results = queryExec.execute(sql);
       while (results.next()) {
         resultCount++;
-        // logger.info("Text is: " + results.getString("textStringType")
-        // + " Source is: " + results.getString("sourceStringType"));
+        logger.debug("Text is: " + results.getString("text.StringType")
+            + " Source is: " + results.getString("source.StringType"));
       }
     } catch (SQLException e) {
       logger.error("Error while executing optiq query: " + sql);
     }
-    logger.error("Result count: " + resultCount);
-    assertEquals(resultCount, 2000);
+    logger.info("Result count: " + resultCount);
+    assertEquals(resultCount, 1);
   }
 
 }

@@ -2,11 +2,16 @@ package io.logbase.querying.optiq;
 
 import io.logbase.datamodel.View;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import net.hydromatic.linq4j.Enumerator;
 
@@ -29,8 +34,19 @@ public class LBEnumerator implements Enumerator<Object> {
    *          The logbase view.
    */
   public <E> LBEnumerator(View view) {
-    rowIterator = view.getIterator();
-    logger.debug("Created an iterator for the enumerator");
+    String[] columnNames = view.getIterator().getColumnNames();
+    List<CharSequence> allProjects = new ArrayList<CharSequence>();
+    for (String columnName : columnNames) {
+      if (getJavaColumnType(columnName) != null) {
+        allProjects.add(columnName);
+      }
+    }
+    logger.debug("No. of columns added to filter: " + allProjects.size());
+    logger.debug("Columns added to filter: " + allProjects);
+    Predicate<CharSequence> allColumnFilter = Predicates.in(allProjects);
+    rowIterator = view.getIterator(allColumnFilter);
+    // logger.debug("Created an iterator for the enumerator with all projects: "
+    // + view.getIterator(allColumnFilter).getColumns().length);
   }
 
   /**
@@ -42,10 +58,17 @@ public class LBEnumerator implements Enumerator<Object> {
    * @param projectionFields
    *          The fields or columns in the select clause of query.
    */
-  public <E> LBEnumerator(View view, Set<String> projectFieldNames) {
+  public <E> LBEnumerator(View view, List<CharSequence> projectFieldNames) {
     // TODO filter for projection by pushing down projected fields
-    rowIterator = view.getIterator();
+    // Create predicates for column names.
+    logger.debug("Received projects: " + projectFieldNames.size());
+    Predicate<CharSequence> columnFilter = Predicates.in(projectFieldNames);
+    rowIterator = view.getIterator(columnFilter);
     logger.debug("Created an iterator for the enumerator with projects");
+    if (rowIterator != null) {
+      logger.debug("No. of columns in row iterator: "
+          + view.getIterator(columnFilter).getColumnNames().length);
+    }
   }
 
   @Override
@@ -84,6 +107,30 @@ public class LBEnumerator implements Enumerator<Object> {
       integers[i] = i;
     }
     return integers;
+  }
+
+  /**
+   * This method determines if a LogBase column will be added to the Optiq table
+   * and returns the column data type.
+   * 
+   * @param columnName
+   *          Logbase column name
+   * @return The java class of the column. Returns null if not an applicable
+   *         type.
+   */
+  private Class getJavaColumnType(String columnName) {
+    if (columnName.endsWith(".StringType"))
+      return String.class;
+    if (columnName.endsWith(".DoubleType"))
+      return Double.class;
+    if (columnName.endsWith(".FloatType"))
+      return Float.class;
+    if (columnName.endsWith(".IntType"))
+      return Integer.class;
+    if (columnName.endsWith(".LongType"))
+      return Long.class;
+    else
+      return null;
   }
 
 }
