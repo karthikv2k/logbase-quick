@@ -37,7 +37,7 @@ public class LBEnumerator implements Enumerator<Object> {
     String[] columnNames = view.getIterator().getColumnNames();
     List<CharSequence> allProjects = new ArrayList<CharSequence>();
     for (String columnName : columnNames) {
-      if (getJavaColumnType(columnName) != null) {
+      if (LBTable.getJavaColumnType(columnName) != null) {
         allProjects.add(columnName);
       }
     }
@@ -107,30 +107,6 @@ public class LBEnumerator implements Enumerator<Object> {
       integers[i] = i;
     }
     return integers;
-  }
-
-  /**
-   * This method determines if a LogBase column will be added to the Optiq table
-   * and returns the column data type.
-   * 
-   * @param columnName
-   *          Logbase column name
-   * @return The java class of the column. Returns null if not an applicable
-   *         type.
-   */
-  private Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith(".StringType"))
-      return String.class;
-    if (columnName.endsWith(".DoubleType"))
-      return Double.class;
-    if (columnName.endsWith(".FloatType"))
-      return Float.class;
-    if (columnName.endsWith(".IntType"))
-      return Integer.class;
-    if (columnName.endsWith(".LongType"))
-      return Long.class;
-    else
-      return null;
   }
 
 }
