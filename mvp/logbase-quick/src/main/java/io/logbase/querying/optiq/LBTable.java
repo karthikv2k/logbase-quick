@@ -55,7 +55,6 @@ public class LBTable extends AbstractQueryableTable implements
     List<RelDataType> types = new ArrayList<RelDataType>();
     // Set<String> allColumnNames = view.getColumnNames();
     String[] allColumnNames = view.getIterator().getColumnNames();
-    List<CharSequence> columnNames = new ArrayList<CharSequence>();
     logger.debug("Total no. of columns in view: " + allColumnNames.length);
     RelDataType type;
     Class clazz;
@@ -63,13 +62,10 @@ public class LBTable extends AbstractQueryableTable implements
       clazz = getJavaColumnType(columnName);
       if (clazz != null) {
         names.add(columnName);
-        columnNames.add(columnName);
         type = typeFactory.createJavaType(clazz);
         types.add(type);
       }
     }
-    logger.debug("No of columns added to table: " + columnNames.size());
-    logger.debug("Columns added to table: " + columnNames);
     return typeFactory.createStructType(Pair.zip(names, types));
   }
 
