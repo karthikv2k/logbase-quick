@@ -1,6 +1,6 @@
 package io.logbase.node;
 
-import io.logbase.datamodel.ViewFactory;
+import io.logbase.view.ViewFactory;
 
 import java.util.Set;
 

@@ -1,8 +1,8 @@
 package io.logbase.node;
 
 import com.google.common.collect.SortedSetMultimap;
-import io.logbase.datamodel.Event;
-import io.logbase.datamodel.Table;
+import io.logbase.event.Event;
+import io.logbase.table.Table;
 
 public interface Node {
 

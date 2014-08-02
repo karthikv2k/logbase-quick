@@ -1,6 +1,6 @@
 package io.logbase.node;
 
-import io.logbase.datamodel.Event;
+import io.logbase.event.Event;
 
 public interface Writer<E extends Event> {
 

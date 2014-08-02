@@ -1,7 +1,7 @@
 package io.logbase.consumer.impl;
 
 import io.logbase.consumer.EventConsumer;
-import io.logbase.datamodel.types.JSONEvent;
+import io.logbase.event.JSONEvent;
 import io.logbase.exceptions.ConsumerInitException;
 import io.logbase.node.Writer;
 import org.slf4j.Logger;

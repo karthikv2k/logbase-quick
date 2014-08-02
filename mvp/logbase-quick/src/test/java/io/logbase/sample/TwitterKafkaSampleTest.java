@@ -2,12 +2,12 @@ package io.logbase.sample;
 
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterKafkaConsumer;
-import io.logbase.datamodel.types.JSONEvent;
+import io.logbase.event.JSONEvent;
 import io.logbase.exceptions.ConsumerInitException;
 import io.logbase.node.Node;
 import io.logbase.node.Reader;
-import io.logbase.node.connector.NodeConnector;
-import io.logbase.node.connector.impl.SimpleRealtimeNodeConnector;
+import io.logbase.node.NodeConnector;
+import io.logbase.node.impl.SimpleRealtimeNodeConnector;
 
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;

@@ -6,18 +6,17 @@ import com.google.common.base.Predicates;
 import com.google.common.base.Predicate;
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
-import io.logbase.datamodel.TableIterator;
-import io.logbase.datamodel.View;
-import io.logbase.datamodel.types.JSONEvent;
+import io.logbase.table.TableIterator;
+import io.logbase.view.View;
+import io.logbase.event.JSONEvent;
 import io.logbase.exceptions.ConsumerInitException;
 import io.logbase.node.Node;
 import io.logbase.node.Reader;
-import io.logbase.node.connector.NodeConnector;
-import io.logbase.node.connector.impl.SimpleRealtimeNodeConnector;
+import io.logbase.node.NodeConnector;
+import io.logbase.node.impl.SimpleRealtimeNodeConnector;
 import io.logbase.querying.optiq.LBSchema;
 import io.logbase.querying.optiq.QueryExecutor;
 import io.logbase.utils.InFilter;
-import io.logbase.utils.Utils;
 
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -82,7 +81,7 @@ public class TwitterFileSampleTest {
         columnFilter2);
     TableIterator tableIterator = view.getIterator(columnFilter);
     logger.debug("Columns in table: "
-        + Arrays.toString(tableIterator.getColumnNames()));
+      + Arrays.toString(tableIterator.getColumnNames()));
     // logger.info("Reading all rows:");
     // int count = 0;
     // while (tableIterator.hasNext()) {

@@ -1,6 +1,6 @@
 package io.logbase.collections;
 
-import io.logbase.datamodel.ColumnIterator;
+import io.logbase.column.ColumnIterator;
 
 /**
  * Created with IntelliJ IDEA.

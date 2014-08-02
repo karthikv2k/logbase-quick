@@ -1,7 +1,6 @@
 package io.logbase.querying.optiq;
 
-import io.logbase.datamodel.View;
-import io.logbase.querying.optiq.LBTable;
+import io.logbase.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,6 +1,6 @@
 package io.logbase.consumer.impl;
 
-import io.logbase.datamodel.types.JSONEvent;
+import io.logbase.event.JSONEvent;
 import io.logbase.node.Writer;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;

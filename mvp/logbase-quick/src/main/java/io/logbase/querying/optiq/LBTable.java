@@ -1,10 +1,9 @@
 package io.logbase.querying.optiq;
 
-import io.logbase.datamodel.View;
+import io.logbase.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eigenbase.rel.RelNode;
 import org.eigenbase.relopt.RelOptTable;
