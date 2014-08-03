@@ -4,7 +4,7 @@ import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.ColumnType;
 
-public class ListBackedColumnFactory implements ColumnFactory {
+public class AppendOnlyColumnFactory implements ColumnFactory {
 
   @Override
   public <T extends ColumnType> Column createColumn(Class<T> type, String name, int numArrays) {

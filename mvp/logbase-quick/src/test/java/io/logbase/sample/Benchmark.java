@@ -1,4 +1,4 @@
-package io.logbase.collections;
+package io.logbase.sample;
 
 import io.logbase.collections.impl.IntegerLinkedArrayList;
 

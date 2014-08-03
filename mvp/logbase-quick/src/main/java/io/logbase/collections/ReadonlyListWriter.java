@@ -6,11 +6,14 @@ import io.logbase.column.ColumnIterator;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public interface ReadonlyList<E> {
+public interface ReadonlyListWriter<E> {
 
   public void append(E value);
 
-  public void optimize();
+  public void append(E[] values);
 
-  public ColumnIterator<E> getIterator();
+  public void appendNativeArray(Object values);
+
+  public void close();
+
 }

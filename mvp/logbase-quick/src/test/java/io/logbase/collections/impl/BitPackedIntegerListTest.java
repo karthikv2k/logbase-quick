@@ -2,6 +2,8 @@ package io.logbase.collections.impl;
 
 import org.junit.Test;import java.lang.Exception;import java.lang.System;
 
+import static junit.framework.Assert.assertTrue;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
@@ -16,12 +18,21 @@ public class BitPackedIntegerListTest {
       values[i] = i%100000;
     }
     System.out.println("init: " + (System.currentTimeMillis()-time));
-    BitPackedIntegerList list = new BitPackedIntegerList(100000, num);
+    BPIntHeapList list = new BPIntHeapList(100000, num);
+    BPIntHeapWriter writer = new BPIntHeapWriter(list);
     time = System.currentTimeMillis();
-    list.write(values);
+    writer.write(values);
     System.out.println("write: " + (System.currentTimeMillis()-time));
+    BPIntHeapReader reader = new BPIntHeapReader(list);
     time = System.currentTimeMillis();
-    list.read();
+    int[] holder = new int[1024*10];
+    int cnt = 0;
+    int totalReads = 0;
+    while(cnt!=-1){
+      cnt = reader.read(holder, 0, holder.length);
+      totalReads = totalReads+cnt;
+    }
+    assertTrue((totalReads+1)==num);
     System.out.println("read: " + (System.currentTimeMillis()-time));
   }
 }
