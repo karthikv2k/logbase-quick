@@ -1,9 +1,6 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.ReadonlyListReader;
-
-import java.util.function.Consumer;
-
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -96,8 +93,4 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
     throw new UnsupportedOperationException("Readonly list doesn't support remove().");
   }
 
-  @Override
-  public void forEachRemaining(Consumer<? super Integer> action) {
-    throw new UnsupportedOperationException("TBA");
-  }
 }
