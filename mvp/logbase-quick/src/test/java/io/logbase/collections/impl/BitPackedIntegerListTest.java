@@ -18,12 +18,12 @@ public class BitPackedIntegerListTest {
       values[i] = i%100000;
     }
     System.out.println("init: " + (System.currentTimeMillis()-time));
-    BPIntHeapList list = new BPIntHeapList(100000, num);
-    BPIntHeapWriter writer = new BPIntHeapWriter(list);
+    BitPackIntList list = new BitPackIntList(100000, num);
+    BitPackIntListWriter writer = new BitPackIntListWriter(list);
     time = System.currentTimeMillis();
     writer.write(values);
     System.out.println("write: " + (System.currentTimeMillis()-time));
-    BPIntHeapReader reader = new BPIntHeapReader(list);
+    BitPackIntListReader reader = new BitPackIntListReader(list);
     time = System.currentTimeMillis();
     int[] holder = new int[1024*10];
     int cnt = 0;

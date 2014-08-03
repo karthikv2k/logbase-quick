@@ -12,15 +12,15 @@ import static com.google.common.base.Preconditions.checkState;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BPIntHeapReader implements ReadonlyListReader<Integer> {
-  private BPIntHeapList list;
+public class BitPackIntListReader implements ReadonlyListReader<Integer> {
+  private BitPackIntList list;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   private int[] holder = new int[1];
   private int totalReads = 0;
 
 
-  public BPIntHeapReader(BPIntHeapList list){
+  public BitPackIntListReader(BitPackIntList list){
     this.list=list;
   }
 
@@ -35,7 +35,7 @@ public class BPIntHeapReader implements ReadonlyListReader<Integer> {
     long next;
     int i;
     for(i = offset; totalReads<list.size && i<offset+count; i++, totalReads++){
-      cur = list.buf[arrayIndex];
+      cur = list.getLong(arrayIndex);
       if(bitIndex >= list.width){
         cur1 = cur << (64 - bitIndex);
         cur2 = cur1 >>> (64 - list.width);
@@ -48,7 +48,7 @@ public class BPIntHeapReader implements ReadonlyListReader<Integer> {
           cur2=0;
         }
         arrayIndex++;
-        next = list.buf[arrayIndex];
+        next = list.getLong(arrayIndex);
         bitIndex = 64 - (list.width - bitIndex);
         next = next >>> bitIndex;
         cur2 |= next;

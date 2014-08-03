@@ -10,35 +10,39 @@ import static com.google.common.base.Preconditions.checkState;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BPIntHeapWriter implements ReadonlyListWriter<Integer> {
-  private BPIntHeapList list;
+public class BitPackIntListWriter implements ReadonlyListWriter<Integer> {
+  private BitPackIntList list;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   boolean isClosed = false;
   private int[] holder = new int[1];
 
-  public BPIntHeapWriter(BPIntHeapList list){
+  public BitPackIntListWriter(BitPackIntList list){
     checkArgument(list.size==0, "The list is not empty.");
     this.list=list;
   }
 
   public void write(int[] values){
     long cur;
+    long buf = list.getLong(arrayIndex);
     for(int value: values){
       cur = value;
       if(bitIndex>=list.width){ //minimum free space required to insert a value
         bitIndex = bitIndex - list.width;
       }else{
         cur = cur >>> (list.width - bitIndex);
-        list.buf[arrayIndex] |= cur;
+        buf |= cur;
         cur = value;
         bitIndex = 64 - (list.width - bitIndex);
+        list.setLong(arrayIndex, buf);
         arrayIndex++;
+        buf=0;
       }
       cur = cur << bitIndex;
-      list.buf[arrayIndex] |= cur;
+      buf |= cur;
       list.size++;
     }
+    list.setLong(arrayIndex, buf);
   }
 
   @Override
