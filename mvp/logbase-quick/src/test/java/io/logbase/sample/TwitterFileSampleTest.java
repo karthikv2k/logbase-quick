@@ -72,11 +72,12 @@ public class TwitterFileSampleTest {
     logger.info("Table names in the node: " + reader.getTableNames());
     View view = reader.getViewFactory().createView(new InFilter("Twitter"));
     List<CharSequence> columns = new ArrayList<CharSequence>();
-    columns.add("text.StringType");
-    columns.add("created_at.StringType");
+    columns.add("text.String");
+    columns.add("created_at.String");
+    columns.add("id.Double");
     Predicate<CharSequence> columnFilter1 = Predicates.in(columns);
     Predicate<CharSequence> columnFilter2 = Predicates
-        .containsPattern("^retweeted_status.*(String|Double)Type");
+        .containsPattern("^retweeted_status1.*(String|Double)");
     Predicate<CharSequence> columnFilter = Predicates.or(columnFilter1,
         columnFilter2);
     TableIterator tableIterator = view.getIterator(columnFilter);
@@ -95,15 +96,15 @@ public class TwitterFileSampleTest {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    String sql = "SELECT \"text.StringType\", \"source.StringType\" "
-        + " from \"TEST\".\"TWITTER\" where \"id.DoubleType\" = 461506965680951296";
+    String sql = "SELECT \"text.String\", \"source.String\" "
+        + " from \"TEST\".\"TWITTER\" where \"id.Double\" = 461506965680951296";
     int resultCount = 0;
     try {
     ResultSet results = queryExec.execute(sql);
       while (results.next()) {
         resultCount++;
-        logger.debug("Text is: " + results.getString("text.StringType")
-            + " Source is: " + results.getString("source.StringType"));
+        logger.debug("Text is: " + results.getString("text.String")
+            + " Source is: " + results.getString("source.String"));
       }
     } catch (SQLException e) {
       logger.error("Error while executing optiq query: " + sql);

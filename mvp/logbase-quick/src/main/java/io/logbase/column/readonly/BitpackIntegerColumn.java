@@ -5,13 +5,12 @@ import io.logbase.collections.impl.BitPackIntListReader;
 import io.logbase.collections.impl.BitPackIntListWriter;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
-import io.logbase.column.types.IntType;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitpackIntegerColumn implements Column<IntType> {
+public class BitpackIntegerColumn implements Column<Integer> {
   public final int maxValue;
   public final int minValue;
   public final long startRowNum;
@@ -24,7 +23,7 @@ public class BitpackIntegerColumn implements Column<IntType> {
   private int minValueTemp;
   private int startRowNumTemp;
 
-  public BitpackIntegerColumn(Column<IntType> column){
+  public BitpackIntegerColumn(Column<Integer> column){
 
     this.columnName = column.getColumnName();
 
@@ -106,16 +105,16 @@ public class BitpackIntegerColumn implements Column<IntType> {
 
   @Override
   public Class getColumnType() {
-    return IntType.class;
+    return Integer.class;
   }
 
   @Override
-  public void append(IntType value, long rowNum) {
+  public void append(Integer value, long rowNum) {
     throw new UnsupportedOperationException("Readonly column, can append values.");
   }
 
   @Override
-  public void append(IntType value, long rowNum, int[] arrayIdx) {
+  public void append(Integer value, long rowNum, int[] arrayIdx) {
     throw new UnsupportedOperationException("Readonly column, can append values.");
   }
 

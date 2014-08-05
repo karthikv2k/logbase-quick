@@ -2,8 +2,6 @@ package io.logbase.column.appendonly;
 
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
-import io.logbase.column.ColumnType;
-import io.logbase.column.types.NullType;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -12,7 +10,7 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-public class ListBackedColumn<E extends ColumnType> implements Column<E> {
+public class ListBackedColumn<E> implements Column<E> {
 
   private String name;
   private List values = new ArrayList(10000);
@@ -49,8 +47,8 @@ public class ListBackedColumn<E extends ColumnType> implements Column<E> {
   @Override
   public void append(E value, long rowNum) {
     checkArgument(this.arrayIdx.length == 0, "Can't append without arrayIdx");
-    checkArgument(value != null && (value.get() != null || value instanceof NullType), "Value can't be null");
-    values.add(value.get());
+    checkArgument(value != null, "Value can't be null");
+    values.add(value);
     appendNull(rowNum - 1);
     isNull.add(false);
     maxRowNum = rowNum;
@@ -59,7 +57,7 @@ public class ListBackedColumn<E extends ColumnType> implements Column<E> {
   @Override
   public void append(E value, long rowNum, int[] arrayIdx) {
     checkArgument(this.arrayIdx.length != 0, "Can't append with arrayIdx. The column has no arrays");
-    values.add(value.get());
+    values.add(value);
 
     //close any previously opened row
     if (rowNum != maxRowNum && maxRowNum >= 0) {

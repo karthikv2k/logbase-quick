@@ -1,10 +1,15 @@
 package io.logbase.column;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-public interface Column<E extends ColumnType> extends Operand<Column> {
-  public static Predicate<CharSequence> alwaysTrue = Predicates.alwaysTrue();
+public interface Column<E> extends Operand<Column> {
+
+  public static Map EMPTY_MAP = new HashMap(1);
+  public static List EMPTY_LIST = new LinkedList();
+  public static Object NULL = new Object();
 
   /**
    * First valid row number for this column

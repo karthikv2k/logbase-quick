@@ -1,9 +1,11 @@
 package io.logbase.view;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import io.logbase.column.Column;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
+import io.logbase.utils.Utils;
 import io.logbase.view.View;
 
 import java.util.*;
@@ -55,7 +57,7 @@ public class SimpleView implements View {
     int iteratorIdx = 0;
 
     public CombinedTableIterator() {
-      this(Column.alwaysTrue);
+      this(Utils.ALWAYS_TRUE_PATTERN);
     }
 
     CombinedTableIterator(Predicate<CharSequence> filter) {

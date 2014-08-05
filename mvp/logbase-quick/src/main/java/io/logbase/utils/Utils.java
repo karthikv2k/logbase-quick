@@ -1,6 +1,12 @@
 package io.logbase.utils;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+
 public class Utils {
+
+  public static final Predicate<CharSequence> ALWAYS_TRUE_PATTERN = Predicates.alwaysTrue();
+
 
   public static String toString(Object val) {
     if (val == null) {

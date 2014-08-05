@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
-import io.logbase.column.types.IntType;
 import io.logbase.utils.Utils;
 
 public class ListBackedColumnTest {
@@ -19,10 +18,8 @@ public class ListBackedColumnTest {
     Integer[] values = { 1, 2, 3, 4, 5 };
     long[] rowNums = { 2, 4, 5, 8, 9 };
     ListBackedColumn column = new ListBackedColumn("test", 0);
-    IntType intType = new IntType();
     for (int i = 0; i < values.length; i++) {
-      intType.set(values[i]);
-      column.append(intType, rowNums[i]);
+      column.append(values[i], rowNums[i]);
     }
     return column;
   }
@@ -32,10 +29,8 @@ public class ListBackedColumnTest {
     long[] rowNums = { 2, 2, 3, 5, 5 };
     int[][] arrayIdx = { { 0, 0 }, { 0, 1 }, { 0, 1 }, { 0, 0 }, { 0, 1 } };
     ListBackedColumn column = new ListBackedColumn("test", 2);
-    IntType intType = new IntType();
     for (int i = 0; i < values.length; i++) {
-      intType.set(values[i]);
-      column.append(intType, rowNums[i], arrayIdx[i]);
+      column.append(values[i], rowNums[i], arrayIdx[i]);
     }
     return column;
   }

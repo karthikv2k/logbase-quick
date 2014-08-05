@@ -5,14 +5,12 @@ import com.google.gson.Gson;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.ColumnIterator;
-import io.logbase.column.ColumnType;
-import io.logbase.column.types.EmptyList;
-import io.logbase.column.types.EmptyMap;
-import io.logbase.column.types.TypeUtils;
+import io.logbase.column.TypeUtils;
 import io.logbase.column.appendonly.ListBackedColumn;
 import io.logbase.event.JSONEvent;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
+import io.logbase.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,13 +65,13 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyMap";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = new ListBackedColumn<EmptyMap>(columnName, arrayDepth);
+          columnGeneric = new ListBackedColumn<Map>(columnName, arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
-          columnGeneric.append(EmptyMap.INSTANCE, rowNum, arrayidx);
+          columnGeneric.append(Column.EMPTY_MAP, rowNum, arrayidx);
         } else {
-          columnGeneric.append(EmptyMap.INSTANCE, rowNum);
+          columnGeneric.append(Column.EMPTY_MAP, rowNum);
         }
       } else {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
@@ -86,14 +84,14 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyList";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = new ListBackedColumn<EmptyList>(columnName,
+          columnGeneric = new ListBackedColumn<List>(columnName,
             arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
-          columnGeneric.append(EmptyList.INSTANCE, rowNum, arrayidx);
+          columnGeneric.append(Column.EMPTY_LIST, rowNum, arrayidx);
         } else {
-          columnGeneric.append(EmptyList.INSTANCE, rowNum);
+          columnGeneric.append(Column.EMPTY_LIST, rowNum);
         }
       } else {
         arrayDepth++;
@@ -107,7 +105,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
       }
     } else {
       String columnName;
-      Class<? extends ColumnType> type = TypeUtils.getType(json);
+      Class type = TypeUtils.getType(TypeUtils.cast(json));
       columnName = parent.substring(1) + "." + type.getSimpleName();
       Column columnGeneric = columns.get(columnName);
       if (columnGeneric == null) {
@@ -177,7 +175,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
     private final Predicate<CharSequence> predicate;
 
     TableIteratorImpl(long maxRows) {
-      this(maxRows, Column.alwaysTrue);
+      this(maxRows, Utils.ALWAYS_TRUE_PATTERN);
     }
 
     TableIteratorImpl(long maxRows, Predicate<CharSequence> predicate) {
