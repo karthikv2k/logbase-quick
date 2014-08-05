@@ -24,7 +24,7 @@ public class BitPackIntListWriter implements ReadonlyListWriter<Integer> {
 
   public void write(int[] values){
     long cur;
-    long buf = list.getLong(arrayIndex);
+    long buf = list.buf.getLong(arrayIndex);
     for(int value: values){
       cur = value;
       if(bitIndex>=list.width){ //minimum free space required to insert a value
@@ -34,7 +34,7 @@ public class BitPackIntListWriter implements ReadonlyListWriter<Integer> {
         buf |= cur;
         cur = value;
         bitIndex = 64 - (list.width - bitIndex);
-        list.setLong(arrayIndex, buf);
+        list.buf.setLong(arrayIndex, buf);
         arrayIndex++;
         buf=0;
       }
@@ -42,7 +42,7 @@ public class BitPackIntListWriter implements ReadonlyListWriter<Integer> {
       buf |= cur;
       list.size++;
     }
-    list.setLong(arrayIndex, buf);
+    list.buf.setLong(arrayIndex, buf);
   }
 
   @Override

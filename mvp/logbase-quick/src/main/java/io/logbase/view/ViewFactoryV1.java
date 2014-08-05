@@ -1,4 +1,4 @@
-package io.logbase.node.impl;
+package io.logbase.view;
 
 import com.google.common.collect.SortedSetMultimap;
 import io.logbase.table.Table;
@@ -15,17 +15,15 @@ import java.util.TreeSet;
 
 public class ViewFactoryV1 implements ViewFactory {
   Node node;
-  private SortedSetMultimap<String, Table> tables;
 
-  ViewFactoryV1(Node node) {
+  public ViewFactoryV1(Node node) {
     this.node = node;
-    tables = node.getTables();
   }
 
   @Override
   public View createView(Filter filter) {
     SortedSet<Table> filteredTables = new TreeSet<Table>();
-    for (Map.Entry<String, Collection<Table>> entry : tables.asMap().entrySet()) {
+    for (Map.Entry<String, Collection<Table>> entry : node.getTables().asMap().entrySet()) {
       if (filter.accept(entry.getKey())) {
         filteredTables.addAll(entry.getValue());
       }

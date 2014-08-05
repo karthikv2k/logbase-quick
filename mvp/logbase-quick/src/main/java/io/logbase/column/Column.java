@@ -59,6 +59,12 @@ public interface Column<E extends ColumnType> extends Operand<Column> {
   public long getValuesCount();
 
   /**
+   * gets number of arrays in the column's path
+   * @return
+   */
+  public int getArrayCount();
+
+  /**
    * Gets an iterator to iterate through values of the column.
    *
    * @return

@@ -6,8 +6,6 @@ import io.logbase.table.Table;
 
 public interface Node {
 
-  public void start();
-
   public Writer getWriter(String tableName, Class<? extends Event> eventType);
 
   public Reader getReader();

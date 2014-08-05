@@ -51,11 +51,6 @@ public class RCFJSONTable implements Table<JSONEvent> {
   }
 
   @Override
-  public JSONEvent getRow(long rowNum) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public void setName(String tableName) {
     this.tableName = tableName;
   }

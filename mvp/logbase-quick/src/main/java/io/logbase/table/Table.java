@@ -12,11 +12,7 @@ public interface Table<E extends Event> extends Comparable<Table> {
 
   public String getTableName();
 
-  public int getNumOfRows();
-
   public void insert(E event);
-
-  public JSONEvent getRow(long rowNum);
 
   public TableIterator getIterator(long maxRowNum);
 
@@ -28,4 +24,5 @@ public interface Table<E extends Event> extends Comparable<Table> {
 
   public Set<String> getColumnNames();
 
+  int getNumOfRows();
 }

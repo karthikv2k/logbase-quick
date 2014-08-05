@@ -1,5 +1,6 @@
 package io.logbase.collections.impl;
 
+import io.logbase.buffer.Buffer;
 import io.logbase.collections.ReadonlyListReader;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,8 +32,9 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
     long cur1,cur2;
     long next;
     int i;
+    Buffer buf = list.buf;
     for(i = offset; totalReads<list.size && i<offset+count; i++, totalReads++){
-      cur = list.getLong(arrayIndex);
+      cur = buf.getLong(arrayIndex);
       if(bitIndex >= list.width){
         cur1 = cur << (64 - bitIndex);
         cur2 = cur1 >>> (64 - list.width);
@@ -45,7 +47,7 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
           cur2=0;
         }
         arrayIndex++;
-        next = list.getLong(arrayIndex);
+        next = buf.getLong(arrayIndex);
         bitIndex = 64 - (list.width - bitIndex);
         next = next >>> bitIndex;
         cur2 |= next;

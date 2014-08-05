@@ -89,12 +89,17 @@ public class ListBackedColumn<E extends ColumnType> implements Column<E> {
 
   @Override
   public long getSize() {
-    return values.size();
+    return isNull.size();
   }
 
   @Override
   public long getValuesCount() {
-    return 0;
+    return values.size();
+  }
+
+  @Override
+  public int getArrayCount() {
+    return arrayIdx.length;
   }
 
   @Override
