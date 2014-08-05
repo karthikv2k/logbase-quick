@@ -78,13 +78,12 @@ public class LBSchema extends AbstractSchema {
     final ImmutableMap.Builder<String, Table> builder = ImmutableMap.builder();
     for (String tableName : viewMap.keySet()) {
       Table lbTable = null;
-      // TODO for smart table
-      // if (smartTables.contains(tableName))
-      // lbTable = new JavaBeanSmartTable(javaBeanListMap.get(tableName));
-      // else
+      if (smartTables.contains(tableName))
+        lbTable = new LBSmartTable(viewMap.get(tableName));
+      else
       lbTable = new LBTable(viewMap.get(tableName));
       builder.put(tableName, lbTable);
-      logger.debug("Initialized LBTable for: " + tableName);
+      logger.debug("Initialized Optiq Table for: " + tableName);
     }
     return builder.build();
   }

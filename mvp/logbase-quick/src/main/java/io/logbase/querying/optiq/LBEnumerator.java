@@ -41,7 +41,7 @@ public class LBEnumerator implements Enumerator<Object> {
       }
     }
     logger.debug("No. of columns added to filter: " + allProjects.size());
-    logger.debug("Columns added to filter: " + allProjects);
+    // logger.debug("Columns added to filter: " + allProjects);
     Predicate<CharSequence> allColumnFilter = Predicates.in(allProjects);
     rowIterator = view.getIterator(allColumnFilter);
     // logger.debug("Created an iterator for the enumerator with all projects: "
