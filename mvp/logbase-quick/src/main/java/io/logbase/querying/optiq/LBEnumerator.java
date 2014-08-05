@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eigenbase.rex.RexCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,11 +42,9 @@ public class LBEnumerator implements Enumerator<Object> {
       }
     }
     logger.debug("No. of columns added to filter: " + allProjects.size());
-    // logger.debug("Columns added to filter: " + allProjects);
     Predicate<CharSequence> allColumnFilter = Predicates.in(allProjects);
     rowIterator = view.getIterator(allColumnFilter);
-    // logger.debug("Created an iterator for the enumerator with all projects: "
-    // + view.getIterator(allColumnFilter).getColumns().length);
+
   }
 
   /**
@@ -57,16 +56,31 @@ public class LBEnumerator implements Enumerator<Object> {
    * @param projectionFields
    *          The fields or columns in the select clause of query.
    */
-  public <E> LBEnumerator(View view, List<CharSequence> projectFieldNames) {
-    // TODO filter for projection by pushing down projected fields
-    // Create predicates for column names.
-    logger.debug("Received projects: " + projectFieldNames.size());
-    Predicate<CharSequence> columnFilter = Predicates.in(projectFieldNames);
-    rowIterator = view.getIterator(columnFilter);
-    logger.debug("Created an iterator for the enumerator with projects");
-    if (rowIterator != null) {
-      logger.debug("No. of columns in row iterator: "
-          + view.getIterator(columnFilter).getColumnNames().length);
+  public <E> LBEnumerator(View view, List<String> projection, String filter) {
+    // TODO Pass filter to get iterator
+    if (projection == null) {
+      String[] columnNames = view.getIterator().getColumnNames();
+      List<CharSequence> allProjects = new ArrayList<CharSequence>();
+      for (String columnName : columnNames) {
+        if (LBTable.getJavaColumnType(columnName) != null) {
+          allProjects.add(columnName);
+        }
+      }
+      logger.debug("No. of columns added to filter: " + allProjects.size());
+      Predicate<CharSequence> allColumnFilter = Predicates.in(allProjects);
+      rowIterator = view.getIterator(allColumnFilter);
+    } else {
+      List<CharSequence> selectProjects = new ArrayList<CharSequence>();
+      for (String p : projection) {
+        if (LBTable.getJavaColumnType(p) != null) {
+          selectProjects.add(p);
+        }
+      }
+      logger.debug("No. of select columns added to filter: "
+          + selectProjects.size());
+      Predicate<CharSequence> selectColumnFilter = Predicates
+          .in(selectProjects);
+      rowIterator = view.getIterator(selectColumnFilter);
     }
   }
 

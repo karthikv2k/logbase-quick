@@ -3,6 +3,7 @@ package io.logbase.querying.optiq;
 import io.logbase.view.View;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eigenbase.rel.RelNode;
@@ -54,9 +55,7 @@ public class LBSmartTable extends AbstractQueryableTable implements
   public RelDataType getRowType(RelDataTypeFactory typeFactory) {
     List<String> names = new ArrayList<String>();
     List<RelDataType> types = new ArrayList<RelDataType>();
-    // Set<String> allColumnNames = view.getColumnNames();
     String[] allColumnNames = view.getIterator().getColumnNames();
-    logger.debug("Total no. of columns in view: " + allColumnNames.length);
     RelDataType type;
     Class clazz;
     for (String columnName : allColumnNames) {
@@ -67,6 +66,8 @@ public class LBSmartTable extends AbstractQueryableTable implements
         types.add(type);
       }
     }
+    logger.debug("Total no. of columns in view: " + names.size());
+    logger.debug("Columns in view: " + names);
     return typeFactory.createStructType(Pair.zip(names, types));
   }
 
@@ -103,8 +104,7 @@ public class LBSmartTable extends AbstractQueryableTable implements
       public Enumerator<T> enumerator() {
         // noinspection unchecked
         try {
-          logger
-.debug("Creating simple enumerator");
+          logger.debug("Creating simple enumerator");
           LBEnumerator enumerator = new LBEnumerator(view);
           return (Enumerator<T>) enumerator;
         } catch (Exception e) {
@@ -125,7 +125,7 @@ public class LBSmartTable extends AbstractQueryableTable implements
     // rule match
     // the projection field will be used to create a new Table scan with values.
 
-    return new LBTableScan(cluster, relOptTable, this);
+    return new LBTableScan(cluster, relOptTable, this, null, null);
   }
 
   /**
@@ -135,13 +135,14 @@ public class LBSmartTable extends AbstractQueryableTable implements
    *          Projections
    * @return The Enumerator
    */
-  public Enumerable<Object> project(int[] projectFields) {
-    logger.debug("Smart table project call received");
-
+  public Enumerable<Object> pushdown(final List<String> projection,
+      final String filter) {
+    logger.debug("Smart table pushdown call received");
+    logger.debug("Pushdown Projection: " + projection);
+    logger.debug("Pushdown Filter: " + filter);
     return new AbstractEnumerable<Object>() {
       public Enumerator<Object> enumerator() {
-        // TODO apply push down with projects and filters
-        return new LBEnumerator(view);
+        return new LBEnumerator(view, projection, filter);
       }
     };
   }

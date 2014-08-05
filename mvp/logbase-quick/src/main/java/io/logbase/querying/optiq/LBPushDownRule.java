@@ -94,6 +94,7 @@ operand(
 
     String filterString;
 
+    RexCall filterCall = null;
     if (filterIdx <= relLength
         && call.rels[relLength - filterIdx] instanceof FilterRel) {
       filter = (FilterRel) call.rels[relLength - filterIdx];
@@ -104,7 +105,7 @@ operand(
         topProj = (ProjectRel) call.rels[relLength - topProjIdx];
       }
 
-      RexCall filterCall = (RexCall) filter.getCondition();
+      filterCall = (RexCall) filter.getCondition();
       SqlOperator op = filterCall.getOperator();
       List<RexNode> operands = filterCall.getOperands();
 
@@ -184,10 +185,15 @@ operand(
       logger.debug("newField: " + newField.getName());
     }
 
-    // TODO pass projections and filter to the new table scan
-    // For testing transform to a full table
+    // TODO check if projection is being sent correctly.
+    // Assume projection = topRow
+    List<String> projection = new ArrayList<String>();
+    List<RelDataTypeField> fieldList = topRow.getFieldList();
+    for (RelDataTypeField field : fieldList) {
+      projection.add(field.getName());
+    }
     call.transformTo(new LBTableScan(lbTableScan.getCluster(), lbTableScan
-        .getTable(), lbTableScan.lbSmartTable));
+        .getTable(), lbTableScan.lbSmartTable, projection, filterString));
 
   }
 

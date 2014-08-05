@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import com.google.common.base.Predicates;
 import com.google.common.base.Predicate;
+
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
 import io.logbase.table.TableIterator;
@@ -18,6 +19,7 @@ import io.logbase.querying.optiq.LBSchema;
 import io.logbase.querying.optiq.QueryExecutor;
 import io.logbase.utils.InFilter;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +103,59 @@ public class TwitterFileSampleTest {
     int resultCount = 0;
     try {
     ResultSet results = queryExec.execute(sql);
+      while (results.next()) {
+        resultCount++;
+        logger.debug("Text is: " + results.getString("text.String")
+            + " Source is: " + results.getString("source.String"));
+      }
+    } catch (SQLException e) {
+      logger.error("Error while executing optiq query: " + sql);
+    }
+    logger.info("Result count: " + resultCount);
+    assertEquals(resultCount, 1);
+  }
+
+  // Ignoring as filter push not yet implemented.
+  @Ignore
+  public void testSmartTwitterFileSample() {
+
+    logger.info("Running a Smart Twitter File sample...");
+
+    // Step 1: Create a local Realtime Node
+    NodeConnector nodeConnector = new SimpleRealtimeNodeConnector();
+    Node node = nodeConnector.connect();
+
+    // Step 2: Configure and start a File consumer
+    String fileName = "twitter_events_mini.dat"; // "test_input1.json"
+    URL url = ClassLoader.getSystemResource(fileName);
+    EventConsumer consumer = new TwitterFileConsumer(url.getFile());
+
+    try {
+      consumer.init(node.getWriter("Twitter", JSONEvent.class));
+    } catch (ConsumerInitException e) {
+      logger.error("Consumer init error: " + e.getMessage());
+      System.exit(-1);
+    }
+    consumer.start();
+
+    // Step 3: Get a reader to fire queries
+    Reader reader = node.getReader();
+
+    // Step 4: Get console input for sample queries.
+    // TODO
+
+    logger.info("Table names in the node: " + reader.getTableNames());
+    View view = reader.getViewFactory().createView(new InFilter("Twitter"));
+
+    // Testing Optiq with Push Down
+    LBSchema lbSchema = new LBSchema("TEST");
+    lbSchema.addAsSmartTable("TWITTER", view);
+    QueryExecutor queryExec = new QueryExecutor(lbSchema);
+    String sql = "SELECT \"text.String\", \"source.String\" "
+        + " from \"TEST\".\"TWITTER\" where \"id.Double\" = 461506965680951296";
+    int resultCount = 0;
+    try {
+      ResultSet results = queryExec.execute(sql);
       while (results.next()) {
         resultCount++;
         logger.debug("Text is: " + results.getString("text.String")
