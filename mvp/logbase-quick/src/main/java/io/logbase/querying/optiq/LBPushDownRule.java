@@ -185,8 +185,7 @@ operand(
       logger.debug("newField: " + newField.getName());
     }
 
-    // TODO check if projection is being sent correctly.
-    // Assume projection = topRow
+    // projection = topRow
     List<String> projection = new ArrayList<String>();
     List<RelDataTypeField> fieldList = topRow.getFieldList();
     for (RelDataTypeField field : fieldList) {

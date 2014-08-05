@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eigenbase.rex.RexCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,14 +111,6 @@ public class LBEnumerator implements Enumerator<Object> {
   @Override
   public void reset() {
     throw new UnsupportedOperationException();
-  }
-
-  public static int[] identityList(int fieldCount) {
-    int[] integers = new int[fieldCount];
-    for (int i = 0; i < fieldCount; i++) {
-      integers[i] = i;
-    }
-    return integers;
   }
 
 }

@@ -3,7 +3,6 @@ package io.logbase.querying.optiq;
 import io.logbase.view.View;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.eigenbase.rel.RelNode;
@@ -120,16 +119,16 @@ public class LBSmartTable extends AbstractQueryableTable implements
     logger.debug("Smart table toRel call received");
     final RelOptCluster cluster = context.getCluster();
 
-    // TODO pass projection field
+
     // Passing projection fields as null initially, after rules are fired and
     // rule match
     // the projection field will be used to create a new Table scan with values.
-
     return new LBTableScan(cluster, relOptTable, this, null, null);
   }
 
   /**
-   * Returns an enumerable over a given projection of the fields.
+   * Returns an enumerable over a given projection of the fields. This method is
+   * called when a push down rule is successfully fired and transformed.
    * 
    * @param projectFields
    *          Projections

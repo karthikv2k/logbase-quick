@@ -94,6 +94,14 @@ public class LBTableScan extends TableAccessRelBase implements
   }
 
 
+
+  /**
+   * This method is called when a Push down rule is fired and transformed. This
+   * method specifies which method in LBSmartTable will be called and what
+   * operands will be sent to it. Sending Strings, int[] are straing forward,
+   * but sending a List<String> requires changing it using the
+   * constantStringList method.
+   */
   public Result implement(EnumerableRelImplementor implementor, Prefer pref) {
     PhysType physType = PhysTypeImpl.of(implementor.getTypeFactory(),
         getRowType(), pref.preferCustom());
@@ -105,6 +113,14 @@ public class LBTableScan extends TableAccessRelBase implements
 
   }
 
+  /**
+   * Utility method to convert a List<String> to be passed down to LBSmartTable
+   * pushdown method.
+   * 
+   * @param strings
+   *          List of strings to be converted to Expression.
+   * @return Expression required to be sent to pushdown method call.
+   */
   private static Expression constantStringList(final List<String> strings) {
     return Expressions.call(Arrays.class, "asList",
         Expressions.newArrayInit(Object.class, new AbstractList<Expression>() {

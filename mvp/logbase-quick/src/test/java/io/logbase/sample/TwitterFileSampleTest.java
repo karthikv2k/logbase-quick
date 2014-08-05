@@ -41,7 +41,9 @@ public class TwitterFileSampleTest {
   static final Logger logger = LoggerFactory
       .getLogger(TwitterFileSampleTest.class);
 
-
+  /**
+   * Test case without query push down
+   */
   @Test
   public void testTwitterFileSample() {
 
@@ -67,8 +69,6 @@ public class TwitterFileSampleTest {
     // Step 3: Get a reader to fire queries
     Reader reader = node.getReader();
 
-    // Step 4: Get console input for sample queries.
-    // TODO
 
     // For testing
     logger.info("Table names in the node: " + reader.getTableNames());
@@ -115,6 +115,9 @@ public class TwitterFileSampleTest {
     assertEquals(resultCount, 1);
   }
 
+  /**
+   * Test case for query push down.
+   */
   // Ignoring as filter push not yet implemented.
   @Ignore
   public void testSmartTwitterFileSample() {
@@ -140,9 +143,6 @@ public class TwitterFileSampleTest {
 
     // Step 3: Get a reader to fire queries
     Reader reader = node.getReader();
-
-    // Step 4: Get console input for sample queries.
-    // TODO
 
     logger.info("Table names in the node: " + reader.getTableNames());
     View view = reader.getViewFactory().createView(new InFilter("Twitter"));

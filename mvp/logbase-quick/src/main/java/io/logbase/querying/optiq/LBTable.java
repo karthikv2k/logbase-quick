@@ -101,8 +101,7 @@ public class LBTable extends AbstractQueryableTable implements
       public Enumerator<T> enumerator() {
         // noinspection unchecked
         try {
-          logger
-.debug("Creating simple enumerator");
+          logger.debug("Creating simple enumerator");
           LBEnumerator enumerator = new LBEnumerator(view);
           return (Enumerator<T>) enumerator;
         } catch (Exception e) {
