@@ -123,7 +123,8 @@ public class LBSmartTable extends AbstractQueryableTable implements
     // Passing projection fields as null initially, after rules are fired and
     // rule match
     // the projection field will be used to create a new Table scan with values.
-    return new LBTableScan(cluster, relOptTable, this, null, null);
+    return new LBTableScan(cluster, relOptTable, this, null, null,
+        "Scan for rule fire");
   }
 
   /**

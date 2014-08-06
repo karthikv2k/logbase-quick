@@ -44,24 +44,19 @@ public class LBPushDownRule extends RelOptRule {
           ProjectRel.class,
           operand(
               FilterRel.class,
-              operand(ProjectRel.class,
- operand(LBTableScan.class, none())))),
-      "proj on filter on proj");
+              operand(ProjectRel.class, operand(LBTableScan.class, none())))),
+      "Proj on filter on proj");
 
   public static final LBPushDownRule FILTER_ON_PROJECT = new LBPushDownRule(
       operand(FilterRel.class,
           operand(ProjectRel.class, operand(LBTableScan.class, none()))),
-      "filter on proj");
+      "Filter on proj");
 
-  public static final LBPushDownRule FILTER = new LBPushDownRule(
-operand(
-      FilterRel.class, operand(LBTableScan.class, none())),
-      "filter");
+  public static final LBPushDownRule FILTER = new LBPushDownRule(operand(
+      FilterRel.class, operand(LBTableScan.class, none())), "Filter");
 
-  public static final LBPushDownRule PROJECT = new LBPushDownRule(
-operand(
-      ProjectRel.class, operand(LBTableScan.class, none())),
-      "proj");
+  public static final LBPushDownRule PROJECT = new LBPushDownRule(operand(
+      ProjectRel.class, operand(LBTableScan.class, none())), "Proj");
 
 
   protected LBPushDownRule(RelOptRuleOperand rule, String id) {
@@ -192,7 +187,8 @@ operand(
       projection.add(field.getName());
     }
     call.transformTo(new LBTableScan(lbTableScan.getCluster(), lbTableScan
-        .getTable(), lbTableScan.lbSmartTable, projection, filterString));
+        .getTable(), lbTableScan.lbSmartTable, projection, filterString,
+        description));
 
   }
 

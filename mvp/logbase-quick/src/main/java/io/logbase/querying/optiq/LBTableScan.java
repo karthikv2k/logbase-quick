@@ -33,15 +33,17 @@ public class LBTableScan extends TableAccessRelBase implements
   final LBSmartTable lbSmartTable;
   final List<String> projection;
   final String filter;
+  final String name;
 
 
   protected LBTableScan(RelOptCluster cluster, RelOptTable table,
-      LBSmartTable lbSmartTable, List<String> projection, String filter) {
+      LBSmartTable lbSmartTable, List<String> projection, String filter,
+      String name) {
     super(cluster, cluster.traitSetOf(EnumerableConvention.INSTANCE), table);
     this.lbSmartTable = lbSmartTable;
     this.projection = projection;
     this.filter = filter;
-
+    this.name = name;
     assert lbSmartTable != null;
   }
 
@@ -50,7 +52,7 @@ public class LBTableScan extends TableAccessRelBase implements
     logger.debug("JavaBean table scan copy call received.");
     assert inputs.isEmpty();
     return new LBTableScan(getCluster(), table, lbSmartTable, projection,
-        filter);
+        filter, name);
   }
 
 
@@ -86,10 +88,10 @@ public class LBTableScan extends TableAccessRelBase implements
 
   @Override
   public void register(RelOptPlanner planner) {
+    planner.addRule(LBPushDownRule.PROJECT);
+    planner.addRule(LBPushDownRule.FILTER);
     planner.addRule(LBPushDownRule.PROJECT_ON_FILTER);
     planner.addRule(LBPushDownRule.FILTER_ON_PROJECT);
-    planner.addRule(LBPushDownRule.FILTER);
-    planner.addRule(LBPushDownRule.PROJECT);
     logger.debug("JavaBean Smart Table rules added.");
   }
 
@@ -98,17 +100,17 @@ public class LBTableScan extends TableAccessRelBase implements
   /**
    * This method is called when a Push down rule is fired and transformed. This
    * method specifies which method in LBSmartTable will be called and what
-   * operands will be sent to it. Sending Strings, int[] are straing forward,
+   * operands will be sent to it. Sending Strings, int[] are straight forward,
    * but sending a List<String> requires changing it using the
    * constantStringList method.
    */
   public Result implement(EnumerableRelImplementor implementor, Prefer pref) {
     PhysType physType = PhysTypeImpl.of(implementor.getTypeFactory(),
         getRowType(), pref.preferCustom());
-    logger.debug("Implement call received");
+    logger.debug("Implement call received for scan: " + name);
     return implementor.result(physType, Blocks.toBlock(Expressions.call(
         table.getExpression(LBSmartTable.class), "pushdown",
-        filter == null ? Expressions.constant(null)
+        projection == null ? Expressions.constant(null)
             : constantStringList(projection), Expressions.constant(filter))));
 
   }
