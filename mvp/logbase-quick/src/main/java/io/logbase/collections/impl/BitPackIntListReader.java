@@ -15,6 +15,9 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   private int[] holder = new int[1];
+  private int[] localBuf = new int[10*1024];
+  private int localBufPos = 0;
+  private int localBufSize = 0;
   private int totalReads = 0;
 
 
@@ -52,7 +55,7 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
         next = next >>> bitIndex;
         cur2 |= next;
       }
-      out[offset + i] = (int)cur2;
+      out[offset + i] = (int)cur2 + list.minValue;
     }
     return i-offset;
   }
@@ -85,9 +88,18 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
 
   @Override
   public Integer next() {
-    checkState(hasNext(), "check hasNext() before calling next()");
-    read(holder, 0, 1);
-    return holder[0];
+    if(localBufSize>0 && localBufPos<localBufSize){
+      return localBuf[localBufPos++];
+    } else {
+      localBufSize = read(localBuf, 0, localBuf.length);
+      localBufPos = 0;
+      if(localBufSize>0){
+        return next();
+      } else {
+        checkState(hasNext(), "check hasNext() before calling next()");
+        return null;
+      }
+    }
   }
 
   @Override

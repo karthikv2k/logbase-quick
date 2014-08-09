@@ -3,48 +3,45 @@ package io.logbase.column.readonly;
 import io.logbase.collections.impl.BitPackIntList;
 import io.logbase.collections.impl.BitPackIntListReader;
 import io.logbase.collections.impl.BitPackIntListWriter;
+import io.logbase.collections.impl.BitPackIntRange;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
 public class BitpackIntegerColumn implements Column<Integer> {
-  public final int maxValue;
-  public final int minValue;
+
   public final long startRowNum;
   public final int arrayCount;
   public final String columnName;
   private final BitPackIntList values;
   private final BitPackIntList isNull;
-
-  private int maxValueTemp;
-  private int minValueTemp;
-  private int startRowNumTemp;
+  private final BitPackIntList arraySize;
+  private BitPackIntRange valuesRange = new BitPackIntRange();
+  private BitPackIntRange arraySizeRange = new BitPackIntRange();
 
   public BitpackIntegerColumn(Column<Integer> column){
 
     this.columnName = column.getColumnName();
 
-    /*** convert values list into values bitpacked list ****/
-    //find max and min
-    int maxValue=Integer.MIN_VALUE;
-    int minValue=Integer.MAX_VALUE;
+    //find max and min of values and array sizes
     long startRowNum = -1;
     ColumnIterator<Object> iterator = column.getSimpleIterator();
     arrayCount = column.getArrayCount();
     int i =0;
     while(iterator.hasNext()){
-      Object temp = iterator.hasNext();
+      Object temp = iterator.next();
       if(temp!=null){
         if(arrayCount>0){
-          Integer[] values = (Integer[]) temp;
-          for(Integer value:values){
-            updateMinMax(value);
-          }
-        }else {
-          updateMinMax((Integer) temp);
+          Integer[] vals = (Integer[]) temp;
+          valuesRange.update(vals);
+          arraySizeRange.update(vals.length);
+        }else{
+          valuesRange.update((Integer) temp);
         }
         if(startRowNum==-1){
           startRowNum=i;
@@ -52,21 +49,28 @@ public class BitpackIntegerColumn implements Column<Integer> {
         i++;
       }
     }
-    this.maxValue = maxValue;
-    this.minValue = minValue;
     this.startRowNum = startRowNum;
 
-    values = new BitPackIntList(maxValue - minValue, column.getValuesCount());
+    values = new BitPackIntList(valuesRange.getMin(), valuesRange.getMax(), column.getValuesCount());
     BitPackIntListWriter valuesWriter = new BitPackIntListWriter(values);
-    isNull = new BitPackIntList(1, column.getSize());
+    isNull = new BitPackIntList(0, 1, column.getRowCount());
     BitPackIntListWriter isNullWriter = new BitPackIntListWriter(isNull);
+    BitPackIntListWriter arraySizeWriter;
+    if(arrayCount>0){
+      arraySize = new BitPackIntList(arraySizeRange.getMin(), arraySizeRange.getMax(), column.getValidRowCount());
+      arraySizeWriter = new BitPackIntListWriter(arraySize);
+    } else {
+      arraySizeWriter = null;
+      arraySize = null;
+    }
 
     iterator = column.getSimpleIterator();
     while(iterator.hasNext()){
-      Object temp = iterator.hasNext();
+      Object temp = iterator.next();
       if(temp!=null){
         if(arrayCount>0){
           Integer[] values = (Integer[]) temp;
+          arraySizeWriter.append(values.length);
           for(Integer value:values){
             addValue(isNullWriter, valuesWriter, value);
           }
@@ -81,16 +85,17 @@ public class BitpackIntegerColumn implements Column<Integer> {
     isNullWriter.close();
     valuesWriter.close();
 
-  }
-
-  private void updateMinMax(Integer value){
-      maxValueTemp = Math.max(maxValueTemp, value);
-      minValueTemp = Math.min(minValueTemp, value);
+    checkArgument(values.size == values.listSize, "list's final size doesn't match the initial expected size");
+    checkArgument(isNull.size == isNull.listSize, "list's final size doesn't match the initial expected size");
+    if(arrayCount>0){
+      arraySizeWriter.close();
+      checkArgument(arraySize.size == arraySize.listSize, "list's final size doesn't match the initial expected size");
+    }
   }
 
   private void addValue(BitPackIntListWriter isNullWriter, BitPackIntListWriter valuesWriter, Integer value){
     isNullWriter.append(1);
-    valuesWriter.append(value- this.minValue);
+    valuesWriter.append(value);
   }
 
   @Override
@@ -119,8 +124,13 @@ public class BitpackIntegerColumn implements Column<Integer> {
   }
 
   @Override
-  public long getSize() {
+  public long getRowCount() {
     return isNull.size;
+  }
+
+  @Override
+  public long getValidRowCount() {
+    return arraySize.size;
   }
 
   @Override
@@ -135,12 +145,12 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
   @Override
   public ColumnIterator<Object> getSimpleIterator(long maxRowNum) {
-     return null;
+     return new SimpleIterator(maxRowNum);
   }
 
   @Override
   public ColumnIterator<Object> getSimpleIterator() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new SimpleIterator(values.size);
   }
 
   @Override
@@ -150,13 +160,16 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
   public class SimpleIterator implements ColumnIterator<Object>{
     private final long maxRowNum;
+    private long validRowNum = 0;
     private final BitPackIntListReader valuesReader;
     private final BitPackIntListReader isNullReader;
+    private final BitPackIntListReader arraySizeReader;
 
     SimpleIterator(long maxRowNum){
       this.maxRowNum = maxRowNum;
       valuesReader = new BitPackIntListReader(values);
       isNullReader = new BitPackIntListReader(isNull);
+      arraySizeReader = new BitPackIntListReader(arraySize);
     }
 
     @Override
@@ -172,7 +185,22 @@ public class BitpackIntegerColumn implements Column<Integer> {
     @Override
     public Object next() {
       if(isNullReader.next()==1){
-        return null;
+        if(arrayCount>0){
+          int n;
+          if(arraySizeReader.hasNext()){
+            n = arraySizeReader.next();
+          } else {
+            n = (int) (values.size - validRowNum);
+          }
+          Integer[] holder = new Integer[n];
+          for(int i=0; i<n && valuesReader.hasNext(); i++){
+            holder[i] = valuesReader.next();
+          }
+          return  holder;
+        }else{
+          validRowNum++;
+          return valuesReader.next();
+        }
       }else{
         return null;
       }

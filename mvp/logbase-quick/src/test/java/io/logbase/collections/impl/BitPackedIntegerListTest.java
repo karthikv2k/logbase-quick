@@ -15,10 +15,10 @@ public class BitPackedIntegerListTest {
     int[] values = new int[num];
     long time = System.currentTimeMillis();
     for(int i=0; i<num; i++){
-      values[i] = i%100000;
+      values[i] = 100 + i%100000;
     }
     System.out.println("init: " + (System.currentTimeMillis()-time));
-    BitPackIntList list = new BitPackIntList(100000, num);
+    BitPackIntList list = new BitPackIntList(100,100+100000, num);
     BitPackIntListWriter writer = new BitPackIntListWriter(list);
     time = System.currentTimeMillis();
     writer.write(values);
@@ -34,5 +34,16 @@ public class BitPackedIntegerListTest {
     }
     assertTrue((totalReads+1)==num);
     System.out.println("read: " + (System.currentTimeMillis()-time));
+    reader = new BitPackIntListReader(list);
+    cnt = 0;
+    totalReads = 0;
+    while(true){
+      cnt = reader.read(holder, 0, holder.length);
+      if(cnt==-1) break;
+      for(int j=0; j<cnt; j++){
+        assertTrue(values[totalReads] == holder[j]);
+        totalReads++;
+      }
+    }
   }
 }

@@ -86,8 +86,13 @@ public class ListBackedColumn<E> implements Column<E> {
   }
 
   @Override
-  public long getSize() {
+  public long getRowCount() {
     return isNull.size();
+  }
+
+  @Override
+  public long getValidRowCount() {
+    return arraySize.size();
   }
 
   @Override

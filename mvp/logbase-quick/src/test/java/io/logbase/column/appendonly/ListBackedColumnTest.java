@@ -14,7 +14,7 @@ public class ListBackedColumnTest {
   static final Logger logger = LoggerFactory
       .getLogger(ListBackedColumnTest.class);
 
-  public ListBackedColumn createTestColumn() throws Exception {
+  public static ListBackedColumn createTestColumn() throws Exception {
     Integer[] values = { 1, 2, 3, 4, 5 };
     long[] rowNums = { 2, 4, 5, 8, 9 };
     ListBackedColumn column = new ListBackedColumn("test", 0);

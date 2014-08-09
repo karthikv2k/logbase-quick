@@ -5,6 +5,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Each leaf node in a nested data model forms a column. A column is composed of values same type. A differentiation is
+ * made between null values and the column not being present. Since a
+ * @param <E>
+ */
+
 public interface Column<E> extends Operand<Column> {
 
   public static Map EMPTY_MAP = new HashMap(1);
@@ -49,11 +55,18 @@ public interface Column<E> extends Operand<Column> {
   public void append(E value, long rowNum, int[] arrayIdx);
 
   /**
-   * Gets memory size in bytes
+   * Gets number of rows in the column.
    *
    * @return
    */
-  public long getSize();
+  public long getRowCount();
+
+  /**
+   * Gets number of rows in the column where a value is present.
+   *
+   * @return
+   */
+  public long getValidRowCount();
 
   /**
    * get number of valid values in this column. If the column has arrays then this may be greater than tht number of

@@ -26,13 +26,13 @@ public class BitPackIntListWriter implements ReadonlyListWriter<Integer> {
     long cur;
     long buf = list.buf.getLong(arrayIndex);
     for(int value: values){
-      cur = value;
+      cur = value - list.minValue;
       if(bitIndex>=list.width){ //minimum free space required to insert a value
         bitIndex = bitIndex - list.width;
       }else{
         cur = cur >>> (list.width - bitIndex);
         buf |= cur;
-        cur = value;
+        cur = value - list.minValue;
         bitIndex = 64 - (list.width - bitIndex);
         list.buf.setLong(arrayIndex, buf);
         arrayIndex++;
