@@ -21,4 +21,12 @@ public abstract class Buffer {
   public void setLong(int index, long value){
     throw new UnsupportedOperationException();
   }
+
+  public void getBytes(byte[] outBuf, int offset, int length, int index){
+    throw new UnsupportedOperationException();
+  }
+
+  public void setBytes(byte[] inBuf, int offset, int length, int index){
+    throw new UnsupportedOperationException();
+  }
 }

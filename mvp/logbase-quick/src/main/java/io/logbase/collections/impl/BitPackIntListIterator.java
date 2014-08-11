@@ -1,7 +1,10 @@
 package io.logbase.collections.impl;
 
 import io.logbase.buffer.Buffer;
-import io.logbase.collections.ReadonlyListReader;
+import io.logbase.collections.BatchIterator;
+
+import java.util.Iterator;
+
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
@@ -10,22 +13,21 @@ import static com.google.common.base.Preconditions.checkState;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitPackIntListReader implements ReadonlyListReader<Integer> {
+public class BitPackIntListIterator implements BatchIterator<Integer> {
   private BitPackIntList list;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
-  private int[] holder = new int[1];
   private int[] localBuf = new int[10*1024];
   private int localBufPos = 0;
   private int localBufSize = 0;
   private int totalReads = 0;
 
 
-  public BitPackIntListReader(BitPackIntList list){
+  public BitPackIntListIterator(BitPackIntList list){
     this.list=list;
   }
 
-  public int read(int[] out, int offset, int count){
+  private int readInternal(int[] out, int offset, int count){
     //return -1 if the list has no values to read
     if(totalReads>=list.size){
       return -1;
@@ -65,7 +67,7 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
     checkNotNull(buffer, "Null buffer is not permitted");
     checkArgument(offset+rows<=buffer.length, "length of buffer should be greater than offset+rows.");
     int[] holder = new int[buffer.length];
-    int count = read(holder, 0, rows);
+    int count = readInternal(holder, 0, rows);
     for(int i=0; i<holder.length && i<count; i++){
       buffer[offset+i] = holder[i];
     }
@@ -73,12 +75,22 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
   }
 
   @Override
-  public int read(Object buffer, int offset, int rows) throws ClassCastException {
+  public boolean primitiveTypeSupport() {
+    return true;
+  }
+
+  @Override
+  public int readNative(Object buffer, int offset, int rows) throws ClassCastException {
     checkNotNull(buffer, "Null buffer is not permitted");
     checkArgument(buffer instanceof int[], "buffer must be int[], found " + buffer.getClass().getSimpleName());
     int[] nativeBuffer = (int[]) buffer;
     checkArgument(offset+rows<=nativeBuffer.length, "length of buffer should be greater than offset+rows.");
-    return read(nativeBuffer, offset, rows);
+    return readInternal(nativeBuffer, offset, rows);
+  }
+
+  @Override
+  public Iterator<Integer> iterator() {
+    return this;
   }
 
   @Override
@@ -91,7 +103,7 @@ public class BitPackIntListReader implements ReadonlyListReader<Integer> {
     if(localBufSize>0 && localBufPos<localBufSize){
       return localBuf[localBufPos++];
     } else {
-      localBufSize = read(localBuf, 0, localBuf.length);
+      localBufSize = readInternal(localBuf, 0, localBuf.length);
       localBufPos = 0;
       if(localBufSize>0){
         return next();

@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertTrue;
 public class BitPackedIntegerListTest {
   @Test
   public void testWrite() throws Exception {
-    int num = 1000*1000*100;
+    int num = 100;
     int[] values = new int[num];
     long time = System.currentTimeMillis();
     for(int i=0; i<num; i++){
@@ -21,24 +21,24 @@ public class BitPackedIntegerListTest {
     BitPackIntList list = new BitPackIntList(100,100+100000, num);
     BitPackIntListWriter writer = new BitPackIntListWriter(list);
     time = System.currentTimeMillis();
-    writer.write(values);
+    writer.write(values, 0, values.length);
     System.out.println("write: " + (System.currentTimeMillis()-time));
-    BitPackIntListReader reader = new BitPackIntListReader(list);
+    BitPackIntListIterator reader = new BitPackIntListIterator(list);
     time = System.currentTimeMillis();
     int[] holder = new int[1024*10];
     int cnt = 0;
     int totalReads = 0;
     while(cnt!=-1){
-      cnt = reader.read(holder, 0, holder.length);
+      cnt = reader.readNative(holder, 0, holder.length);
       totalReads = totalReads+cnt;
     }
-    assertTrue((totalReads+1)==num);
+    assertTrue((totalReads + 1) == num);
     System.out.println("read: " + (System.currentTimeMillis()-time));
-    reader = new BitPackIntListReader(list);
+    reader = new BitPackIntListIterator(list);
     cnt = 0;
     totalReads = 0;
     while(true){
-      cnt = reader.read(holder, 0, holder.length);
+      cnt = reader.readNative(holder, 0, holder.length);
       if(cnt==-1) break;
       for(int j=0; j<cnt; j++){
         assertTrue(values[totalReads] == holder[j]);

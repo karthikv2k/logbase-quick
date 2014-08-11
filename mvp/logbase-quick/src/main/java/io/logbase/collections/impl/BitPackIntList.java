@@ -1,8 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.buffer.Buffer;
-import io.logbase.buffer.LongHeapBuffer;
-import io.logbase.buffer.LongOffheapBuffer;
+import io.logbase.buffer.GenericOffHeapBuffer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -25,7 +24,7 @@ public class BitPackIntList {
     this.width = getWidthFromMaxInt(maxValue-minValue);
     this.listSize = listSize;
     int arraySize = (int) Math.ceil(((double)(listSize*width))/64)+1;
-    buf = new LongOffheapBuffer(arraySize);
+    buf = new GenericOffHeapBuffer(arraySize*Long.SIZE/8);
   }
 
   /**

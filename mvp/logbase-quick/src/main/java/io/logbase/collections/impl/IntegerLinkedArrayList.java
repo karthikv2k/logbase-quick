@@ -1,16 +1,20 @@
 package io.logbase.collections.impl;
 
+import io.logbase.collections.BatchIterator;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class IntegerLinkedArrayList extends BaseList<Integer> {
   private List<int[]> blocks = new ArrayList<int[]>();
   private int blockSize = 1024;
   private int blockIndex = 0;
   int[] tail = null;
+  boolean isClosed = false;
 
   public IntegerLinkedArrayList() {
     addBlock();
@@ -35,12 +39,13 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
 
   @Override
   public int size() {
-    long size = longSize();
-    checkArgument(size <= Integer.MAX_VALUE, "List size is more than Integer.MAX_VALUE. Call longSize()");
+    long size = sizeAsLong();
+    checkArgument(size <= Integer.MAX_VALUE, "List size is more than Integer.MAX_VALUE. Call sizeAsLong()");
     return (int) size;
   }
 
-  public long longSize() {
+  @Override
+  public long sizeAsLong() {
     long size = 0;
     Iterator<int[]> iterator = blocks.iterator();
     for (int i = 0; i < blocks.size() - 1; i++) {
@@ -50,8 +55,40 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
   }
 
   @Override
+  public boolean primitiveTypeSupport() {
+    return true;
+  }
+
+  @Override
+  public void addPrimitiveArray(Object values, int offset, int length) {
+    checkNotNull(values, "Null vales are not permitted");
+    checkArgument(values instanceof int[], "values must be int[], found " + values.getClass().getSimpleName());
+    int[] intValues = (int[]) values;
+    //TBA optimize
+    for(int i = 0; i<length; i++){
+      add(intValues[offset+i]);
+    }
+  }
+
+  @Override
+  public BatchIterator<Integer> batchIterator(long maxIndex) {
+    return new ListIterator(maxIndex);
+  }
+
+  @Override
+  public boolean close() {
+    isClosed = true;
+    return isClosed;
+  }
+
+  @Override
   public boolean isEmpty() {
-    return longSize() == 0 ? true : false;
+    return sizeAsLong() == 0 ? true : false;
+  }
+
+  @Override
+  public Iterator<Integer> iterator() {
+    return new ListIterator(sizeAsLong());
   }
 
   @Override
@@ -89,6 +126,53 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
       }
     }
     throw new UnsupportedOperationException("input i(" + l + ") exceeds list size (" + j + ")");
+  }
+
+  public class ListIterator implements BatchIterator<Integer>{
+    long index = 0;
+    int blockIndex = 0;
+    int blockLocalIndex = 0;
+
+    long maxIndex = 0;
+
+    ListIterator(long maxIndex){
+      this.maxIndex = maxIndex;
+    }
+
+    @Override
+    public java.util.Iterator<Integer> iterator() {
+      return this;
+    }
+
+    @Override
+    public boolean hasNext() {
+      return index < maxIndex;
+    }
+
+    @Override
+    public Integer next() {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void remove() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int read(Integer[] buffer, int offset, int count) {
+      return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public boolean primitiveTypeSupport() {
+      return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public int readNative(Object buffer, int offset, int count) {
+      return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    }
   }
 
 }

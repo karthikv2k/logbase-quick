@@ -1,5 +1,7 @@
 package io.logbase.column.appendonly;
 
+import io.logbase.collections.BatchIterator;
+import io.logbase.collections.impl.BatchIteratorWrapper;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 
@@ -14,7 +16,7 @@ public class ListBackedColumn<E> implements Column<E> {
 
   private String name;
   private List values = new ArrayList(10000);
-  private List<Boolean> isNull = new ArrayList<Boolean>(10000);
+  private List<Boolean> isPresent = new ArrayList<Boolean>(10000);
   private List<Integer>[] arrayIdx;
   private List<Integer> arraySize = new ArrayList<Integer>(10000);
   private long startRowNum = -1;
@@ -49,8 +51,8 @@ public class ListBackedColumn<E> implements Column<E> {
     checkArgument(this.arrayIdx.length == 0, "Can't append without arrayIdx");
     checkArgument(value != null, "Value can't be null");
     values.add(value);
-    appendNull(rowNum - 1);
-    isNull.add(false);
+    appendNotPresent(rowNum - 1);
+    isPresent.add(true);
     maxRowNum = rowNum;
   }
 
@@ -65,9 +67,9 @@ public class ListBackedColumn<E> implements Column<E> {
       maxRowArraySize = 0;
     }
 
-    appendNull(rowNum - 1);
+    appendNotPresent(rowNum - 1);
     if (rowNum != maxRowNum) {
-      isNull.add(false);
+      isPresent.add(true);
     }
 
     // this.arrayIdx.length is used here because the passed arrayIdx may be
@@ -79,15 +81,15 @@ public class ListBackedColumn<E> implements Column<E> {
     maxRowNum = rowNum;
   }
 
-  private void appendNull(long rowNum) {
+  private void appendNotPresent(long rowNum) {
     for (long i = maxRowNum; i < rowNum; i++) {
-      isNull.add(true);
+      isPresent.add(false);
     }
   }
 
   @Override
   public long getRowCount() {
-    return isNull.size();
+    return isPresent.size();
   }
 
   @Override
@@ -116,6 +118,26 @@ public class ListBackedColumn<E> implements Column<E> {
   }
 
   @Override
+  public BatchIterator<Boolean> getIsPresentIterator() {
+    return new BatchIteratorWrapper<Boolean>(isPresent.iterator());
+  }
+
+  @Override
+  public BatchIterator<E> getValuesIterator() {
+    return new BatchIteratorWrapper<E>(values.iterator());
+  }
+
+  @Override
+  public BatchIterator<Integer> getArraySizeIterator() {
+    return new BatchIteratorWrapper<Integer>(arraySize.iterator());
+  }
+
+  @Override
+  public BatchIterator<Integer> getArrayIndexIterator(int arrayNum) {
+    return new BatchIteratorWrapper<Integer>(arrayIdx[arrayNum].iterator());
+  }
+
+  @Override
   public int compareTo(Column column) {
     return this.name.compareTo(column.getColumnName());
   }
@@ -123,27 +145,32 @@ public class ListBackedColumn<E> implements Column<E> {
   private class SimpleColumnIterator implements ColumnIterator<Object> {
     private final long maxRowNum;
     private long rowNum = 0;
-    Iterator<Boolean> isNullIterator;
+    Iterator<Boolean> isPresentIterator;
     Iterator<E> valuesIterator;
     Iterator<Integer> arraySizeIterator;
 
     SimpleColumnIterator(long maxRowNum) {
       this.maxRowNum = maxRowNum;
-      isNullIterator = isNull.iterator();
+      isPresentIterator = isPresent.iterator();
       valuesIterator = values.iterator();
       arraySizeIterator = arraySize.iterator();
     }
 
     @Override
+    public Iterator<Object> iterator() {
+      return this;
+    }
+
+    @Override
     public boolean hasNext() {
-      return isNullIterator.hasNext() && rowNum <= maxRowNum;
+      return isPresentIterator.hasNext() && rowNum <= maxRowNum;
     }
 
     @Override
     public Object next() {
       checkArgument(hasNext(), "Check hashNext() before calling next().");
       rowNum++;
-      if (isNullIterator.next()) {
+      if (!isPresentIterator.next()) {
         return null;
       } else {
         if (arrayIdx.length > 0) {
@@ -174,15 +201,18 @@ public class ListBackedColumn<E> implements Column<E> {
     }
 
     @Override
-    public boolean skip(long rows) {
-      for (int i = 0; i < rows; i++) {
-        if (hasNext()) {
-          next();
-        } else {
-          return false;
-        }
-      }
-      return true;
+    public int read(Object[] buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean primitiveTypeSupport() {
+      return false;
+    }
+
+    @Override
+    public int readNative(Object buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
     }
 
   }

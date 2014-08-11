@@ -99,13 +99,8 @@ public class SimpleView implements View {
     }
 
     @Override
-    public Column[] getColumns() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean skip(long rows) {
-      throw new UnsupportedOperationException();
+    public Iterator<Object[]> iterator() {
+      return this;
     }
 
     @Override
@@ -138,6 +133,21 @@ public class SimpleView implements View {
 
     @Override
     public void remove() {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int read(Object[][] buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean primitiveTypeSupport() {
+      return false;
+    }
+
+    @Override
+    public int readNative(Object buffer, int offset, int count) {
       throw new UnsupportedOperationException();
     }
   }

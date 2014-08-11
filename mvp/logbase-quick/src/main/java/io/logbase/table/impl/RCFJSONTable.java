@@ -207,6 +207,11 @@ public class RCFJSONTable implements Table<JSONEvent> {
     }
 
     @Override
+    public Iterator<Object[]> iterator() {
+      return this;
+    }
+
+    @Override
     public boolean hasNext() {
       for (Iterator i : iterators) {
         if (i.hasNext()) {
@@ -233,23 +238,25 @@ public class RCFJSONTable implements Table<JSONEvent> {
     }
 
     @Override
+    public int read(Object[][] buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean primitiveTypeSupport() {
+      return false;
+    }
+
+    @Override
+    public int readNative(Object buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String[] getColumnNames() {
       return columnNames;
     }
 
-    @Override
-    public Column[] getColumns() {
-      return columns;
-    }
-
-    @Override
-    public boolean skip(long rows) {
-      boolean result = false;
-      for (int i = 0; i < iterators.length; i++) {
-        result = result || iterators[i].skip(rows);
-      }
-      return result;
-    }
   }
 
 }

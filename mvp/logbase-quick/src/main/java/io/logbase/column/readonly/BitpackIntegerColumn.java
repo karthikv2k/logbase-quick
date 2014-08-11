@@ -1,11 +1,14 @@
 package io.logbase.column.readonly;
 
+import io.logbase.collections.BatchIterator;
 import io.logbase.collections.impl.BitPackIntList;
-import io.logbase.collections.impl.BitPackIntListReader;
+import io.logbase.collections.impl.BitPackIntListIterator;
 import io.logbase.collections.impl.BitPackIntListWriter;
 import io.logbase.collections.impl.BitPackIntRange;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
+
+import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -70,7 +73,7 @@ public class BitpackIntegerColumn implements Column<Integer> {
       if(temp!=null){
         if(arrayCount>0){
           Integer[] values = (Integer[]) temp;
-          arraySizeWriter.append(values.length);
+          arraySizeWriter.add(values.length);
           for(Integer value:values){
             addValue(isNullWriter, valuesWriter, value);
           }
@@ -78,7 +81,7 @@ public class BitpackIntegerColumn implements Column<Integer> {
           addValue(isNullWriter, valuesWriter, (Integer) temp);
         }
       }else{
-        isNullWriter.append(0);
+        isNullWriter.add(0);
       }
     }
 
@@ -94,8 +97,8 @@ public class BitpackIntegerColumn implements Column<Integer> {
   }
 
   private void addValue(BitPackIntListWriter isNullWriter, BitPackIntListWriter valuesWriter, Integer value){
-    isNullWriter.append(1);
-    valuesWriter.append(value);
+    isNullWriter.add(1);
+    valuesWriter.add(value);
   }
 
   @Override
@@ -154,6 +157,26 @@ public class BitpackIntegerColumn implements Column<Integer> {
   }
 
   @Override
+  public BatchIterator<Boolean> getIsPresentIterator() {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public BatchIterator<Integer> getValuesIterator() {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public BatchIterator<Integer> getArraySizeIterator() {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public BatchIterator<Integer> getArrayIndexIterator(int arrayNum) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
   public int compareTo(Column o) {
     return 0;  //To change body of implemented methods use File | Settings | File Templates.
   }
@@ -161,29 +184,31 @@ public class BitpackIntegerColumn implements Column<Integer> {
   public class SimpleIterator implements ColumnIterator<Object>{
     private final long maxRowNum;
     private long validRowNum = 0;
-    private final BitPackIntListReader valuesReader;
-    private final BitPackIntListReader isNullReader;
-    private final BitPackIntListReader arraySizeReader;
+    private long currentRowNum = 0;
+    private final BitPackIntListIterator valuesReader;
+    private final BitPackIntListIterator isNullReader;
+    private final BitPackIntListIterator arraySizeReader;
 
     SimpleIterator(long maxRowNum){
       this.maxRowNum = maxRowNum;
-      valuesReader = new BitPackIntListReader(values);
-      isNullReader = new BitPackIntListReader(isNull);
-      arraySizeReader = new BitPackIntListReader(arraySize);
+      valuesReader = new BitPackIntListIterator(values);
+      isNullReader = new BitPackIntListIterator(isNull);
+      arraySizeReader = new BitPackIntListIterator(arraySize);
     }
 
     @Override
-    public boolean skip(long rows) {
-      return false;  //To change body of implemented methods use File | Settings | File Templates.
+    public Iterator<Object> iterator() {
+      return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public boolean hasNext() {
-      return isNullReader.hasNext();
+      return isNullReader.hasNext() && currentRowNum<maxRowNum;
     }
 
     @Override
     public Object next() {
+      currentRowNum++;
       if(isNullReader.next()==1){
         if(arrayCount>0){
           int n;
@@ -208,7 +233,24 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
     @Override
     public void remove() {
-      //To change body of implemented methods use File | Settings | File Templates.
+      throw new UnsupportedOperationException("Remove is not supported.");
+    }
+
+    @Override
+    public int read(Object[] buffer, int offset, int count) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean primitiveTypeSupport() {
+      //TBA
+      return false;
+    }
+
+    @Override
+    public int readNative(Object buffer, int offset, int count) {
+      //TBA
+      throw new UnsupportedOperationException();
     }
   }
 }

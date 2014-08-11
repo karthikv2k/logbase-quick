@@ -1,31 +1,17 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.LinkedArrayList;
+import io.logbase.collections.BatchList;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
-public abstract class BaseList<E> implements LinkedArrayList<E> {
+import static com.google.common.base.Preconditions.checkArgument;
 
-  @Override
-  public int size() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public boolean isEmpty() {
-    throw new UnsupportedOperationException();
-  }
+public abstract class BaseList<E> implements BatchList<E> {
 
   @Override
   public boolean contains(Object o) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Iterator<E> iterator() {
     throw new UnsupportedOperationException();
   }
 
@@ -123,4 +109,12 @@ public abstract class BaseList<E> implements LinkedArrayList<E> {
   public List<E> subList(int i, int i2) {
     throw new UnsupportedOperationException();
   }
+
+  @Override
+  public int size() {
+    long size = sizeAsLong();
+    checkArgument(size <= Integer.MAX_VALUE, "List size is more than Integer.MAX_VALUE. Call sizeAsLong()");
+    return (int) size;
+  }
+
 }

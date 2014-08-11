@@ -9,8 +9,8 @@ import io.logbase.buffer.Buffer;
 public class StringList {
   public  Buffer stringBuf;
   public  Buffer offsetBuf;
-  public  Buffer lenBuf;
 
-  public StringList(int capacity){
+  public StringList(int numValues, int toalSize){
+
   }
 }

@@ -9,6 +9,9 @@ import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 import io.logbase.utils.Utils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 public class ListBackedColumnTest {
 
   static final Logger logger = LoggerFactory
@@ -39,13 +42,27 @@ public class ListBackedColumnTest {
   public void testGetSimpleIterator() throws Exception {
     Column column = createTestColumn();
     ColumnIterator it = column.getSimpleIterator();
+    Integer[] values = { null, null, 1, null, 2, 3, null, null, 4, 5};
+    int i = 0;
     while (it.hasNext()) {
-      logger.info((Utils.toString(it.next())));
+      assertEquals(values[i++], it.next());
     }
+
     column = createTestArrayColumn();
     it = column.getSimpleIterator();
+    i = 0;
+    Integer[][] arrayValues = {null, null, {1, 2}, {3}, null, {4, 5}};
     while (it.hasNext()) {
-      logger.info((Utils.toString(it.next())));
+      Object temp = it.next();
+      if(arrayValues[i] == null){
+        assertNull(temp);
+      }else{
+        Object[] tempArray = (Object[]) temp;
+        for(int j=0; j<arrayValues[i].length; j++ ){
+          assertEquals(arrayValues[i][j], tempArray[j]);
+        }
+      }
+      i++;
     }
   }
 }

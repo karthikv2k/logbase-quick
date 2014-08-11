@@ -1,5 +1,7 @@
 package io.logbase.column;
 
+import io.logbase.collections.BatchIterator;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -95,5 +97,13 @@ public interface Column<E> extends Operand<Column> {
    * @return
    */
   public ColumnIterator<Object> getSimpleIterator();
+
+  public BatchIterator<Boolean> getIsPresentIterator();
+
+  public BatchIterator<E> getValuesIterator();
+
+  public BatchIterator<Integer> getArraySizeIterator();
+
+  public BatchIterator<Integer> getArrayIndexIterator(int arrayNum);
 
 }
