@@ -1,8 +1,8 @@
 package io.logbase.collections.impl;
 
-import io.logbase.buffer.Buffer;
 import io.logbase.collections.BatchIterator;
 
+import java.nio.LongBuffer;
 import java.util.Iterator;
 
 import static com.google.common.base.Preconditions.*;
@@ -12,7 +12,8 @@ import static com.google.common.base.Preconditions.*;
  * User: karthik
  */
 public class BitPackIntListIterator implements BatchIterator<Integer> {
-  private BitPackIntBuffer list;
+  private final BitPackIntBuffer listBuffer;
+  private final LongBuffer longBuffer;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   private int[] localBuf = new int[10*1024];
@@ -21,13 +22,14 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
   private int totalReads = 0;
 
 
-  public BitPackIntListIterator(BitPackIntBuffer list) {
-    this.list=list;
+  public BitPackIntListIterator(BitPackIntBuffer listBuffer) {
+    this.listBuffer = listBuffer;
+    this.longBuffer = listBuffer.buf.asLongBuffer();
   }
 
   private int readInternal(int[] out, int offset, int count){
     //return -1 if the list has no values to read
-    if(totalReads>=list.size){
+    if(totalReads>= listBuffer.size){
       return -1;
     }
 
@@ -35,27 +37,26 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
     long cur1,cur2;
     long next;
     int i;
-    Buffer buf = list.buf;
-    for(i = offset; totalReads<list.size && i<offset+count; i++, totalReads++){
-      cur = buf.getLong(arrayIndex);
-      if(bitIndex >= list.width){
+    for(i = offset; totalReads< listBuffer.size && i<offset+count; i++, totalReads++){
+      cur = longBuffer.get(arrayIndex);
+      if(bitIndex >= listBuffer.width){
         cur1 = cur << (64 - bitIndex);
-        cur2 = cur1 >>> (64 - list.width);
-        bitIndex = bitIndex - list.width;
+        cur2 = cur1 >>> (64 - listBuffer.width);
+        bitIndex = bitIndex - listBuffer.width;
       }else{
         if(bitIndex>0){
           cur1 = cur << (64 - bitIndex);
-          cur2 = cur1 >>> (64 - list.width);
+          cur2 = cur1 >>> (64 - listBuffer.width);
         }else{
           cur2=0;
         }
         arrayIndex++;
-        next = buf.getLong(arrayIndex);
-        bitIndex = 64 - (list.width - bitIndex);
+        next = longBuffer.get(arrayIndex);
+        bitIndex = 64 - (listBuffer.width - bitIndex);
         next = next >>> bitIndex;
         cur2 |= next;
       }
-      out[offset + i] = (int)cur2 + list.minValue;
+      out[offset + i] = (int)cur2 + listBuffer.minValue;
     }
     return i-offset;
   }
@@ -93,7 +94,7 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
 
   @Override
   public boolean hasNext() {
-    return totalReads<list.size;
+    return totalReads< listBuffer.size;
   }
 
   @Override

@@ -11,7 +11,7 @@ import static junit.framework.Assert.assertTrue;
 public class BitPackedIntegerListTest {
   @Test
   public void testWrite() throws Exception {
-    int num = 100;
+    int num = 100*1000*1000;
     int[] values = new int[num];
     long time = System.currentTimeMillis();
     for(int i=0; i<num; i++){

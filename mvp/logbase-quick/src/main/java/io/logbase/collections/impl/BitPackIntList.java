@@ -2,6 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
 
+import java.nio.LongBuffer;
 import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 
@@ -12,7 +13,8 @@ import static com.google.common.base.Preconditions.*;
  * User: karthik
  */
 public class BitPackIntList extends BaseList<Integer> {
-  private BitPackIntBuffer buffer;
+  private final BitPackIntBuffer buffer;
+  private final LongBuffer longBuffer;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   boolean isClosed = false;
@@ -21,6 +23,7 @@ public class BitPackIntList extends BaseList<Integer> {
   public BitPackIntList(BitPackIntBuffer buffer) {
     checkArgument(buffer.size == 0, "The list is not empty.");
     this.buffer = buffer;
+    this.longBuffer = buffer.buf.asLongBuffer();
   }
 
   public BitPackIntList(BatchIterator<Integer> source) {
@@ -44,6 +47,8 @@ public class BitPackIntList extends BaseList<Integer> {
     }
 
     this.buffer = new BitPackIntBuffer(summaryStatistics);
+    this.longBuffer = buffer.buf.asLongBuffer();
+
   }
 
   public void writeAll(BatchIterator<Integer> source) {
@@ -80,7 +85,7 @@ public class BitPackIntList extends BaseList<Integer> {
         buf |= cur;
         cur = values[offset + i] - buffer.minValue;
         bitIndex = 64 - (buffer.width - bitIndex);
-        buffer.buf.setLong(arrayIndex, buf);
+        longBuffer.put(arrayIndex, buf);
         arrayIndex++;
         buf = 0;
       }
@@ -88,7 +93,7 @@ public class BitPackIntList extends BaseList<Integer> {
       buf |= cur;
       buffer.size++;
     }
-    buffer.buf.setLong(arrayIndex, buf);
+    longBuffer.put(arrayIndex, buf);
   }
 
   @Override

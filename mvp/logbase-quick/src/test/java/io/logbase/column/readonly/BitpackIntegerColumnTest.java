@@ -37,7 +37,7 @@ public class BitpackIntegerColumnTest {
 
   @Test
   public void benchmarkSimpleIterator() throws Exception {
-    int num = 100*1000*100;
+    int num = 100*1000;
     int[] values = new int[num];
     long time = System.currentTimeMillis();
     for(int i=0; i<num; i++){
@@ -66,11 +66,11 @@ public class BitpackIntegerColumnTest {
     time = System.currentTimeMillis();
     BatchIterator<Integer> valuesIt = colRO.getValuesIterator();
     int[] holder = new int[1024];
-    int cnt;
+    int cnt = 0;
     while(valuesIt.hasNext()){
       cnt = valuesIt.readNative(holder, 0, holder.length);
     }
-    System.out.println("readonly column read (batch): " + (System.currentTimeMillis()-time));
+    System.out.println("readonly column read (batch): " + (System.currentTimeMillis()-time) + " " + cnt);
 
 
   }
