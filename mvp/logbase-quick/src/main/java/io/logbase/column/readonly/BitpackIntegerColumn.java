@@ -1,10 +1,9 @@
 package io.logbase.column.readonly;
 
 import io.logbase.collections.BatchIterator;
+import io.logbase.collections.impl.BitPackIntBuffer;
 import io.logbase.collections.impl.BitPackIntList;
 import io.logbase.collections.impl.BitPackIntListIterator;
-import io.logbase.collections.impl.BitPackIntListWriter;
-import io.logbase.collections.impl.BitPackIntRange;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 
@@ -22,83 +21,59 @@ public class BitpackIntegerColumn implements Column<Integer> {
   public final int arrayCount;
   public final String columnName;
   private final BitPackIntList values;
-  private final BitPackIntList isNull;
+  private final BitPackIntList isPresent;
   private final BitPackIntList arraySize;
-  private BitPackIntRange valuesRange = new BitPackIntRange();
-  private BitPackIntRange arraySizeRange = new BitPackIntRange();
+  private final BitPackIntList[] arrayIdx;
 
   public BitpackIntegerColumn(Column<Integer> column){
 
     this.columnName = column.getColumnName();
+    this.arrayCount = column.getArrayCount();
 
-    //find max and min of values and array sizes
+    BatchIterator<Boolean> isPresentIt = column.getIsPresentIterator();
+    isPresent = new BitPackIntList(new BitPackIntBuffer(0, 1, column.getRowCount()));
     long startRowNum = -1;
-    ColumnIterator<Object> iterator = column.getSimpleIterator();
-    arrayCount = column.getArrayCount();
-    int i =0;
-    while(iterator.hasNext()){
-      Object temp = iterator.next();
-      if(temp!=null){
-        if(arrayCount>0){
-          Integer[] vals = (Integer[]) temp;
-          valuesRange.update(vals);
-          arraySizeRange.update(vals.length);
-        }else{
-          valuesRange.update((Integer) temp);
-        }
-        if(startRowNum==-1){
-          startRowNum=i;
-        }
-        i++;
+    int cnt = 0;
+    while (isPresentIt.hasNext()) {
+      boolean value = isPresentIt.next();
+      if (value && startRowNum == -1) {
+        startRowNum = cnt;
       }
+      cnt++;
+      isPresent.add(value ? 1 : 0);
     }
     this.startRowNum = startRowNum;
+    checkArgument(isPresent.getBuffer().size == isPresent.getBuffer().listSize, "list's final size doesn't match the " +
+      "initial expected size");
 
-    values = new BitPackIntList(valuesRange.getMin(), valuesRange.getMax(), column.getValuesCount());
-    BitPackIntListWriter valuesWriter = new BitPackIntListWriter(values);
-    isNull = new BitPackIntList(0, 1, column.getRowCount());
-    BitPackIntListWriter isNullWriter = new BitPackIntListWriter(isNull);
-    BitPackIntListWriter arraySizeWriter;
     if(arrayCount>0){
-      arraySize = new BitPackIntList(arraySizeRange.getMin(), arraySizeRange.getMax(), column.getValidRowCount());
-      arraySizeWriter = new BitPackIntListWriter(arraySize);
+      arraySize = new BitPackIntList(column.getArraySizeIterator());
+      arraySize.writeAll(column.getArraySizeIterator());
+      arraySize.close();
+      checkArgument(arraySize.getBuffer().size == arraySize.getBuffer().listSize, "list's final size doesn't match " +
+        "the initial expected size");
     } else {
-      arraySizeWriter = null;
       arraySize = null;
     }
 
-    iterator = column.getSimpleIterator();
-    while(iterator.hasNext()){
-      Object temp = iterator.next();
-      if(temp!=null){
-        if(arrayCount>0){
-          Integer[] values = (Integer[]) temp;
-          arraySizeWriter.add(values.length);
-          for(Integer value:values){
-            addValue(isNullWriter, valuesWriter, value);
-          }
-        }else {
-          addValue(isNullWriter, valuesWriter, (Integer) temp);
-        }
-      }else{
-        isNullWriter.add(0);
-      }
-    }
+    values = new BitPackIntList(column.getValuesIterator());
+    values.writeAll(column.getValuesIterator());
+    values.close();
+    checkArgument(values.getBuffer().size == values.getBuffer().listSize, "list's final size doesn't match the " +
+      "initial expected size");
 
-    isNullWriter.close();
-    valuesWriter.close();
-
-    checkArgument(values.size == values.listSize, "list's final size doesn't match the initial expected size");
-    checkArgument(isNull.size == isNull.listSize, "list's final size doesn't match the initial expected size");
     if(arrayCount>0){
-      arraySizeWriter.close();
-      checkArgument(arraySize.size == arraySize.listSize, "list's final size doesn't match the initial expected size");
+      arrayIdx = new BitPackIntList[arrayCount];
+      for (int i = 0; i < arrayIdx.length; i++) {
+        arrayIdx[i] = new BitPackIntList(column.getArrayIndexIterator(i));
+        arrayIdx[i].writeAll(column.getValuesIterator());
+        arrayIdx[i].close();
+        checkArgument(arrayIdx[i].getBuffer().size == arrayIdx[i].getBuffer().listSize, "list's final size doesn't " +
+          "match the initial expected size");
+      }
+    } else {
+      arrayIdx = null;
     }
-  }
-
-  private void addValue(BitPackIntListWriter isNullWriter, BitPackIntListWriter valuesWriter, Integer value){
-    isNullWriter.add(1);
-    valuesWriter.add(value);
   }
 
   @Override
@@ -128,17 +103,17 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
   @Override
   public long getRowCount() {
-    return isNull.size;
+    return isPresent.getBuffer().size;
   }
 
   @Override
   public long getValidRowCount() {
-    return arraySize.size;
+    return arraySize.getBuffer().size;
   }
 
   @Override
   public long getValuesCount() {
-    return values.size;
+    return values.getBuffer().size;
   }
 
   @Override
@@ -153,7 +128,7 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
   @Override
   public ColumnIterator<Object> getSimpleIterator() {
-    return new SimpleIterator(values.size);
+    return new SimpleIterator(values.getBuffer().size);
   }
 
   @Override
@@ -163,22 +138,23 @@ public class BitpackIntegerColumn implements Column<Integer> {
 
   @Override
   public BatchIterator<Integer> getValuesIterator() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new BitPackIntListIterator(values.getBuffer());
   }
 
   @Override
   public BatchIterator<Integer> getArraySizeIterator() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new BitPackIntListIterator(arraySize.getBuffer());
   }
 
   @Override
   public BatchIterator<Integer> getArrayIndexIterator(int arrayNum) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    checkArgument(arrayNum>=0 && arrayNum<arrayCount, "arrayNum should be in the range of [0, arrayCount]");
+    return new BitPackIntListIterator(arrayIdx[arrayNum].getBuffer());
   }
 
   @Override
   public int compareTo(Column o) {
-    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    return columnName.compareTo(o.getColumnName());
   }
 
   public class SimpleIterator implements ColumnIterator<Object>{
@@ -186,36 +162,40 @@ public class BitpackIntegerColumn implements Column<Integer> {
     private long validRowNum = 0;
     private long currentRowNum = 0;
     private final BitPackIntListIterator valuesReader;
-    private final BitPackIntListIterator isNullReader;
+    private final BitPackIntListIterator isPresentReader;
     private final BitPackIntListIterator arraySizeReader;
 
     SimpleIterator(long maxRowNum){
       this.maxRowNum = maxRowNum;
-      valuesReader = new BitPackIntListIterator(values);
-      isNullReader = new BitPackIntListIterator(isNull);
-      arraySizeReader = new BitPackIntListIterator(arraySize);
+      valuesReader = new BitPackIntListIterator(values.getBuffer());
+      isPresentReader = new BitPackIntListIterator(isPresent.getBuffer());
+      if (arrayCount > 0) {
+        arraySizeReader = new BitPackIntListIterator(arraySize.getBuffer());
+      } else {
+        arraySizeReader = null;
+      }
     }
 
     @Override
     public Iterator<Object> iterator() {
-      return null;  //To change body of implemented methods use File | Settings | File Templates.
+      return this;
     }
 
     @Override
     public boolean hasNext() {
-      return isNullReader.hasNext() && currentRowNum<maxRowNum;
+      return isPresentReader.hasNext() && currentRowNum < maxRowNum;
     }
 
     @Override
     public Object next() {
       currentRowNum++;
-      if(isNullReader.next()==1){
+      if (isPresentReader.next() == 1) {
         if(arrayCount>0){
           int n;
           if(arraySizeReader.hasNext()){
             n = arraySizeReader.next();
           } else {
-            n = (int) (values.size - validRowNum);
+            n = (int) (values.getBuffer().size - validRowNum);
           }
           Integer[] holder = new Integer[n];
           for(int i=0; i<n && valuesReader.hasNext(); i++){

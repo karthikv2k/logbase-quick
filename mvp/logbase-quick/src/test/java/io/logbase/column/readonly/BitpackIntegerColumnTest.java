@@ -1,5 +1,6 @@
 package io.logbase.column.readonly;
 
+import io.logbase.collections.BatchIterator;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 import io.logbase.column.appendonly.ListBackedColumn;
@@ -36,7 +37,7 @@ public class BitpackIntegerColumnTest {
 
   @Test
   public void benchmarkSimpleIterator() throws Exception {
-    int num = 1000*100;
+    int num = 100*1000*100;
     int[] values = new int[num];
     long time = System.currentTimeMillis();
     for(int i=0; i<num; i++){
@@ -60,7 +61,17 @@ public class BitpackIntegerColumnTest {
     while(roIt.hasNext()){
       roIt.next();
     }
-    System.out.println("readonly column read: " + (System.currentTimeMillis()-time));
+    System.out.println("readonly column read (row): " + (System.currentTimeMillis()-time));
+
+    time = System.currentTimeMillis();
+    BatchIterator<Integer> valuesIt = colRO.getValuesIterator();
+    int[] holder = new int[1024];
+    int cnt;
+    while(valuesIt.hasNext()){
+      cnt = valuesIt.readNative(holder, 0, holder.length);
+    }
+    System.out.println("readonly column read (batch): " + (System.currentTimeMillis()-time));
+
 
   }
 }

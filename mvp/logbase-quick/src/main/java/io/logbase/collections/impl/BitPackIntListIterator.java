@@ -5,16 +5,14 @@ import io.logbase.collections.BatchIterator;
 
 import java.util.Iterator;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
 public class BitPackIntListIterator implements BatchIterator<Integer> {
-  private BitPackIntList list;
+  private BitPackIntBuffer list;
   private int arrayIndex = 0;
   private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
   private int[] localBuf = new int[10*1024];
@@ -23,7 +21,7 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
   private int totalReads = 0;
 
 
-  public BitPackIntListIterator(BitPackIntList list){
+  public BitPackIntListIterator(BitPackIntBuffer list) {
     this.list=list;
   }
 

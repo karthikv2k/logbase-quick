@@ -1,12 +1,9 @@
 package io.logbase.view;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import io.logbase.column.Column;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.Utils;
-import io.logbase.view.View;
 
 import java.util.*;
 
@@ -44,7 +41,7 @@ public class SimpleView implements View {
   @Override
   public Set<String> getColumnNames() {
     Set<String> columns = new HashSet<String>();
-    for(Table t: tables){
+    for (Table t : tables) {
       columns.addAll(t.getColumnNames());
     }
     return columns;

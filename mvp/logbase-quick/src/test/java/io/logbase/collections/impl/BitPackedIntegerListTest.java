@@ -18,8 +18,8 @@ public class BitPackedIntegerListTest {
       values[i] = 100 + i%100000;
     }
     System.out.println("init: " + (System.currentTimeMillis()-time));
-    BitPackIntList list = new BitPackIntList(100,100+100000, num);
-    BitPackIntListWriter writer = new BitPackIntListWriter(list);
+    BitPackIntBuffer list = new BitPackIntBuffer(100,100+100000, num);
+    BitPackIntList writer = new BitPackIntList(list);
     time = System.currentTimeMillis();
     writer.write(values, 0, values.length);
     System.out.println("write: " + (System.currentTimeMillis()-time));

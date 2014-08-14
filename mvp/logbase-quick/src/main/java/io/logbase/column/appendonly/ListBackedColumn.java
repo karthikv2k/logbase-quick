@@ -48,6 +48,7 @@ public class ListBackedColumn<E> implements Column<E> {
 
   @Override
   public void append(E value, long rowNum) {
+    values.stream();
     checkArgument(this.arrayIdx.length == 0, "Can't append without arrayIdx");
     checkArgument(value != null, "Value can't be null");
     values.add(value);

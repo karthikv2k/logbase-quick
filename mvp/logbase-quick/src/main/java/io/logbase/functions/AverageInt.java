@@ -12,11 +12,11 @@ public class AverageInt implements UDAF {
 
   @Override
   public void apply(Object[] operands) {
-    checkArgument(operands.length==2, "More than one parameter given.");
+    checkArgument(operands.length == 2, "More than one parameter given.");
     checkArgument(operands[0] instanceof int[], "More than one parameter given.");
     int[] values = (int[]) operands[0];
     byte[] isNull = (byte[]) operands[1];
-    for(int i=0; i<values.length;i++){
+    for (int i = 0; i < values.length; i++) {
       sum += values[i];
       total += 1 * isNull[i];
     }
@@ -24,7 +24,7 @@ public class AverageInt implements UDAF {
 
   @Override
   public Object result() {
-    return ((double) sum)/total;
+    return ((double) sum) / total;
   }
 
   @Override

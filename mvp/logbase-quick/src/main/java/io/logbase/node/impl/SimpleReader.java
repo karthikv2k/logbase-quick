@@ -1,8 +1,8 @@
 package io.logbase.node.impl;
 
-import io.logbase.view.ViewFactory;
 import io.logbase.node.Node;
 import io.logbase.node.Reader;
+import io.logbase.view.ViewFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

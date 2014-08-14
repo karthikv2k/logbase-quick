@@ -10,6 +10,7 @@ import java.util.Map;
 /**
  * Each leaf node in a nested data model forms a column. A column is composed of values same type. A differentiation is
  * made between null values and the column not being present. Since a
+ *
  * @param <E>
  */
 
@@ -17,7 +18,7 @@ public interface Column<E> extends Operand<Column> {
 
   public static Map EMPTY_MAP = new HashMap(1);
   public static List EMPTY_LIST = new LinkedList();
-  public static Object NULL = new Object();
+  public static Object NULL = new NullType();
 
   /**
    * First valid row number for this column
@@ -32,9 +33,9 @@ public interface Column<E> extends Operand<Column> {
   public String getColumnName();
 
   /**
-   * A column has values of only one type @ColumnType.
+   * A column has values of only one type.
    *
-   * @return
+   * @return Type of the values stored in the Column.
    */
   public Class getColumnType();
 
@@ -80,6 +81,7 @@ public interface Column<E> extends Operand<Column> {
 
   /**
    * gets number of arrays in the column's path
+   *
    * @return
    */
   public int getArrayCount();

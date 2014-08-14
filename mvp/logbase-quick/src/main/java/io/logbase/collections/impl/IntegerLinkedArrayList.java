@@ -65,8 +65,8 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
     checkArgument(values instanceof int[], "values must be int[], found " + values.getClass().getSimpleName());
     int[] intValues = (int[]) values;
     //TBA optimize
-    for(int i = 0; i<length; i++){
-      add(intValues[offset+i]);
+    for (int i = 0; i < length; i++) {
+      add(intValues[offset + i]);
     }
   }
 
@@ -128,14 +128,14 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
     throw new UnsupportedOperationException("input i(" + l + ") exceeds list size (" + j + ")");
   }
 
-  public class ListIterator implements BatchIterator<Integer>{
+  public class ListIterator implements BatchIterator<Integer> {
     long index = 0;
     int blockIndex = 0;
     int blockLocalIndex = 0;
 
     long maxIndex = 0;
 
-    ListIterator(long maxIndex){
+    ListIterator(long maxIndex) {
       this.maxIndex = maxIndex;
     }
 

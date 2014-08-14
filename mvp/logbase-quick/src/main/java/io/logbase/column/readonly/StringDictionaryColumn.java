@@ -1,29 +1,26 @@
 package io.logbase.column.readonly;
 
+import io.logbase.collections.BatchIterator;
+import io.logbase.collections.impl.UniqStringConsumer;
 import io.logbase.column.Column;
-import io.logbase.column.ColumnIterator;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
 public class StringDictionaryColumn {
+  //final StringList dict;
 
-  StringDictionaryColumn(Column<String> column){
+  StringDictionaryColumn(Column<String> column) {
+    BatchIterator<String> iterator = column.getValuesIterator();
+    UniqStringConsumer stringConsumer = new UniqStringConsumer();
 
-    SortedSet<byte[]> dict = new TreeSet<byte[]>();
-    ColumnIterator<Object> iterator = column.getSimpleIterator();
-
-    //iterate through the column and form the dict. Here we convert into UTF8 rightaway and store them instead of string
-    //representation
-    while(iterator.hasNext()){
-      Object temp = iterator.next();
-     // if()
-     // dict.add(iterator.next())
+    while (iterator.hasNext()) {
+      stringConsumer.accept(iterator.next());
     }
+
+    //dict = new StringList(stringConsumer.numValues())
+
 
   }
 

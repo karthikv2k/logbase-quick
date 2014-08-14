@@ -5,9 +5,9 @@ import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.TreeMultimap;
 import io.logbase.column.ColumnFactory;
 import io.logbase.event.Event;
+import io.logbase.node.Node;
 import io.logbase.table.Table;
 import io.logbase.table.TableFactory;
-import io.logbase.node.Node;
 
 public abstract class BaseNode implements Node {
 

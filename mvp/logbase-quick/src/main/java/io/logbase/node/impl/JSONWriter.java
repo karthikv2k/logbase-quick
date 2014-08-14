@@ -1,10 +1,10 @@
 package io.logbase.node.impl;
 
 
-import io.logbase.table.Table;
 import io.logbase.event.JSONEvent;
 import io.logbase.node.Node;
 import io.logbase.node.Writer;
+import io.logbase.table.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,27 +6,27 @@ package io.logbase.buffer;
  */
 public abstract class Buffer {
 
-  public long getLong(long index){
+  public long getLong(long index) {
     throw new UnsupportedOperationException();
   }
 
-  public void setLong(long index, long value){
+  public void setLong(long index, long value) {
     throw new UnsupportedOperationException();
   }
 
-  public long getLong(int index){
+  public long getLong(int index) {
     throw new UnsupportedOperationException();
   }
 
-  public void setLong(int index, long value){
+  public void setLong(int index, long value) {
     throw new UnsupportedOperationException();
   }
 
-  public void getBytes(byte[] outBuf, int offset, int length, int index){
+  public void getBytes(byte[] outBuf, int offset, int length, int index) {
     throw new UnsupportedOperationException();
   }
 
-  public void setBytes(byte[] inBuf, int offset, int length, int index){
+  public void setBytes(byte[] inBuf, int offset, int length, int index) {
     throw new UnsupportedOperationException();
   }
 }

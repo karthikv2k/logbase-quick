@@ -3,7 +3,6 @@ package io.logbase.collections.impl;
 import io.logbase.collections.BatchIterator;
 
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -12,7 +11,7 @@ import java.util.List;
 public class BatchIteratorWrapper<E> implements BatchIterator<E> {
   Iterator<E> iterator;
 
-  public BatchIteratorWrapper(Iterator<E> iterator){
+  public BatchIteratorWrapper(Iterator<E> iterator) {
     this.iterator = iterator;
   }
 
@@ -38,9 +37,9 @@ public class BatchIteratorWrapper<E> implements BatchIterator<E> {
 
   @Override
   public int read(E[] buffer, int offset, int count) {
-    int i= 0;
-    for(; i<count && iterator.hasNext(); i++){
-      buffer[i+offset] = iterator.next();
+    int i = 0;
+    for (; i < count && iterator.hasNext(); i++) {
+      buffer[i + offset] = iterator.next();
     }
     return i;
   }

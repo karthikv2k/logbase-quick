@@ -1,11 +1,7 @@
 package io.logbase.view;
 
-import com.google.common.collect.SortedSetMultimap;
-import io.logbase.table.Table;
-import io.logbase.view.View;
-import io.logbase.view.ViewFactory;
 import io.logbase.node.Node;
-import io.logbase.view.SimpleView;
+import io.logbase.table.Table;
 import io.logbase.utils.Filter;
 
 import java.util.Collection;

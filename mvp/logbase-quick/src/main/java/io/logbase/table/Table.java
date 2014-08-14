@@ -2,7 +2,6 @@ package io.logbase.table;
 
 import com.google.common.base.Predicate;
 import io.logbase.event.Event;
-import io.logbase.event.JSONEvent;
 
 import java.util.Set;
 
