@@ -4,6 +4,7 @@ import io.logbase.collections.BatchIterator;
 import io.logbase.collections.impl.BatchIteratorWrapper;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
+import io.logbase.column.SimpleColumnIterator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -110,12 +111,12 @@ public class ListBackedColumn<E> implements Column<E> {
 
   @Override
   public ColumnIterator<Object> getSimpleIterator(long maxRowNum) {
-    return new SimpleColumnIterator(maxRowNum);
+    return new SimpleColumnIterator(this, maxRowNum);
   }
 
   @Override
   public ColumnIterator<Object> getSimpleIterator() {
-    return new SimpleColumnIterator(maxRowNum);
+    return new SimpleColumnIterator(this, maxRowNum);
   }
 
   @Override
@@ -141,81 +142,6 @@ public class ListBackedColumn<E> implements Column<E> {
   @Override
   public int compareTo(Column column) {
     return this.name.compareTo(column.getColumnName());
-  }
-
-  private class SimpleColumnIterator implements ColumnIterator<Object> {
-    private final long maxRowNum;
-    private long rowNum = 0;
-    Iterator<Boolean> isPresentIterator;
-    Iterator<E> valuesIterator;
-    Iterator<Integer> arraySizeIterator;
-
-    SimpleColumnIterator(long maxRowNum) {
-      this.maxRowNum = maxRowNum;
-      isPresentIterator = isPresent.iterator();
-      valuesIterator = values.iterator();
-      arraySizeIterator = arraySize.iterator();
-    }
-
-    @Override
-    public Iterator<Object> iterator() {
-      return this;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return isPresentIterator.hasNext() && rowNum <= maxRowNum;
-    }
-
-    @Override
-    public Object next() {
-      checkArgument(hasNext(), "Check hashNext() before calling next().");
-      rowNum++;
-      if (!isPresentIterator.next()) {
-        return null;
-      } else {
-        if (arrayIdx.length > 0) {
-          if (arraySizeIterator.hasNext()) {
-            int arraySize = arraySizeIterator.next();
-            Object[] values = new Object[arraySize];
-            for (int i = 0; i < arraySize && valuesIterator.hasNext(); i++) {
-              values[i] = valuesIterator.next();
-            }
-            return values;
-          } else {
-            List values = new LinkedList();
-            while (valuesIterator.hasNext()) {
-              values.add(valuesIterator.next());
-            }
-            return values.toArray();
-          }
-        } else {
-          Object value = valuesIterator.next();
-          return value;
-        }
-      }
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Cant remove any item. Append only list.");
-    }
-
-    @Override
-    public int read(Object[] buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean primitiveTypeSupport() {
-      return false;
-    }
-
-    @Override
-    public int readNative(Object buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
-
   }
 
 }

@@ -10,12 +10,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * User: karthik
  */
 public class BitPackIntBuffer {
-  public final ByteBuffer buf;
   public final int minValue;
   public final int maxValue;
   public final int width;
   public final long listSize;
-  public long size = 0;
+  private final ByteBuffer buf;
+  private long size = 0;
 
   public BitPackIntBuffer(IntSummaryStatistics summaryStatistics) {
     this(summaryStatistics.getMin(), summaryStatistics.getMax(), summaryStatistics.getCount());
@@ -38,6 +38,22 @@ public class BitPackIntBuffer {
    */
   public static int getWidthFromMaxInt(int bound) {
     return 32 - Integer.numberOfLeadingZeros(bound);
+  }
+
+  public long getSize() {
+    return size;
+  }
+
+  public void incSize() {
+    size++;
+  }
+
+  public ByteBuffer writeBuffer(){
+    return buf.duplicate();
+  }
+
+  public ByteBuffer readBuffer(){
+    return buf.asReadOnlyBuffer();
   }
 
 }

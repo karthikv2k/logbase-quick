@@ -19,6 +19,8 @@ public interface Column<E> extends Operand<Column> {
   public static Map EMPTY_MAP = new HashMap(1);
   public static List EMPTY_LIST = new LinkedList();
   public static Object NULL = new NullType();
+  public static Byte TRUE = new Byte((byte)1);
+  public static Byte FALSE = new Byte((byte)0);
 
   /**
    * First valid row number for this column

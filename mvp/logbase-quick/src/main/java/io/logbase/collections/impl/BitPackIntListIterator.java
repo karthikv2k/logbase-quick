@@ -24,12 +24,12 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
 
   public BitPackIntListIterator(BitPackIntBuffer listBuffer) {
     this.listBuffer = listBuffer;
-    this.longBuffer = listBuffer.buf.asLongBuffer();
+    this.longBuffer = listBuffer.readBuffer().asLongBuffer();
   }
 
   private int readInternal(int[] out, int offset, int count){
     //return -1 if the list has no values to read
-    if(totalReads>= listBuffer.size){
+    if(totalReads>= listBuffer.getSize()){
       return -1;
     }
 
@@ -37,7 +37,7 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
     long cur1,cur2;
     long next;
     int i;
-    for(i = offset; totalReads< listBuffer.size && i<offset+count; i++, totalReads++){
+    for(i = offset; totalReads< listBuffer.getSize() && i<offset+count; i++, totalReads++){
       cur = longBuffer.get(arrayIndex);
       if(bitIndex >= listBuffer.width){
         cur1 = cur << (64 - bitIndex);
@@ -94,7 +94,7 @@ public class BitPackIntListIterator implements BatchIterator<Integer> {
 
   @Override
   public boolean hasNext() {
-    return totalReads< listBuffer.size;
+    return totalReads< listBuffer.getSize() || localBufPos<localBufSize;
   }
 
   @Override

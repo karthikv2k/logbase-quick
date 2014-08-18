@@ -108,18 +108,18 @@ public class RCFJSONTable implements Table<JSONEvent> {
       }
     } else {
       String columnName;
-      Class type = TypeUtils.getType(TypeUtils.cast(json));
-      columnName = parent.substring(1) + "." + type.getSimpleName();
+      Class type = TypeUtils.castToLB(json).getClass();
+      columnName = parent.substring(1) + "." + TypeUtils.getSQLType(json).getSimpleName();
       Column columnGeneric = columns.get(columnName);
       if (columnGeneric == null) {
         columnGeneric = columnFactory.createColumn(type, columnName, arrayDepth);
         columns.put(columnName, columnGeneric);
       }
       if (arrayDepth > 0) {
-        columnGeneric.append(TypeUtils.cast(json), rowNum, arrayidx);
+        columnGeneric.append(TypeUtils.castToLB(json), rowNum, arrayidx);
       } else {
         try {
-          columnGeneric.append(TypeUtils.cast(json), rowNum);
+          columnGeneric.append(TypeUtils.castToLB(json), rowNum);
         } catch (Exception e) {
           e.printStackTrace();
         }

@@ -1,36 +1,36 @@
 package io.logbase.collections.impl;
 
+import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.IntSummaryStatistics;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.function.Consumer;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class UniqStringConsumer {
+public class UniqStringConsumer implements Consumer<CharBuffer> {
 
-  Set<byte[]> uniqValues = new TreeSet<byte[]>();
+  private Set<CharBuffer> uniqValues = new TreeSet<CharBuffer>();
+  private IntSummaryStatistics stats = new IntSummaryStatistics();
 
-  public void accept(CharSequence value) {
-    uniqValues.add(value.toString().getBytes(Charset.forName("UTF-8")));
+  @Override
+  public void accept(CharBuffer value) {
+    if(!uniqValues.contains(value)){
+      uniqValues.add(value);
+      stats.accept(value.length());
+    }
   }
 
-  public Iterator<byte[]> iterator() {
+  public Iterator<CharBuffer> iterator() {
     return uniqValues.iterator();
   }
 
-  public int numValues() {
-    return uniqValues.size();
-  }
-
-  public long totalSize() {
-    long totalSize = 0;
-    /*for(byte[] value: this){
-      totalSize += value.length;
-    } */
-    return totalSize;
+  public IntSummaryStatistics getStats(){
+    return stats;
   }
 
 }

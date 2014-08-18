@@ -21,9 +21,9 @@ public class BitPackIntList extends BaseList<Integer> {
   private int[] holder = new int[1];
 
   public BitPackIntList(BitPackIntBuffer buffer) {
-    checkArgument(buffer.size == 0, "The list is not empty.");
+    checkArgument(buffer.getSize() == 0, "The list is not empty.");
     this.buffer = buffer;
-    this.longBuffer = buffer.buf.asLongBuffer();
+    this.longBuffer = buffer.writeBuffer().asLongBuffer();
   }
 
   public BitPackIntList(BatchIterator<Integer> source) {
@@ -47,35 +47,18 @@ public class BitPackIntList extends BaseList<Integer> {
     }
 
     this.buffer = new BitPackIntBuffer(summaryStatistics);
-    this.longBuffer = buffer.buf.asLongBuffer();
+    this.longBuffer = buffer.writeBuffer().asLongBuffer();
 
   }
 
-  public void writeAll(BatchIterator<Integer> source) {
-    if (source.primitiveTypeSupport()) {
-      int[] holder = new int[1024];
-      int count;
-      while (source.hasNext()) {
-        count = source.readNative(holder, 0, holder.length);
-        if (count > 0) {
-          write(holder, 0, count);
-        }
-      }
-    } else {
-      while (source.hasNext()) {
-        add(source.next());
-      }
-    }
-  }
-
-  public void write(int[] values, int offset, int length) {
+  private void write(int[] values, int offset, int length) {
     long cur;
 
     for (int i = offset; i < length + offset; i++) {
       checkArgument(values[i] >= buffer.minValue && values[i] <= buffer.maxValue, "Input value is out of range.");
     }
 
-    long buf = buffer.buf.getLong(arrayIndex);
+    long buf = longBuffer.get(arrayIndex);
     for (int i = 0; i < length; i++) {
       cur = values[offset + i] - buffer.minValue;
       if (bitIndex >= buffer.width) { //minimum free space required to insert a value
@@ -91,7 +74,7 @@ public class BitPackIntList extends BaseList<Integer> {
       }
       cur = cur << bitIndex;
       buf |= cur;
-      buffer.size++;
+      buffer.incSize();
     }
     longBuffer.put(arrayIndex, buf);
   }
@@ -115,7 +98,7 @@ public class BitPackIntList extends BaseList<Integer> {
 
   @Override
   public long sizeAsLong() {
-    return buffer.size;
+    return buffer.getSize();
   }
 
   @Override

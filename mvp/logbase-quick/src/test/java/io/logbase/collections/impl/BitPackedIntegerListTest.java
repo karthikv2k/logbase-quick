@@ -21,7 +21,7 @@ public class BitPackedIntegerListTest {
     BitPackIntBuffer list = new BitPackIntBuffer(100,100+100000, num);
     BitPackIntList writer = new BitPackIntList(list);
     time = System.currentTimeMillis();
-    writer.write(values, 0, values.length);
+    writer.addPrimitiveArray(values, 0, values.length);
     System.out.println("write: " + (System.currentTimeMillis()-time));
     BitPackIntListIterator reader = new BitPackIntListIterator(list);
     time = System.currentTimeMillis();

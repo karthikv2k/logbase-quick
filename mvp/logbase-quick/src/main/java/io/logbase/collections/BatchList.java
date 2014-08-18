@@ -32,6 +32,17 @@ public interface BatchList<E> extends List<E> {
    */
   public void addPrimitiveArray(Object values, int offset, int length);
 
+  /**
+   * Add all elements in the given array to the list.
+   *
+   * @param values - array that contains values to be added to the list
+   * @param offset - array index of values array from which values to be read
+   * @param length - number of values to be read
+   */
+  public void addAll(E[] values, int offset, int length);
+
+  public void addAll(BatchIterator<E> iterator);
+
   public BatchIterator<E> batchIterator(long maxIndex);
 
   /**
@@ -40,8 +51,5 @@ public interface BatchList<E> extends List<E> {
    * @return true - if the list is closeable, false otherwise
    */
   public boolean close();
-
-
-  public void addAll(BatchIterator<E> iterator);
 
 }

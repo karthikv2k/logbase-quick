@@ -45,6 +45,11 @@ public class BaseList<E> implements BatchList<E> {
   }
 
   @Override
+  public void addAll(E[] values, int offset, int length) {
+    //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
   public BatchIterator<E> batchIterator(long maxIndex) {
     return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
