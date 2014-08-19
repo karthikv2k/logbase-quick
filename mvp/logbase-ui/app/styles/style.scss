@@ -1,0 +1,40 @@
+$icon-font-path: "../styles/fonts/"; // Change the path to the fonts
+@import "bootstrap-sass-official/vendor/assets/stylesheets/bootstrap";
+
+/* Put your CSS here */
+html, body {
+    margin: 30px 0;
+}
+
+.nav-logo {
+    height: 15px;
+}
+
+.src-icon {
+    height: 65px;
+    width: 65px;
+}
+
+.src-name {
+  padding-top: 20px;
+}
+
+.footer {
+  padding-top: 20px;
+  padding-bottom: 40px;
+  background-color: #f5f5f5;
+}
+
+.footer-hdr {
+  font-weight: bold;
+  font-size: small;
+}
+
+.data-stats {
+  background-color: #f5f5f5;
+  padding: 30px;
+}
+
+.search-icons {
+  padding-top: 10px;
+}

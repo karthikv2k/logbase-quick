@@ -1,0 +1,77 @@
+<div class="container">
+
+    <div class="row new-query-menu">
+        <div class="col-xs-12">
+            <p><span class="glyphicon glyphicon-search"></span> <b>New Query</b></p>
+            <p><small>Sources  |  Date-Time Range: Today <span class="caret"></span></small></p>
+        </div> <!-- /col -->
+        <div class="col-xs-12">
+            <div class="input-group">
+                {{input action="fireQuery" type="text" class="form-control" placeholder="Enter your search terms here." valueBinding="controller.searchTerm"}}
+                <span class="input-group-btn">
+                    <button {{action 'fireQuery'}} class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div> <!-- /input-group -->
+        </div> <!-- /col -->
+    </div> <!-- New query -->
+
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="pull-right search-icons">
+                <small>
+                    <span class="glyphicon glyphicon-time"></span> History &nbsp;&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-cog"></span> Settings
+                </small>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12"><br/><hr/></div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-xs-12"><br/></div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class = "col-xs-12 col-md-5">
+                <p class="footer-hdr">About LogBase</p>
+                <p><small>LogBase has been designed ground-up for interactive and exploratory big data analysis of real-time and historical data, specifically time series data like click streams and application logs. Our vision is to empower data driven decision makers (product managers, security analysts, operations team, etc.) to make faster decisions by bridging the gap between data and the decision maker.</small></p>
+            </div>
+            <div class = "col-xs-12 col-md-4">
+                <p class="footer-hdr">User Guide</p>
+                <small>
+                    <ul>
+                        <li>Doing a keyword search</li>
+                        <li>Performing a count</li>
+                        <li>Comparing query results</li>
+                        <li>Plotting charts</li>
+                        <li>Doing time series operations</li>
+                        <li>Using SQL for analytics</li>
+                        <li>Extracting interesting fields</li>
+                    </ul>
+                </small>
+            </div>
+            <div class = "col-xs-12 col-md-3">
+                <p class="footer-hdr">Contact Support</p>
+                <small>
+                    <address>
+                        <strong>LogBase, Inc.</strong><br>
+                        440 N. Wolfe Rd<br>
+                        Sunnyvale, CA 94085<br>
+                        <abbr title="Phone">P:</abbr> (123) 456-7890<br>
+                        <a href="mailto:#">support@logbase.io</a>
+                    </address>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>

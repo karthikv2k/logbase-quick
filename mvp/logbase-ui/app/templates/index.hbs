@@ -1,0 +1,137 @@
+<div class="container">
+
+    <div class="row new-query-menu">
+        <div class="col-xs-12">
+            <p><span class="glyphicon glyphicon-search"></span> <b>New Query</b></p>
+            <p><small>Sources  |  Date-Time Range: Today <span class="caret"></span></small></p>
+        </div> <!-- /col -->
+        <div class="col-xs-12">
+            <div class="input-group">
+                {{input action="goToWorkspace" type="text" class="form-control" placeholder="Enter your search terms here." valueBinding="controller.searchTerm"}}
+                <span class="input-group-btn">
+                    <button {{action 'goToWorkspace'}} class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+            </div> <!-- /input-group -->
+        </div> <!-- /col -->
+    </div> <!-- New query -->
+
+    <div class="row">
+        <div class="col-xs-12">
+            <p class="pull-right search-icons">
+                <small>
+                    <span class="glyphicon glyphicon-time"></span> History &nbsp;&nbsp;&nbsp;
+                    <span class="glyphicon glyphicon-cog"></span> Settings
+                </small>
+            </p>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12"><br/><hr/></div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-8 load-data">
+            <p><span class="glyphicon glyphicon-cloud-upload"></span> <b>Load Data</b></p>
+            <p>Choose a data source type you would like to load.</p><br/>
+            <div class="row placeholders">
+                <div class = "col-xs-3 placeholder" align="center">
+                    <img src="images/1.png" class="img-responsive src-icon" alt="Local File">
+                    <h5>Local File</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/2.png" class="img-responsive src-icon" alt="Apache Kafka">
+                    <h5>Apache Kafka</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/3.png" class="img-responsive src-icon" alt="HDFS">
+                    <h5>HDFS</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/4.png" class="img-responsive src-icon" alt="AWS S3">
+                    <h5>AWS S3</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12"><br/></div>
+            </div>
+            <div class="row">
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/5.png" class="img-responsive src-icon" alt="Twitter Stream">
+                    <h5>Twitter Stream</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/6.png" class="img-responsive src-icon" alt="IoT">
+                    <h5>IoT Device</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/7.png" class="img-responsive src-icon" alt="Relational DB">
+                    <h5>Relational DB</h5>
+                </div>
+                <div class = "col-xs-3 placeholder"  align="center">
+                    <img src="images/8.png" class="img-responsive src-icon" alt="See all Sources">
+                    <h5>See all Sources</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12"><br/></div>
+            </div>
+        </div>
+
+        <div class="col-xs-12 col-sm-12 col-md-4 data-stats">
+            <p><h5><span class="glyphicon glyphicon-stats"></span> Data Load Stats</h5></p>
+            <br/>
+            <p>Number of sources loaded: <b>280</b></p>
+            <p>Number of events processed: <b>1,000,000,000</b></p>
+            <p>Number of events stored: <b>1,000,000</b></p>
+            <p>Size on Disk: <b>2.5G</b></p>
+            <br/>
+            <div align="center"><button type="button" class="btn btn-primary">Source Details</button></div>
+            <br/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-12"><br/></div>
+    </div>
+
+</div>
+
+<div class="footer">
+    <div class="container">
+        <div class="row">
+            <div class = "col-xs-12 col-md-5">
+                <p class="footer-hdr">About LogBase</p>
+                <p><small>LogBase has been designed ground-up for interactive and exploratory big data analysis of real-time and historical data, specifically time series data like click streams and application logs. Our vision is to empower data driven decision makers (product managers, security analysts, operations team, etc.) to make faster decisions by bridging the gap between data and the decision maker.</small></p>
+            </div>
+            <div class = "col-xs-12 col-md-4">
+                <p class="footer-hdr">User Guide</p>
+                <small>
+                <ul>
+                    <li>Doing a keyword search</li>
+                    <li>Performing a count</li>
+                    <li>Comparing query results</li>
+                    <li>Plotting charts</li>
+                    <li>Doing time series operations</li>
+                    <li>Using SQL for analytics</li>
+                    <li>Extracting interesting fields</li>
+                </ul>
+                </small>
+            </div>
+            <div class = "col-xs-12 col-md-3">
+                <p class="footer-hdr">Contact Support</p>
+                <small>
+                <address>
+                    <strong>LogBase, Inc.</strong><br>
+                    440 N. Wolfe Rd<br>
+                    Sunnyvale, CA 94085<br>
+                    <abbr title="Phone">P:</abbr> (123) 456-7890<br>
+                    <a href="mailto:#">support@logbase.io</a>
+                </address>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
