@@ -1,7 +1,7 @@
 LB.WorkspaceController = Ember.Controller.extend({
     searchTerm: function(){
-        console.log('Getting search term from App ' + LB.ApplicationController.searchTerm);
-        return LB.ApplicationController.searchTerm;
+        console.log('Getting search term from App ' + LB.ApplicationController.lastSearchTerm);
+        return LB.ApplicationController.lastSearchTerm;
     }.property(),
     actions: {
         fireQuery: function() {
