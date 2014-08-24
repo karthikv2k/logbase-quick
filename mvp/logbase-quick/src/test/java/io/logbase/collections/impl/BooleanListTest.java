@@ -59,5 +59,42 @@ public class BooleanListTest {
                 totalReads++;
             }
         }
+        System.out.println("Boolean List Off Heap");
+        /*
+         * Push the content of boolean array to the OffHeapBooleanList
+         */
+        BooleanListOffHeap blist = new BooleanListOffHeap(num);
+        time = System.currentTimeMillis();
+        blist.write(values, 0, values.length);
+        System.out.println("write: " + (System.currentTimeMillis()-time));
+
+        /*
+         * Iterate and read from list
+         */
+        reader = blist.batchIterator(1);
+        time = System.currentTimeMillis();
+        holder = new boolean[1024*10];
+        cnt = 0;
+        totalReads = 0;
+        while(cnt!=-1){
+            cnt = reader.readNative(holder, 0, holder.length);
+            totalReads = totalReads+cnt;
+        }
+        assertTrue((totalReads + 1) == num);
+        System.out.println("read native: " + (System.currentTimeMillis()-time));
+
+        /*
+         * Validate the contents
+         */
+        reader = blist.batchIterator(1);
+        totalReads = cnt = 0;
+        while(true){
+            cnt = reader.readNative(holder, 0, holder.length);
+            if(cnt==-1) break;
+            for(int j=0; j<cnt; j++){
+                assertTrue(values[totalReads] == holder[j]);
+                totalReads++;
+            }
+        }
     }
 }
