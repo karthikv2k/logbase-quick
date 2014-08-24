@@ -6,7 +6,7 @@ import org.junit.Test;
 import static junit.framework.Assert.assertTrue;
 
 /**
- * Created by admin on 17/08/14.
+ * Created by Kousik on 17/08/14.
  */
 public class BooleanListTest {
     @Test
@@ -19,7 +19,7 @@ public class BooleanListTest {
          * Initialize the boolean array
          */
         for(int i=0; i<num; i++){
-            values[i] = (i%2 == 0) ? true: false;
+            values[i] = (i%100 == 0) ? true: false;
         }
         System.out.println("init: " + (System.currentTimeMillis()-time));
 

@@ -13,8 +13,32 @@ import java.util.*;
 public class BooleanList implements BatchList<Boolean> {
     private int arrayIndex = 0;
     boolean isClosed = false;
-    BitSet bits = new BitSet();
+    BitSet bits;
     boolean holder[] = new boolean[1];
+
+    public BooleanList () {
+        bits = new BitSet();
+    }
+    public BooleanList(BatchIterator<Boolean> source) {
+        checkArgument(source != null, "source can't be null");
+        checkArgument(source.hasNext(), "source can't be empty");
+
+        bits = new BitSet();
+        if (source.primitiveTypeSupport()) {
+            boolean[] temp_holder = new boolean[1024];
+            int count;
+            while (source.hasNext()) {
+                count = source.readNative(holder, 0, holder.length);
+                for (int i = 0; i < count; i++) {
+                    write(temp_holder, 0, count);
+                }
+            }
+        } else {
+            while (source.hasNext()) {
+                add(source.next());
+            }
+        }
+    }
 
     /*
      * Iterate the given array from offset till length and insert
