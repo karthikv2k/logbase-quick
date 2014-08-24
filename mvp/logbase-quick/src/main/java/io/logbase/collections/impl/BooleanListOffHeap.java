@@ -8,42 +8,23 @@ import static com.google.common.base.Preconditions.*;
 import java.util.*;
 
 /**
- * Created by Kousik on 15/08/14
+ * Created by Kousik on 21/08/14
  */
-public class BooleanList implements BatchList<Boolean> {
+public class BooleanListOffHeap implements BatchList<Boolean> {
     private int arrayIndex = 0;
     boolean isClosed = false;
-    BitSet bits;
+    OffHeapBitSet bits;
     boolean holder[] = new boolean[1];
 
-    public BooleanList () {
-        bits = new BitSet();
-    }
-    public BooleanList(BatchIterator<Boolean> source) {
-        checkArgument(source != null, "source can't be null");
-        checkArgument(source.hasNext(), "source can't be empty");
-
-        bits = new BitSet();
-        if (source.primitiveTypeSupport()) {
-            boolean[] temp_holder = new boolean[1024];
-            int count;
-            while (source.hasNext()) {
-                count = source.readNative(holder, 0, holder.length);
-                for (int i = 0; i < count; i++) {
-                    write(temp_holder, 0, count);
-                }
-            }
-        } else {
-            while (source.hasNext()) {
-                add(source.next());
-            }
-        }
+    public BooleanListOffHeap(int entries) {
+        bits = new OffHeapBitSet(entries);
     }
 
     /*
      * Iterate the given array from offset till length and insert
      * entries into the BitSet
      */
+
     public void write(boolean[] values, int offset, int length) {
         int start = offset;
         int end = offset + length;
@@ -101,7 +82,7 @@ public class BooleanList implements BatchList<Boolean> {
 
     @Override
     public BatchIterator<Boolean> batchIterator(long maxIndex) {
-        return new BooleanListIterator(bits, arrayIndex);
+        return new BooleanListOffHeapIterator(bits, arrayIndex);
     }
 
     @Override
