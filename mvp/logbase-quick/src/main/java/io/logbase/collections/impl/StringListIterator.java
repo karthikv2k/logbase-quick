@@ -19,7 +19,7 @@ public class StringListIterator implements BatchIterator<CharBuffer> {
 
   public StringListIterator(StringListBuffer listBuffer){
     this.stringBuffer = listBuffer.getReadBuffer();
-    lengthIterator = listBuffer.lengthList.batchIterator(listBuffer.lengthList.sizeAsLong());
+    lengthIterator = listBuffer.lengthList.batchIterator(listBuffer.lengthList.size());
   }
   @Override
   public Iterator<CharBuffer> iterator() {

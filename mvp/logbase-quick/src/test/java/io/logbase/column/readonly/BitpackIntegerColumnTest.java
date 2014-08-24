@@ -6,6 +6,7 @@ import io.logbase.column.ColumnIterator;
 import io.logbase.column.appendonly.ListBackedColumn;
 import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
 
 
 /**
@@ -31,7 +32,9 @@ public class BitpackIntegerColumnTest {
     BitpackIntegerColumn colRO = new BitpackIntegerColumn(col);
     ColumnIterator<Object> roIt = colRO.getSimpleIterator();
     while(apIt.hasNext()){
+      assertTrue(roIt.hasNext());
       assertEquals(apIt.next(), roIt.next());
+      //System.out.println(roIt.next());
     }
   }
 

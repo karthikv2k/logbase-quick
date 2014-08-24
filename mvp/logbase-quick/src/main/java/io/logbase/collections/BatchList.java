@@ -1,19 +1,17 @@
 package io.logbase.collections;
 
-import java.util.List;
-
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public interface BatchList<E> extends List<E> {
+public interface BatchList<E> {
 
   /**
    * Gives size of the list in long. Some list implementations can have more than Integer.MAX_VALUE.
    *
    * @return
    */
-  public long sizeAsLong();
+  public long size();
 
   /**
    * Does this list support adding and iterating using primitive arrays. Using primitive arrays, e.g. int[], is efficient
@@ -33,21 +31,27 @@ public interface BatchList<E> extends List<E> {
   public void addPrimitiveArray(Object values, int offset, int length);
 
   /**
-   * Add all elements in the given array to the list.
-   *
-   * @param values - array that contains values to be added to the list
-   * @param offset - array index of values array from which values to be read
-   * @param length - number of values to be read
+   * Add the value to the list. The value is added at the end of the list.
+   * @param value
    */
-  public void addAll(E[] values, int offset, int length);
+  public void add(E value);
 
+  /**
+   * Add all the values from the iterator to the list.
+   * @param iterator
+   */
   public void addAll(BatchIterator<E> iterator);
 
+  /**
+   * Get a batch iterator that is scans up to maxIndex rows.
+   * @param maxIndex - Largest row number where the iterator ends. If the maxIndex greater than list size then the
+   *                 iterator ends at end of the list.
+   * @return
+   */
   public BatchIterator<E> batchIterator(long maxIndex);
 
   /**
    * Closing a list will make it immutable and prevent any future additions or modifications.
-   *
    * @return true - if the list is closeable, false otherwise
    */
   public boolean close();

@@ -1,6 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchList;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -9,7 +10,7 @@ import java.util.*;
 /**
  * Created by Kousik on 15/08/14
  */
-public class BooleanList extends BaseList<Boolean>{
+public class BooleanList implements BatchList<Boolean> {
     private int arrayIndex = 0;
     boolean isClosed = false;
     BitSet bits = new BitSet();
@@ -32,12 +33,11 @@ public class BooleanList extends BaseList<Boolean>{
     }
 
     @Override
-    public boolean add(Boolean value) {
+    public void add(Boolean value) {
         checkNotNull(value, "Null vales are not permitted");
         checkState(!isClosed, "Attempting to modify a closed list.");
         holder[0] = value.booleanValue();
         write(holder, 0, 1);
-        return true;
     }
 
     @Override
@@ -65,12 +65,12 @@ public class BooleanList extends BaseList<Boolean>{
         }
     }
 
-    @Override
-    public int size() {
-        return arrayIndex;
-    }
+  @Override
+  public long size() {
+    return arrayIndex;
+  }
 
-    @Override
+  @Override
     public boolean primitiveTypeSupport() {
         return true;
     }
@@ -108,15 +108,5 @@ public class BooleanList extends BaseList<Boolean>{
                 write(buffer, 0, count);
             }
         }
-    }
-
-    @Override
-    public boolean isEmpty() {
-        return arrayIndex > 0;
-    }
-
-    @Override
-    public Iterator<Boolean> iterator() {
-        return batchIterator(-1);
     }
 }

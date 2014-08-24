@@ -1,6 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchList;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,7 +10,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class IntegerLinkedArrayList extends BaseList<Integer> {
+public class IntegerLinkedArrayList implements BatchList<Integer> {
   private List<int[]> blocks = new ArrayList<int[]>();
   private int blockSize = 1024;
   private int blockIndex = 0;
@@ -38,14 +39,7 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
   }
 
   @Override
-  public int size() {
-    long size = sizeAsLong();
-    checkArgument(size <= Integer.MAX_VALUE, "List size is more than Integer.MAX_VALUE. Call sizeAsLong()");
-    return (int) size;
-  }
-
-  @Override
-  public long sizeAsLong() {
+  public long size() {
     long size = 0;
     Iterator<int[]> iterator = blocks.iterator();
     for (int i = 0; i < blocks.size() - 1; i++) {
@@ -82,19 +76,13 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
   }
 
   @Override
-  public boolean isEmpty() {
-    return sizeAsLong() == 0 ? true : false;
-  }
-
-  @Override
-  public Iterator<Integer> iterator() {
-    return new ListIterator(sizeAsLong());
-  }
-
-  @Override
-  public boolean add(Integer integer) {
+  public void add(Integer integer) {
     add(integer.intValue());
-    return true;
+  }
+
+  @Override
+  public void addAll(BatchIterator<Integer> iterator) {
+    //To change body of implemented methods use File | Settings | File Templates.
   }
 
   public void add(int value) {
@@ -103,18 +91,6 @@ public class IntegerLinkedArrayList extends BaseList<Integer> {
     }
     tail[blockIndex] = value;
     blockIndex++;
-  }
-
-  @Override
-  public void clear() {
-    blocks.clear();
-    tail = null;
-    blockIndex = 0;
-  }
-
-  @Override
-  public Integer get(int i) {
-    return get((long) i);
   }
 
   public Integer get(long l) {

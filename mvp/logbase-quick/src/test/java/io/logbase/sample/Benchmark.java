@@ -1,5 +1,6 @@
 package io.logbase.sample;
 
+import io.logbase.collections.BatchList;
 import io.logbase.collections.impl.IntegerLinkedArrayList;
 
 import java.util.ArrayList;
@@ -32,20 +33,20 @@ public class Benchmark {
     System.out.println("reading " + readSize + " ints");
     System.out.println("Awesome list (ms) " + read(intList, readSize));
     //System.out.println("LinkedList list (ms) " + read(genList,readSize));
-    System.out.println("ArrayList list (ms) " + read(arrayList, readSize));
+    //System.out.println("ArrayList list (ms) " + read(arrayList, readSize));
   }
 
-  private static long read(List<Integer> list, int readSize) {
-    int length = list.size();
+  private static long read(BatchList<Integer> list, int readSize) {
+    long length = list.size();
     int[] readIdx = new int[readSize];
     for (int i = 0; i < readIdx.length; i++) {
       readIdx[i] = (int) (Math.random() * length);
     }
     long time = System.currentTimeMillis();
     for (int i = 0; i < readIdx.length; i++) {
-      if (readIdx[i] != list.get(readIdx[i])) {
+   /*   if (readIdx[i] != list.get(readIdx[i])) {
         throw new RuntimeException("wrong read");
-      }
+      }*/
     }
     return System.currentTimeMillis() - time;
   }

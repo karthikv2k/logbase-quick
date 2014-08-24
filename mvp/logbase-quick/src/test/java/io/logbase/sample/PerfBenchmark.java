@@ -2,7 +2,7 @@ package io.logbase.sample;
 
 import bb.util.Benchmark;
 
-import io.logbase.collections.impl.BaseList;
+import io.logbase.collections.BatchList;
 import io.logbase.collections.impl.IntegerLinkedArrayList;
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
@@ -49,7 +49,7 @@ public class PerfBenchmark implements Callable<Integer> {
     public Integer call() {
         switch (this.listType) {
             case INSERT_INTLINKARRLIST:
-                BaseList<Integer> intList = new IntegerLinkedArrayList(64 * 1024);
+                BatchList<Integer> intList = new IntegerLinkedArrayList(64 * 1024);
                 insert(intList);
                 break;
             case INSERT_LINKEDLIST:
@@ -93,7 +93,7 @@ public class PerfBenchmark implements Callable<Integer> {
      * Benchmarking subroutines go here
      */
 
-    private static void insert(BaseList<Integer> list) {
+    private static void insert(BatchList<Integer> list) {
         for (int i = 0; i < testSize; i++) {
             list.add(i);
         }

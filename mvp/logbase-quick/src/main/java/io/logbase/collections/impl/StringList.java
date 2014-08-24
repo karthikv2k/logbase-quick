@@ -1,6 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchList;
 
 import java.nio.CharBuffer;
 import java.util.IntSummaryStatistics;
@@ -12,7 +13,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringList  extends BaseList<CharBuffer> {
+public class StringList implements BatchList<CharBuffer> {
   public final StringListBuffer listBuffer;
   private final CharBuffer stringBuf;
   public final String CHARSET = "UTF-8";
@@ -39,17 +40,38 @@ public class StringList  extends BaseList<CharBuffer> {
   }
 
   @Override
-  public boolean add(CharBuffer value){
-    listBuffer.lengthList.add(value.length());
-    stringBuf.put(value);
-    return true;
+  public BatchIterator<CharBuffer> batchIterator(long maxIndex) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
-  public void addAll(CharBuffer[] values, int offset, int length){
+  public boolean close() {
+    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public long size() {
+    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public boolean primitiveTypeSupport() {
+    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  }
+
+  @Override
+  public void add(CharBuffer value){
+    listBuffer.lengthList.add(value.length());
+    stringBuf.put(value);
+  }
+
+  @Override
+  public void addPrimitiveArray(Object values, int offset, int length){
+    checkArgument(values instanceof CharBuffer[],"values should be instance of CharBuffer[].");
     checkArgument(values!=null, "values can't be null");
-    for(int i=0; i<values.length; i++){
-      add(values[i]);
+    CharBuffer[] valueArray = (CharBuffer[]) values;
+    for(int i=0; i<valueArray.length; i++){
+      add(valueArray[i]);
     }
   }
 

@@ -1,6 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchList;
 
 import java.nio.LongBuffer;
 import java.util.IntSummaryStatistics;
@@ -12,7 +13,7 @@ import static com.google.common.base.Preconditions.*;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitPackIntList extends BaseList<Integer> {
+public class BitPackIntList implements BatchList<Integer> {
   private final BitPackIntBuffer buffer;
   private final LongBuffer longBuffer;
   private int arrayIndex = 0;
@@ -80,12 +81,11 @@ public class BitPackIntList extends BaseList<Integer> {
   }
 
   @Override
-  public boolean add(Integer value) {
+  public void add(Integer value) {
     checkNotNull(value, "Null vales are not permitted");
     checkState(!isClosed, "Attempting to modify a closed list.");
     holder[0] = value.intValue();
     write(holder, 0, 1);
-    return true;
   }
 
   @Override
@@ -97,7 +97,7 @@ public class BitPackIntList extends BaseList<Integer> {
   }
 
   @Override
-  public long sizeAsLong() {
+  public long size() {
     return buffer.getSize();
   }
 
@@ -113,6 +113,8 @@ public class BitPackIntList extends BaseList<Integer> {
 
   @Override
   public boolean close() {
+    checkArgument(getBuffer().getSize() == getBuffer().listSize, "list's final size doesn't match the " +
+      "initial expected size");
     isClosed = true;
     return isClosed;
   }
@@ -137,16 +139,6 @@ public class BitPackIntList extends BaseList<Integer> {
         write(buffer, 0, cnt);
       }
     }
-  }
-
-  @Override
-  public boolean isEmpty() {
-    return size() > 0;
-  }
-
-  @Override
-  public Iterator<Integer> iterator() {
-    return batchIterator(-1);
   }
 
   public BitPackIntBuffer getBuffer() {

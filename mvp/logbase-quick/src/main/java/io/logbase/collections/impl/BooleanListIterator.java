@@ -77,7 +77,7 @@ public class BooleanListIterator implements BatchIterator<Boolean>{
 
     @Override
     public boolean hasNext() {
-        return arrayIndex < max_size;
+        return arrayIndex < max_size || localBufPos<localBufSize;
     }
 
     @Override

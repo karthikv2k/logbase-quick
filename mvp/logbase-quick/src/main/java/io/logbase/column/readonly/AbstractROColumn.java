@@ -2,10 +2,7 @@ package io.logbase.column.readonly;
 
 import io.logbase.collections.BatchIterator;
 import io.logbase.collections.BatchList;
-import io.logbase.collections.impl.BitPackIntBuffer;
-import io.logbase.collections.impl.BitPackIntList;
-import io.logbase.collections.impl.BitPackIntListIterator;
-import io.logbase.collections.impl.IntToBooleanIterator;
+import io.logbase.collections.impl.*;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 import io.logbase.column.SimpleColumnIterator;
@@ -20,17 +17,17 @@ public abstract class AbstractROColumn<E> implements Column<E> {
 
   protected final String columnName;
   protected final int arrayCount;
-  protected final BitPackIntList isPresent;
   protected final long startRowNum;
+  protected final BatchList<Boolean> isPresent;
   protected final BatchList<Integer> arraySize;
-  protected final BitPackIntList[] arrayIdx;
+  protected final BatchList<Integer>[] arrayIdx;
 
   AbstractROColumn(Column<E> column){
     this.columnName = column.getColumnName();
     this.arrayCount = column.getArrayCount();
 
     BatchIterator<Boolean> isPresentIt = column.getIsPresentIterator();
-    isPresent = new BitPackIntList(new BitPackIntBuffer(0, 1, column.getRowCount()));
+    isPresent = new BooleanList();
     long startRowNum = -1;
     int cnt = 0;
     while (isPresentIt.hasNext()) {
@@ -39,18 +36,15 @@ public abstract class AbstractROColumn<E> implements Column<E> {
         startRowNum = cnt;
       }
       cnt++;
-      isPresent.add(value ? 1 : 0);
+      isPresent.add(value);
     }
+    isPresent.close();
     this.startRowNum = startRowNum;
-    checkArgument(isPresent.getBuffer().getSize() == isPresent.getBuffer().listSize, "list's final size doesn't match the " +
-      "initial expected size");
 
     if(arrayCount>0){
       arraySize = new BitPackIntList(column.getArraySizeIterator());
       arraySize.addAll(column.getArraySizeIterator());
       arraySize.close();
-      checkArgument(((BitPackIntList)arraySize).getBuffer().getSize() == ((BitPackIntList)arraySize).getBuffer().listSize, "list's final size doesn't match " +
-        "the initial expected size");
     } else {
       arraySize = null;
     }
@@ -61,8 +55,6 @@ public abstract class AbstractROColumn<E> implements Column<E> {
         arrayIdx[i] = new BitPackIntList(column.getArrayIndexIterator(i));
         arrayIdx[i].addAll(column.getArrayIndexIterator(i));
         arrayIdx[i].close();
-        checkArgument(arrayIdx[i].getBuffer().getSize() == arrayIdx[i].getBuffer().listSize, "list's final size doesn't " +
-          "match the initial expected size");
       }
     } else {
       arrayIdx = null;
@@ -94,12 +86,12 @@ public abstract class AbstractROColumn<E> implements Column<E> {
 
   @Override
   public long getRowCount() {
-    return isPresent.getBuffer().getSize();
+    return isPresent.size();
   }
 
   @Override
   public long getValidRowCount() {
-    return arraySize.sizeAsLong();
+    return arraySize.size();
   }
 
   @Override
@@ -122,7 +114,7 @@ public abstract class AbstractROColumn<E> implements Column<E> {
 
   @Override
   public BatchIterator<Boolean> getIsPresentIterator() {
-    return new IntToBooleanIterator(new BitPackIntListIterator(isPresent.getBuffer()));
+    return isPresent.batchIterator(isPresent.size());
   }
 
   @Override
@@ -130,13 +122,13 @@ public abstract class AbstractROColumn<E> implements Column<E> {
 
   @Override
   public BatchIterator<Integer> getArraySizeIterator() {
-    return new BitPackIntListIterator(((BitPackIntList)arraySize).getBuffer());
+    return arraySize.batchIterator(arraySize.size());
   }
 
   @Override
   public BatchIterator<Integer> getArrayIndexIterator(int arrayNum) {
     checkArgument(arrayNum>=0 && arrayNum<arrayCount, "arrayNum should be in the range of [0, arrayCount]");
-    return new BitPackIntListIterator(arrayIdx[arrayNum].getBuffer());
+    return arrayIdx[arrayNum].batchIterator(arrayIdx[arrayNum].size());
   }
 
   @Override
