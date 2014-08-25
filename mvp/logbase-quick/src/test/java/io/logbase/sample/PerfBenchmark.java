@@ -46,7 +46,7 @@ public class PerfBenchmark implements Callable<Integer> {
   }
 
   /*
-   * The Benchmark library executes the this call subroutine.
+   * The Benchmark library executes this call subroutine.
    */
 
   public Integer call() {
