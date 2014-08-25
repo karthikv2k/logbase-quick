@@ -2,7 +2,7 @@ package io.logbase.column.readonly;
 
 import io.logbase.collections.BatchIterator;
 import io.logbase.collections.BatchList;
-import io.logbase.collections.impl.BitPackIntList;
+import io.logbase.collections.impl.BitPackIntListWriter;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnIterator;
 import io.logbase.column.SimpleColumnIterator;
@@ -18,7 +18,7 @@ public class BitpackIntegerColumn extends AbstractROColumn<Integer>{
 
   public BitpackIntegerColumn(Column<Integer> column){
     super(column);
-    values = new BitPackIntList(column.getValuesIterator());
+    values = new BitPackIntListWriter(column.getValuesIterator());
     values.addAll(column.getValuesIterator());
     values.close();
   }

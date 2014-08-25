@@ -42,17 +42,17 @@ public abstract class AbstractROColumn<E> implements Column<E> {
     this.startRowNum = startRowNum;
 
     if(arrayCount>0){
-      arraySize = new BitPackIntList(column.getArraySizeIterator());
-      arraySize.addAll(column.getArraySizeIterator());
-      arraySize.close();
+      BitPackIntListWriter arraySizeWriter = new BitPackIntListWriter(column.getArraySizeIterator());
+      arraySizeWriter.addAll(column.getArraySizeIterator());
+      arraySizeWriter.close();
     } else {
       arraySize = null;
     }
 
     if(arrayCount>0){
-      arrayIdx = new BitPackIntList[arrayCount];
+      arrayIdx = new BitPackIntListWriter[arrayCount];
       for (int i = 0; i < arrayIdx.length; i++) {
-        arrayIdx[i] = new BitPackIntList(column.getArrayIndexIterator(i));
+        arrayIdx[i] = new BitPackIntListWriter(column.getArrayIndexIterator(i));
         arrayIdx[i].addAll(column.getArrayIndexIterator(i));
         arrayIdx[i].close();
       }

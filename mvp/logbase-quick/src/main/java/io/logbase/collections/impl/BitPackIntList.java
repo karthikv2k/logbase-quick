@@ -2,32 +2,45 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchIterator;
 import io.logbase.collections.BatchList;
+import io.logbase.collections.BatchListReader;
+import io.logbase.collections.BatchListWriter;
 
-import java.nio.LongBuffer;
+import java.nio.ByteBuffer;
 import java.util.IntSummaryStatistics;
-import java.util.Iterator;
 
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
 public class BitPackIntList implements BatchList<Integer> {
-  private final BitPackIntBuffer buffer;
-  private final LongBuffer longBuffer;
-  private int arrayIndex = 0;
-  private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
-  boolean isClosed = false;
-  private int[] holder = new int[1];
+  public final int minValue;
+  public final int maxValue;
+  public final int width;
+  public final long listSize;
+  private final ByteBuffer buf;
+  private long size = 0;
 
-  public BitPackIntList(BitPackIntBuffer buffer) {
-    checkArgument(buffer.getSize() == 0, "The list is not empty.");
-    this.buffer = buffer;
-    this.longBuffer = buffer.writeBuffer().asLongBuffer();
+  public BitPackIntList(IntSummaryStatistics summaryStatistics) {
+    this(summaryStatistics.getMin(), summaryStatistics.getMax(), summaryStatistics.getCount());
+  }
+
+  public BitPackIntList(int minValue, int maxValue, long listSize) {
+    checkArgument(minValue<maxValue, "maxValue should be a greater than minValue.");
+    this.minValue = minValue;
+    this.maxValue = maxValue;
+    this.width = getWidthFromMaxInt(maxValue-minValue);
+    this.listSize = listSize;
+    int arraySize = (int) Math.ceil(((double)(listSize*width))/64)+1;
+    buf = ByteBuffer.allocateDirect(arraySize*(Long.SIZE/8));
   }
 
   public BitPackIntList(BatchIterator<Integer> source) {
+    this(getStats(source));
+  }
+
+  private  static IntSummaryStatistics getStats(BatchIterator<Integer> source){
     checkArgument(source != null, "source can't be null");
     checkArgument(source.hasNext(), "source can't be empty");
 
@@ -46,102 +59,47 @@ public class BitPackIntList implements BatchList<Integer> {
         summaryStatistics.accept(source.next());
       }
     }
-
-    this.buffer = new BitPackIntBuffer(summaryStatistics);
-    this.longBuffer = buffer.writeBuffer().asLongBuffer();
-
+    return summaryStatistics;
   }
 
-  private void write(int[] values, int offset, int length) {
-    long cur;
-
-    for (int i = offset; i < length + offset; i++) {
-      checkArgument(values[i] >= buffer.minValue && values[i] <= buffer.maxValue, "Input value is out of range.");
-    }
-
-    long buf = longBuffer.get(arrayIndex);
-    for (int i = 0; i < length; i++) {
-      cur = values[offset + i] - buffer.minValue;
-      if (bitIndex >= buffer.width) { //minimum free space required to insert a value
-        bitIndex = bitIndex - buffer.width;
-      } else {
-        cur = cur >>> (buffer.width - bitIndex);
-        buf |= cur;
-        cur = values[offset + i] - buffer.minValue;
-        bitIndex = 64 - (buffer.width - bitIndex);
-        longBuffer.put(arrayIndex, buf);
-        arrayIndex++;
-        buf = 0;
-      }
-      cur = cur << bitIndex;
-      buf |= cur;
-      buffer.incSize();
-    }
-    longBuffer.put(arrayIndex, buf);
+  /**
+   * give the number of bits needed to encode an int given the max value
+   * @param bound max int that we want to encode
+   * @return the number of bits required
+   */
+  private static int getWidthFromMaxInt(int bound) {
+    return 32 - Integer.numberOfLeadingZeros(bound);
   }
 
-  @Override
-  public void add(Integer value) {
-    checkNotNull(value, "Null vales are not permitted");
-    checkState(!isClosed, "Attempting to modify a closed list.");
-    holder[0] = value.intValue();
-    write(holder, 0, 1);
+  public void incSize() {
+    size++;
   }
 
-  @Override
-  public void addPrimitiveArray(Object values, int offset, int length) {
-    checkNotNull(values, "Null vales are not permitted");
-    checkArgument(values instanceof int[], "values must be int[], found " + values.getClass().getSimpleName());
-    checkState(!isClosed, "Attempting to modify a closed list.");
-    write((int[]) values, offset, length);
+  public ByteBuffer writeBuffer(){
+    return buf.duplicate();
+  }
+
+  public ByteBuffer readBuffer(){
+    return buf.asReadOnlyBuffer();
   }
 
   @Override
   public long size() {
-    return buffer.getSize();
-  }
-
-  @Override
-  public boolean primitiveTypeSupport() {
-    return true;
+    return size;
   }
 
   @Override
   public BatchIterator<Integer> batchIterator(long maxIndex) {
-    return new BitPackIntListIterator(buffer);
+    return new BitPackIntListIterator(this);
   }
 
   @Override
-  public boolean close() {
-    checkArgument(getBuffer().getSize() == getBuffer().listSize, "list's final size doesn't match the " +
-      "initial expected size");
-    isClosed = true;
-    return isClosed;
+  public BatchListReader<Integer> reader(long maxIndex) {
+    return new BitPackIntListReader(this, maxIndex);
   }
 
   @Override
-  public void addAll(BatchIterator<Integer> iterator) {
-    int[] buffer = new int[1024];
-    int cnt;
-    if (iterator.primitiveTypeSupport()) {
-      while (iterator.hasNext()) {
-        cnt = iterator.readNative(buffer, 0, buffer.length);
-        if (cnt > 0) {
-          break;
-        }
-        write(buffer, 0, cnt);
-      }
-    } else {
-      while (iterator.hasNext()) {
-        for (cnt = 0; cnt < buffer.length && iterator.hasNext(); cnt++) {
-          buffer[cnt] = iterator.next();
-        }
-        write(buffer, 0, cnt);
-      }
-    }
-  }
-
-  public BitPackIntBuffer getBuffer() {
-    return buffer;
+  public BatchListWriter<Integer> writer() {
+    return new BitPackIntListWriter(this);
   }
 }
