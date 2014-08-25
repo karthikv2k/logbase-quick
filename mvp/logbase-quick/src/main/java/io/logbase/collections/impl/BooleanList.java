@@ -1,136 +1,44 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
-import io.logbase.collections.BatchList;
-
-import static com.google.common.base.Preconditions.*;
-
-import java.util.*;
+import io.logbase.collections.*;
 
 /**
  * Created by Kousik on 15/08/14
  */
 public class BooleanList implements BatchList<Boolean> {
-    private int arrayIndex = 0;
-    boolean isClosed = false;
-    BitSet bits;
-    boolean holder[] = new boolean[1];
+  private int arrayIndex = 0;
+  LBBitSet bits;
 
-    public BooleanList () {
-        bits = new BitSet();
-    }
-    public BooleanList(BatchIterator<Boolean> source) {
-        checkArgument(source != null, "source can't be null");
-        checkArgument(source.hasNext(), "source can't be empty");
+  public BooleanList() {
+    this.bits = new NativeBitSet();
+  }
 
-        bits = new BitSet();
-        if (source.primitiveTypeSupport()) {
-            boolean[] temp_holder = new boolean[1024];
-            int count;
-            while (source.hasNext()) {
-                count = source.readNative(holder, 0, holder.length);
-                for (int i = 0; i < count; i++) {
-                    write(temp_holder, 0, count);
-                }
-            }
-        } else {
-            while (source.hasNext()) {
-                add(source.next());
-            }
-        }
-    }
+  public BooleanList(OffHeapBitSet bits, int size) {
+    this.bits = new OffHeapBitSet(size);
+  }
 
-    /*
-     * Iterate the given array from offset till length and insert
-     * entries into the BitSet
-     */
-    public void write(boolean[] values, int offset, int length) {
-        int start = offset;
-        int end = offset + length;
+  public void incrSize() {
+    arrayIndex++;
+  }
 
-        for (; start < end; start++) {
-            if (values[start] == true) {
-                bits.set(arrayIndex);
-            }
-            arrayIndex++;
-        }
-    }
+  @Override
+  public long size() {
+    return arrayIndex;
+  }
 
-    @Override
-    public void add(Boolean value) {
-        checkNotNull(value, "Null vales are not permitted");
-        checkState(!isClosed, "Attempting to modify a closed list.");
-        holder[0] = value.booleanValue();
-        write(holder, 0, 1);
-    }
+  @Override
+  public BatchIterator<Boolean> batchIterator(long maxIndex) {
+    return new BooleanListIterator(this);
+  }
 
-    @Override
-    public void addPrimitiveArray(Object values, int offset, int length) {
-        checkNotNull(values, "Null vales are not permitted");
-        checkArgument(values instanceof boolean[], "values must be boolean[], found " + values.getClass().getSimpleName());
-        checkState(!isClosed, "Attempting to modify a closed list.");
-        write((boolean[]) values, offset, length);
-    }
+  @Override
+  public BatchListReader<Boolean> reader(long maxIndex) {
+    return new BooleanListReader(this, maxIndex);
+  }
 
-    public void writeAll(BatchIterator<Boolean> source) {
-        if (source.primitiveTypeSupport()) {
-            boolean[] temp_holder = new boolean[1024];
-            int count;
-            while (source.hasNext()) {
-                count = source.readNative(temp_holder, 0, temp_holder.length);
-                if (count > 0) {
-                    write(temp_holder, 0, count);
-                }
-            }
-        } else {
-            while (source.hasNext()) {
-                add(source.next());
-            }
-        }
-    }
+  @Override
+  public BatchListWriter<Boolean> writer() {
+    return new BooleanListWriter(this);
+  }
 
-    @Override
-    public long size() {
-        return arrayIndex;
-    }
-
-    @Override
-    public boolean primitiveTypeSupport() {
-        return true;
-    }
-
-    @Override
-    public BatchIterator<Boolean> batchIterator(long maxIndex) {
-        return new BooleanListIterator(bits, arrayIndex);
-    }
-
-    @Override
-    public boolean close() {
-        isClosed = true;
-        return isClosed;
-    }
-
-    @Override
-    public void addAll(BatchIterator<Boolean> iterator) {
-        boolean[] buffer = new boolean[1024];
-        int count;
-        if (iterator.primitiveTypeSupport()) {
-            while (iterator.hasNext()) {
-                count = iterator.readNative(buffer, 0, buffer.length);
-                if (count > 0) {
-                    break;
-                }
-                write(buffer, 0, count);
-            }
-        } else {
-            while (iterator.hasNext()) {
-                for (count = 0;
-                     count < buffer.length && iterator.hasNext();
-                     count++) {
-                    buffer[count] = iterator.next();
-                }
-                write(buffer, 0, count);
-            }
-        }
-    }
 }
