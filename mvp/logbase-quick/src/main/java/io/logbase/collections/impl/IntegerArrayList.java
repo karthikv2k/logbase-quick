@@ -69,7 +69,7 @@ public class IntegerArrayList implements BatchList<Integer>, IntList {
 
   @Override
   public BatchListIterator<Integer> iterator(long maxIndex) {
-    return new IntegerArrayListIterator(this, blocks);
+    return new IntegerArrayListIterator(this, blocks, maxIndex);
   }
 
   @Override

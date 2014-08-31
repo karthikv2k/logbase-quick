@@ -81,7 +81,7 @@ public class BitPackIntList implements IntList {
 
   @Override
   public IntListIterator primitiveIterator(long maxIndex) {
-    return new BitPackIntListIterator(this);
+    return new BitPackIntListIterator(this, maxIndex);
   }
 
   @Override

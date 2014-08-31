@@ -61,7 +61,7 @@ public class IntegerArrayListWriter implements IntListWriter {
       buf = list.addBlock();
     }
     buf.put(value);
-    //list.incSize();
+    list.incSize();
   }
 
 }

@@ -13,13 +13,13 @@ import org.junit.Test;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class IntLisTest extends AbstractBenchmark {
+public class IntLisBenchmarkTest extends AbstractBenchmark {
   private IntListWriter writer;
   private int[] intP;
   private Integer[] intO;
   private int iterations;
 
-  public IntLisTest(){
+  public IntLisBenchmarkTest(){
     IntList list = new IntegerArrayList();
     int[] testData = (int[]) DataGen.genRndData(int.class, GlobalConfig.DEFAULT_READ_BUFFER_SIZE*10);
     init(list.primitiveWriter(), testData, 1000*10);

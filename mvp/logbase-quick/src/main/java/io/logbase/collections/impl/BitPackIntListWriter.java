@@ -32,7 +32,8 @@ public class BitPackIntListWriter implements IntListWriter {
     long cur;
 
     for (int i = offset; i < length + offset; i++) {
-      checkArgument(values[i] >= buffer.minValue && values[i] <= buffer.maxValue, "Input value is out of range.");
+      checkArgument(values[i] >= buffer.minValue && values[i] <= buffer.maxValue, "Input value is out of range ["
+        + buffer.minValue + "," + buffer.maxValue +"]. Got " + values[i]);
     }
 
     long buf = longBuffer.get(arrayIndex);

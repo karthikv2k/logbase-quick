@@ -14,23 +14,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class BitPackIntListIterator implements IntListIterator {
   private final BitPackIntList listBuffer;
   private final LongBuffer longBuffer;
-  private int bitIndex = 64; //index (1 indexed) where MSB of the input goes
+  private int bitIndex; //index (1 indexed) where MSB of the input goes
   private int arrayIndex;
-  private int totalReads;
+  private long totalReads;
+  private final long maxIndex;
 
 
-  public BitPackIntListIterator(BitPackIntList listBuffer) {
+  public BitPackIntListIterator(BitPackIntList listBuffer, long maxIndex) {
     this.listBuffer = listBuffer;
     this.longBuffer = listBuffer.readBuffer().asLongBuffer();
+    this.maxIndex = Math.min(listBuffer.size(), maxIndex);
     reset();
   }
 
   @Override
   public int nextPrimitive(int[] out, int offset, int count) {
-    //return -1 if the list has no values to read
-    if (totalReads >= listBuffer.size()) {
-      return -1;
-    }
+    count = (int) Math.min(count, remaining());
 
     long cur;
     long cur1, cur2;
@@ -60,6 +59,10 @@ public class BitPackIntListIterator implements IntListIterator {
     return i - offset;
   }
 
+  private long remaining() {
+    return maxIndex-totalReads;
+  }
+
   @Override
   public int next(Object buffer, int offset, int rows) throws ClassCastException {
     checkNotNull(buffer, "Null buffer is not permitted");
@@ -73,11 +76,12 @@ public class BitPackIntListIterator implements IntListIterator {
   public void reset() {
     arrayIndex = 0;
     totalReads = 0;
+    bitIndex = 64;
   }
 
   @Override
   public boolean hasNext() {
-    return totalReads < listBuffer.size();
+    return totalReads < maxIndex;
   }
 
 

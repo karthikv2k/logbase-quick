@@ -19,14 +19,16 @@ public class IntegerArrayListIterator implements IntListIterator {
   private int limit;
   private int block;
   private long totalRead;
+  private final long maxIndex;
   private final long size;
 
-  IntegerArrayListIterator(IntegerArrayList list, List<IntBuffer> blocksList) {
+  IntegerArrayListIterator(IntegerArrayList list, List<IntBuffer> blocksList, long maxIndex) {
     synchronized (blocksList) {
       blocks = blocksList.toArray(new IntBuffer[0]);
     }
     this.list = list;
     size = list.size();
+    this.maxIndex = Math.min(maxIndex, size);
     reset();
   }
 
@@ -38,14 +40,19 @@ public class IntegerArrayListIterator implements IntListIterator {
 
   @Override
   public boolean hasNext() {
-    return totalRead < size;
+    return totalRead < maxIndex;
+  }
+
+  private long remaining(){
+    return maxIndex - totalRead;
   }
 
   @Override
   public int nextPrimitive(int[] buffer, int offset, int count) {
+    count = (int) Math.min(count, (maxIndex-totalRead));
     int curCnt = 0;
     int batchSize;
-    while (curCnt < count && hasNext()) {
+    while (curCnt < count) {
       batchSize = Math.min((count - curCnt), limit - index);
       blocks[block].get(buffer, offset + curCnt, batchSize);
       index = index + batchSize;
@@ -62,9 +69,10 @@ public class IntegerArrayListIterator implements IntListIterator {
   public void reset() {
     if (blocks.length != 0) {
       limit = blocks[0].capacity();
+    } else {
+      limit = 0;
     }
     index = 0;
-    limit = 0;
     block = 0;
     totalRead = 0;
   }
