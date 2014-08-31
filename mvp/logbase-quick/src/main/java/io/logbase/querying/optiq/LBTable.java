@@ -1,19 +1,6 @@
 package io.logbase.querying.optiq;
 
 import io.logbase.view.View;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import org.eigenbase.rel.RelNode;
-import org.eigenbase.relopt.RelOptTable;
-import org.eigenbase.relopt.RelOptTable.ToRelContext;
-import org.eigenbase.reltype.RelDataType;
-import org.eigenbase.reltype.RelDataTypeFactory;
-import org.eigenbase.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import net.hydromatic.linq4j.Enumerator;
 import net.hydromatic.linq4j.QueryProvider;
 import net.hydromatic.linq4j.Queryable;
@@ -23,24 +10,34 @@ import net.hydromatic.optiq.impl.AbstractTableQueryable;
 import net.hydromatic.optiq.impl.java.AbstractQueryableTable;
 import net.hydromatic.optiq.rules.java.EnumerableConvention;
 import net.hydromatic.optiq.rules.java.JavaRules;
+import org.eigenbase.rel.RelNode;
+import org.eigenbase.relopt.RelOptTable;
+import org.eigenbase.relopt.RelOptTable.ToRelContext;
+import org.eigenbase.reltype.RelDataType;
+import org.eigenbase.reltype.RelDataTypeFactory;
+import org.eigenbase.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * LBTable is an Optiq table that accepts a Logbase View and creates the table
  * out of it.
- * 
+ *
  * @author Abishek Baskaran
  */
 public class LBTable extends AbstractQueryableTable implements
-    TranslatableTable {
+  TranslatableTable {
 
   static final Logger logger = LoggerFactory.getLogger(LBTable.class);
   private View view;
 
   /**
    * Constructor
-   * 
-   * @param view
-   *          A Logbase View
+   *
+   * @param view A Logbase View
    */
   public LBTable(View view) {
     super(Object[].class);
@@ -71,9 +68,8 @@ public class LBTable extends AbstractQueryableTable implements
   /**
    * This method determines if a LogBase column will be added to the Optiq table
    * and returns the column data type.
-   * 
-   * @param columnName
-   *          Logbase column name
+   *
+   * @param columnName Logbase column name
    * @return The java class of the column. Returns null if not an applicable
    *         type.
    */
@@ -95,7 +91,7 @@ public class LBTable extends AbstractQueryableTable implements
   // This method has to return an Enumerator which contains an iterator
   @Override
   public <T> Queryable<T> asQueryable(QueryProvider queryProvider,
-      SchemaPlus schema, String tableName) {
+                                      SchemaPlus schema, String tableName) {
     logger.info("Got query request for: " + tableName);
     return new AbstractTableQueryable<T>(queryProvider, schema, this, tableName) {
       public Enumerator<T> enumerator() {
@@ -115,8 +111,8 @@ public class LBTable extends AbstractQueryableTable implements
   @Override
   public RelNode toRel(ToRelContext context, RelOptTable relOptTable) {
     return new JavaRules.EnumerableTableAccessRel(context.getCluster(), context
-        .getCluster().traitSetOf(EnumerableConvention.INSTANCE), relOptTable,
-        (Class) getElementType());
+      .getCluster().traitSetOf(EnumerableConvention.INSTANCE), relOptTable,
+      (Class) getElementType());
   }
 
 }

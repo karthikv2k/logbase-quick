@@ -1,24 +1,20 @@
 package io.logbase.querying.optiq;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import io.logbase.view.View;
+import net.hydromatic.linq4j.Enumerator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
-import net.hydromatic.linq4j.Enumerator;
-
 /**
  * LBEnumerator converts a Logbase view into a row iterator.
- * 
- * @author Abishek Baskaran
  *
+ * @author Abishek Baskaran
  */
 public class LBEnumerator implements Enumerator<Object> {
 
@@ -28,9 +24,8 @@ public class LBEnumerator implements Enumerator<Object> {
 
   /**
    * Constructor - forms the iterator.
-   * 
-   * @param view
-   *          The logbase view.
+   *
+   * @param view The logbase view.
    */
   public <E> LBEnumerator(View view) {
     String[] columnNames = view.getIterator().getColumnNames();
@@ -49,11 +44,9 @@ public class LBEnumerator implements Enumerator<Object> {
   /**
    * This constructor is for a smart table. Projection fields will tell what
    * columns or fields are required.
-   * 
-   * @param view
-   *          The Logbase view
-   * @param projectionFields
-   *          The fields or columns in the select clause of query.
+   *
+   * @param view             The Logbase view
+   * @param projectionFields The fields or columns in the select clause of query.
    */
   public <E> LBEnumerator(View view, List<String> projection, String filter) {
     // TODO Pass filter to get iterator
@@ -76,9 +69,9 @@ public class LBEnumerator implements Enumerator<Object> {
         }
       }
       logger.debug("No. of select columns added to filter: "
-          + selectProjects.size());
+        + selectProjects.size());
       Predicate<CharSequence> selectColumnFilter = Predicates
-          .in(selectProjects);
+        .in(selectProjects);
       rowIterator = view.getIterator(selectColumnFilter);
     }
   }

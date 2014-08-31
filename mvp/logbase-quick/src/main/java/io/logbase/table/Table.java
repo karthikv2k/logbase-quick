@@ -1,8 +1,10 @@
 package io.logbase.table;
 
 import com.google.common.base.Predicate;
+import io.logbase.column.Column;
 import io.logbase.event.Event;
 
+import java.util.Map;
 import java.util.Set;
 
 public interface Table<E extends Event> extends Comparable<Table> {
@@ -15,13 +17,13 @@ public interface Table<E extends Event> extends Comparable<Table> {
 
   public TableIterator getIterator(long maxRowNum);
 
-  public TableIterator getIterator();
-
-  public TableIterator getIterator(Predicate<CharSequence> filter);
+  public TableIterator getIterator(Predicate<CharSequence> columnFilter);
 
   public long getLatestEventTime();
 
   public Set<String> getColumnNames();
+
+  public Map<String, Column> getColumns();
 
   int getNumOfRows();
 }

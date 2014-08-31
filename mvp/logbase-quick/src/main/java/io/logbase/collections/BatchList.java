@@ -15,11 +15,12 @@ public interface BatchList<E> {
 
   /**
    * Get a batch iterator that is scans up to maxIndex rows.
+   *
    * @param maxIndex - Largest row number where the iterator ends. If the maxIndex greater than list size then the
    *                 iterator ends at end of the list.
    * @return
    */
-  public BatchIterator<E> batchIterator(long maxIndex);
+  public BatchListIterator<E> iterator(long maxIndex);
 
   public BatchListReader<E> reader(long maxIndex);
 

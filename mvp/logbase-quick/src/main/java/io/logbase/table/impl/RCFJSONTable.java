@@ -4,17 +4,14 @@ import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
-import io.logbase.column.ColumnIterator;
 import io.logbase.column.TypeUtils;
-import io.logbase.column.appendonly.ListBackedColumn;
 import io.logbase.event.JSONEvent;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
-import io.logbase.utils.Utils;
+import io.logbase.utils.GlobalConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +24,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
 
   private String tableName;
   private Map<String, Column> columns;
-  private int[] arrayidx = new int[1024];
+  private int[] arrayidx = new int[GlobalConfig.MAX_ARRAYS_IN_COLUMN];
   private int arrayDepth = 0;
   private int rowNum = 0;
   private final ColumnFactory columnFactory;
@@ -68,7 +65,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyMap";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = new ListBackedColumn<Map>(columnName, arrayDepth);
+          columnGeneric = columnFactory.createColumn(Map.class, columnName, arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
@@ -87,8 +84,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyList";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = new ListBackedColumn<List>(columnName,
-            arrayDepth);
+          columnGeneric = columnFactory.createColumn(List.class, columnName, arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
@@ -134,17 +130,12 @@ public class RCFJSONTable implements Table<JSONEvent> {
 
   @Override
   public TableIterator getIterator(long maxRows) {
-    return new TableIteratorImpl(maxRows);
-  }
-
-  @Override
-  public TableIterator getIterator() {
-    return getIterator(this.rowNum);
+    return new SimpleTableIterator(this, maxRows);
   }
 
   @Override
   public TableIterator getIterator(Predicate<CharSequence> filter) {
-    return new TableIteratorImpl(this.rowNum, filter);
+    return new SimpleTableIterator(this, this.rowNum, filter);
   }
 
   @Override
@@ -155,6 +146,11 @@ public class RCFJSONTable implements Table<JSONEvent> {
   @Override
   public Set<String> getColumnNames() {
     return columns.keySet();
+  }
+
+  @Override
+  public Map<String, Column> getColumns() {
+    return columns;
   }
 
   @Override
@@ -169,97 +165,6 @@ public class RCFJSONTable implements Table<JSONEvent> {
     } else {
       return temp;
     }
-  }
-
-  public class TableIteratorImpl implements TableIterator {
-    String[] columnNames;
-    Column[] columns;
-    ColumnIterator[] iterators;
-    private final Predicate<CharSequence> predicate;
-
-    TableIteratorImpl(long maxRows) {
-      this(maxRows, Utils.ALWAYS_TRUE_PATTERN);
-    }
-
-    TableIteratorImpl(long maxRows, Predicate<CharSequence> predicate) {
-      this.predicate = predicate;
-
-      Map<String, Column> allColumns = RCFJSONTable.this.columns;
-      int count = 0;
-      for (Map.Entry<String, Column> entry : allColumns.entrySet()) {
-        Column c = entry.getValue();
-        if (predicate.apply(c.getColumnName()) && c.getStartRowNum() < maxRows) {
-          count++;
-        }
-      }
-
-      columnNames = new String[count];
-      columns = new Column[count];
-      iterators = new ColumnIterator[count];
-
-      count = 0;
-      for (Map.Entry<String, Column> entry : allColumns.entrySet()) {
-        Column c = entry.getValue();
-        if (predicate.apply(c.getColumnName()) && c.getStartRowNum() < maxRows) {
-          columnNames[count] = entry.getKey();
-          columns[count] = entry.getValue();
-          iterators[count] = entry.getValue().getSimpleIterator(maxRows);
-          count++;
-        }
-      }
-    }
-
-    @Override
-    public Iterator<Object[]> iterator() {
-      return this;
-    }
-
-    @Override
-    public boolean hasNext() {
-      for (Iterator i : iterators) {
-        if (i.hasNext()) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    @Override
-    public Object[] next() {
-      Object[] obj = new Object[columns.length];
-      for (int i = 0; i < iterators.length; i++) {
-        if (iterators[i].hasNext()) {
-          obj[i] = iterators[i].next();
-        }
-      }
-      return obj;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException("Readonly table");
-    }
-
-    @Override
-    public int read(Object[][] buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean primitiveTypeSupport() {
-      return false;
-    }
-
-    @Override
-    public int readNative(Object buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String[] getColumnNames() {
-      return columnNames;
-    }
-
   }
 
 }

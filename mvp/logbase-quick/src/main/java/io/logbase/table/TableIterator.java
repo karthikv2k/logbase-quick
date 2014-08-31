@@ -1,8 +1,8 @@
 package io.logbase.table;
 
-import io.logbase.column.ColumnIterator;
+import java.util.Iterator;
 
-public interface TableIterator extends ColumnIterator<Object[]> {
+public interface TableIterator extends Iterator<Object[]> {
 
   public String[] getColumnNames();
 

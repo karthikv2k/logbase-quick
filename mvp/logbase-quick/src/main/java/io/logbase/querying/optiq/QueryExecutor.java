@@ -1,22 +1,16 @@
 package io.logbase.querying.optiq;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
 import net.hydromatic.optiq.SchemaPlus;
 import net.hydromatic.optiq.jdbc.OptiqConnection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.*;
+
 /**
  * This class executes a sql query over an Optiq Schema
- * 
- * @author Abishek Baskaran
  *
+ * @author Abishek Baskaran
  */
 public class QueryExecutor {
 
@@ -26,16 +20,15 @@ public class QueryExecutor {
 
   /**
    * Constructor to instantiate a JdbcQueryExecutor
-   * 
-   * @param schema
-   *          The schema to execute queries.
+   *
+   * @param schema The schema to execute queries.
    */
   public QueryExecutor(LBSchema schema) {
     try {
       Class.forName("net.hydromatic.optiq.jdbc.Driver");
       connection = DriverManager.getConnection("jdbc:optiq:");
       OptiqConnection optiqConnection = connection
-          .unwrap(OptiqConnection.class);
+        .unwrap(OptiqConnection.class);
       SchemaPlus rootSchema = optiqConnection.getRootSchema();
       rootSchema.add(schema.getName(), schema);
       logger.info("Created connection to schema: " + schema.getName());
@@ -46,9 +39,8 @@ public class QueryExecutor {
 
   /**
    * Executes a SQL query.
-   * 
-   * @param sql
-   *          SQL query in string.
+   *
+   * @param sql SQL query in string.
    * @return JDBC result set.
    */
   public ResultSet execute(String sql) {

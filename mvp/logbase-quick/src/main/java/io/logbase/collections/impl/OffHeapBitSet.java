@@ -2,12 +2,13 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.LBBitSet;
 
-import java.nio.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 /**
  * This class implements an off heap bitset. Each entry in the bitset has a boolean value.
  * Each bit is indexed and can be set or cleared using the index.
- *
+ * <p/>
  * Created by kousik on 21/08/14.
  */
 public class OffHeapBitSet implements LBBitSet {

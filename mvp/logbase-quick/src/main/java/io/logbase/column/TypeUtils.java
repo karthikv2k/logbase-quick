@@ -1,7 +1,5 @@
 package io.logbase.column;
 
-import java.io.UnsupportedEncodingException;
-import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 
 public class TypeUtils {
@@ -18,9 +16,9 @@ public class TypeUtils {
 
   public static Object castToLB(Object value) {
     if (value == null) {
-      return  Column.NULL ;
+      return Column.NULL;
     } else if (value instanceof String) {
-      return CharBuffer.wrap((String)value);
+      return CharBuffer.wrap((String) value);
     /*} else if (value instanceof Boolean){
       return (Boolean) value ? Column.TRUE : Column.FALSE;*/
     } else {

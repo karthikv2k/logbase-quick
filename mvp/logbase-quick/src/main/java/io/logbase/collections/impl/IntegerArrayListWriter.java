@@ -1,10 +1,10 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListWriter;
+import io.logbase.collections.nativelists.IntListWriter;
 
 import java.nio.IntBuffer;
-import java.util.function.IntConsumer;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -13,30 +13,22 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class IntegerListWriter implements BatchListWriter<Integer>, IntConsumer {
+public class IntegerArrayListWriter implements IntListWriter {
   private boolean isClosed;
   private IntBuffer buf;
-  private final IntegerList list;
+  private final IntegerArrayList list;
 
 
-  IntegerListWriter(IntegerList list){
+  IntegerArrayListWriter(IntegerArrayList list) {
     this.list = list;
+    buf = list.addBlock();
   }
 
   @Override
-  public boolean primitiveTypeSupport() {
-    return true;
-  }
-
-  @Override
-  public void addPrimitiveArray(Object values, int offset, int length) {
+  public void add(Object values, int offset, int length) {
     checkNotNull(values, "Null vales are not permitted");
     checkArgument(values instanceof int[], "values must be int[], found " + values.getClass().getSimpleName());
-    int[] intValues = (int[]) values;
-    //TBA optimize
-    for (int i = 0; i < length; i++) {
-      accept(intValues[offset + i]);
-    }
+    addPrimitive((int[]) values, offset, length);
   }
 
   @Override
@@ -47,20 +39,29 @@ public class IntegerListWriter implements BatchListWriter<Integer>, IntConsumer 
 
   @Override
   public void add(Integer integer) {
-    accept(integer.intValue());
+    addPrimitive(integer.intValue());
   }
 
   @Override
-  public void addAll(BatchIterator<Integer> iterator) {
-
+  public BatchListWriter<Integer> addAll(BatchListIterator<Integer> iterator) {
+    return this;
   }
 
   @Override
-  public void accept(int value) {
+  public void addPrimitive(int[] buffer, int offset, int length) {
+    //TBA optimize
+    for (int i = 0; i < length; i++) {
+      addPrimitive(buffer[offset + i]);
+    }
+  }
+
+  @Override
+  public void addPrimitive(int value) {
     if (!buf.hasRemaining()) {
       buf = list.addBlock();
     }
     buf.put(value);
+    //list.incSize();
   }
 
 }

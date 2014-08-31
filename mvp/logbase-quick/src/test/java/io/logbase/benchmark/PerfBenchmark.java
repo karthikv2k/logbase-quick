@@ -1,7 +1,6 @@
-package io.logbase.sample;
+package io.logbase.benchmark;
 
 import bb.util.Benchmark;
-import io.logbase.collections.impl.IntegerLinkedArrayList;
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
 import io.logbase.event.JSONEvent;

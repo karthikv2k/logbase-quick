@@ -1,26 +1,21 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListWriter;
 
-
-import java.util.BitSet;
-
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Preconditions.*;
 
 /**
  * Created by Kousik on 25/08/14.
  */
-public class BooleanListWriter implements BatchListWriter<Boolean>{
+public class BitsetListWriter implements BatchListWriter<Boolean> {
 
-  private BooleanList list;
+  private BitsetList list;
   boolean isClosed = false;
   private int arrayIndex = 0;
   private boolean[] holder = new boolean[1];
 
-  public BooleanListWriter(BooleanList list) {
+  public BitsetListWriter(BitsetList list) {
     checkArgument(list.size() == 0, "The list is not empty.");
     this.list = list;
   }
@@ -51,7 +46,7 @@ public class BooleanListWriter implements BatchListWriter<Boolean>{
   }
 
   @Override
-  public void addPrimitiveArray(Object values, int offset, int length) {
+  public void add(Object values, int offset, int length) {
     checkNotNull(values, "Null vales are not permitted");
     checkArgument(values instanceof boolean[], "values must be boolean[], found " + values.getClass().getSimpleName());
     checkState(!isClosed, "Attempting to modify a closed list.");
@@ -59,32 +54,17 @@ public class BooleanListWriter implements BatchListWriter<Boolean>{
   }
 
   @Override
-  public void addAll(BatchIterator<Boolean> iterator) {
+  public BatchListWriter<Boolean> addAll(BatchListIterator<Boolean> iterator) {
     boolean[] buffer = new boolean[1024];
     int count;
-    if (iterator.primitiveTypeSupport()) {
-      while (iterator.hasNext()) {
-        count = iterator.readNative(buffer, 0, buffer.length);
-        if (count > 0) {
-          break;
-        }
-        write(buffer, 0, count);
+    while (iterator.hasNext()) {
+      count = iterator.next(buffer, 0, buffer.length);
+      if (count > 0) {
+        break;
       }
-    } else {
-      while (iterator.hasNext()) {
-        for (count = 0;
-             count < buffer.length && iterator.hasNext();
-             count++) {
-          buffer[count] = iterator.next();
-        }
-        write(buffer, 0, count);
-      }
+      write(buffer, 0, count);
     }
-  }
-
-  @Override
-  public boolean primitiveTypeSupport() {
-    return true;
+    return this;
   }
 
   @Override

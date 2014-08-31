@@ -1,78 +1,58 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
 import io.logbase.collections.BatchList;
+import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.BatchListReader;
+import io.logbase.collections.BatchListWriter;
+import io.logbase.collections.nativelists.IntList;
 
+import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.IntSummaryStatistics;
-import java.util.Iterator;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
 public class StringList implements BatchList<CharBuffer> {
-  public final StringListBuffer listBuffer;
   private final CharBuffer stringBuf;
-  public final String CHARSET = "UTF-8";
+  public final IntList lengthList;
 
-  StringList(Iterator<CharBuffer> source){
-    IntSummaryStatistics stats = new IntSummaryStatistics();
-    while(source.hasNext()){
-      stats.accept(source.next().length());
-    }
-    listBuffer = new StringListBuffer(stats);
-    stringBuf = listBuffer.getWriteBuffer();
+  public StringList(IntSummaryStatistics stats) {
+    this(stats.getMin(), stats.getMax(), stats.getCount(), stats.getSum());
   }
 
-  public StringList(IntSummaryStatistics stats){
-    listBuffer = new StringListBuffer(stats);
-    stringBuf = listBuffer.getWriteBuffer();
+  public StringList(int min, int max, long count, long sum) {
+    //tba remove (int)
+    stringBuf = ByteBuffer.allocateDirect((int) sum * 2).asCharBuffer();
+    lengthList = new BitPackIntList(min, max, count);
   }
 
-  @Override
-  public void addAll(BatchIterator<CharBuffer> source){
-    while(source.hasNext()){
-      add(source.next());
-    }
+  public CharBuffer getWriteBuffer() {
+    return stringBuf.duplicate();
   }
 
-  @Override
-  public BatchIterator<CharBuffer> batchIterator(long maxIndex) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public boolean close() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  public CharBuffer getReadBuffer() {
+    return stringBuf.asReadOnlyBuffer();
   }
 
   @Override
   public long size() {
-    return 0;  //To change body of implemented methods use File | Settings | File Templates.
+    return lengthList.size();
   }
 
   @Override
-  public boolean primitiveTypeSupport() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
+  public BatchListIterator<CharBuffer> iterator(long maxIndex) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
-  public void add(CharBuffer value){
-    listBuffer.lengthList.add(value.length());
-    stringBuf.put(value);
+  public BatchListReader<CharBuffer> reader(long maxIndex) {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
 
   @Override
-  public void addPrimitiveArray(Object values, int offset, int length){
-    checkArgument(values instanceof CharBuffer[],"values should be instance of CharBuffer[].");
-    checkArgument(values!=null, "values can't be null");
-    CharBuffer[] valueArray = (CharBuffer[]) values;
-    for(int i=0; i<valueArray.length; i++){
-      add(valueArray[i]);
-    }
+  public BatchListWriter<CharBuffer> writer() {
+    return null;  //To change body of implemented methods use File | Settings | File Templates.
   }
-
 }

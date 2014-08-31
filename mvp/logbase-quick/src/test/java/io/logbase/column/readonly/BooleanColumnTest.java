@@ -1,20 +1,11 @@
 package io.logbase.column.readonly;
 
-import io.logbase.collections.BatchIterator;
-import io.logbase.collections.BatchList;
-import io.logbase.collections.impl.OffHeapBitSet;
-import io.logbase.column.ColumnIterator;
-import io.logbase.column.appendonly.ListBackedColumn;
-import org.junit.Test;
-
-import java.util.BitSet;
-
 import static junit.framework.Assert.assertEquals;
 
 /**
  * Created by Kousik on 23/08/14.
  */
-public class BooleanColumnTest {
+public class BooleanColumnTest {              /*
 
     private static void testBooleanColumn (ListBackedColumn column, Object obj) {
         long time;
@@ -32,7 +23,7 @@ public class BooleanColumnTest {
         System.out.println("Readonly column read (row): " + (System.currentTimeMillis()-time));
 
         time = System.currentTimeMillis();
-        BatchIterator<Boolean> valuesIt = colRO.getValuesIterator();
+        BatchListIterator<Boolean> valuesIt = colRO.getValuesIterator();
         boolean[] holder = new boolean[1024];
         int cnt = 0;
         while(valuesIt.hasNext()){
@@ -60,5 +51,5 @@ public class BooleanColumnTest {
 
         testBooleanColumn(column, new BitSet());
         testBooleanColumn(column, new OffHeapBitSet(1));
-    }
+    }  */
 }

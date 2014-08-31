@@ -1,15 +1,15 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchListReader;
+import io.logbase.collections.nativelists.IntListReader;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitPackIntListReader implements BatchListReader<Integer> {
+public class BitPackIntListReader implements IntListReader {
   private BitPackIntList list;
 
-  BitPackIntListReader(BitPackIntList list, long maxIndex){
+  BitPackIntListReader(BitPackIntList list, long maxIndex) {
     this.list = list;
   }
 
@@ -19,12 +19,7 @@ public class BitPackIntListReader implements BatchListReader<Integer> {
   }
 
   @Override
-  public boolean primitiveTypeSupport() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public void getPrimitiveArray(Object values, int offset, long[] index, int idxOffset, int length) {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public int getAsInt(long index) {
+    return 0;  //To change body of implemented methods use File | Settings | File Templates.
   }
 }

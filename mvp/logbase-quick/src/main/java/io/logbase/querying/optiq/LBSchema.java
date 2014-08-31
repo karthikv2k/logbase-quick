@@ -1,19 +1,16 @@
 package io.logbase.querying.optiq;
 
+import com.google.common.collect.ImmutableMap;
 import io.logbase.view.View;
+import net.hydromatic.optiq.Table;
+import net.hydromatic.optiq.impl.AbstractSchema;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import net.hydromatic.optiq.Table;
-import net.hydromatic.optiq.impl.AbstractSchema;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
  * LBSchema is a type of Optiq Schema that contains a list of Logbase tables.
@@ -29,9 +26,8 @@ public class LBSchema extends AbstractSchema {
 
   /**
    * Constructor
-   * 
-   * @param schemaName
-   *          The schema name which is like database name.
+   *
+   * @param schemaName The schema name which is like database name.
    */
   public LBSchema(String schemaName) {
     super();
@@ -40,11 +36,9 @@ public class LBSchema extends AbstractSchema {
 
   /**
    * Adds a table/view to the schema.
-   * 
-   * @param tableName
-   *          The name of the table, has to be unique else will overwrite.
-   * @param javaBeanList
-   *          A List of JavaBeans of same type that's to be seen as table.
+   *
+   * @param tableName    The name of the table, has to be unique else will overwrite.
+   * @param javaBeanList A List of JavaBeans of same type that's to be seen as table.
    */
   public void addAsTable(String tableName, View view) {
     viewMap.put(tableName, view);
@@ -53,17 +47,15 @@ public class LBSchema extends AbstractSchema {
 
   /**
    * Adds a smart table to the schema.
-   * 
-   * @param tableName
-   *          The name of the table, has to be unique else will overwrite.
-   * @param javaBeanList
-   *          A List of JavaBeans of same type that's to be seen as table.
+   *
+   * @param tableName    The name of the table, has to be unique else will overwrite.
+   * @param javaBeanList A List of JavaBeans of same type that's to be seen as table.
    */
   public <E> void addAsSmartTable(String tableName, View view) {
     viewMap.put(tableName, view);
     smartTables.add(tableName);
     logger
-        .info("Added smart table: " + tableName + " to Schema: " + schemaName);
+      .info("Added smart table: " + tableName + " to Schema: " + schemaName);
   }
 
   /**
@@ -81,7 +73,7 @@ public class LBSchema extends AbstractSchema {
       if (smartTables.contains(tableName))
         lbTable = new LBSmartTable(viewMap.get(tableName));
       else
-      lbTable = new LBTable(viewMap.get(tableName));
+        lbTable = new LBTable(viewMap.get(tableName));
       builder.put(tableName, lbTable);
       logger.debug("Initialized Optiq Table for: " + tableName);
     }

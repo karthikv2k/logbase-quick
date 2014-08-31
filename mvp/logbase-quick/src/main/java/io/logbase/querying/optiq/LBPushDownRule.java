@@ -1,10 +1,6 @@
 package io.logbase.querying.optiq;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
+import com.google.common.collect.ImmutableSet;
 import org.eigenbase.rel.FilterRel;
 import org.eigenbase.rel.ProjectRel;
 import org.eigenbase.relopt.RelOptRule;
@@ -12,11 +8,7 @@ import org.eigenbase.relopt.RelOptRuleCall;
 import org.eigenbase.relopt.RelOptRuleOperand;
 import org.eigenbase.reltype.RelDataType;
 import org.eigenbase.reltype.RelDataTypeField;
-import org.eigenbase.rex.RexCall;
-import org.eigenbase.rex.RexInputRef;
-import org.eigenbase.rex.RexLiteral;
-import org.eigenbase.rex.RexNode;
-import org.eigenbase.rex.RexSlot;
+import org.eigenbase.rex.*;
 import org.eigenbase.sql.SqlBinaryOperator;
 import org.eigenbase.sql.SqlKind;
 import org.eigenbase.sql.SqlOperator;
@@ -26,37 +18,40 @@ import org.eigenbase.util.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class LBPushDownRule extends RelOptRule {
 
   static final Logger logger = LoggerFactory
-      .getLogger(LBPushDownRule.class);
+    .getLogger(LBPushDownRule.class);
 
   private static final Set<SqlKind> SUPPORTED_OPS = ImmutableSet.of(
-      SqlKind.CAST, SqlKind.EQUALS, SqlKind.LESS_THAN,
-      SqlKind.LESS_THAN_OR_EQUAL, SqlKind.GREATER_THAN,
-      SqlKind.GREATER_THAN_OR_EQUAL, SqlKind.NOT_EQUALS, SqlKind.LIKE,
-      SqlKind.AND, SqlKind.OR, SqlKind.NOT);
+    SqlKind.CAST, SqlKind.EQUALS, SqlKind.LESS_THAN,
+    SqlKind.LESS_THAN_OR_EQUAL, SqlKind.GREATER_THAN,
+    SqlKind.GREATER_THAN_OR_EQUAL, SqlKind.NOT_EQUALS, SqlKind.LIKE,
+    SqlKind.AND, SqlKind.OR, SqlKind.NOT);
 
   public static final LBPushDownRule PROJECT_ON_FILTER = new LBPushDownRule(
+    operand(
+      ProjectRel.class,
       operand(
-          ProjectRel.class,
-          operand(
-              FilterRel.class,
-              operand(ProjectRel.class, operand(LBTableScan.class, none())))),
-      "Proj on filter on proj");
+        FilterRel.class,
+        operand(ProjectRel.class, operand(LBTableScan.class, none())))),
+    "Proj on filter on proj");
 
   public static final LBPushDownRule FILTER_ON_PROJECT = new LBPushDownRule(
-      operand(FilterRel.class,
-          operand(ProjectRel.class, operand(LBTableScan.class, none()))),
-      "Filter on proj");
+    operand(FilterRel.class,
+      operand(ProjectRel.class, operand(LBTableScan.class, none()))),
+    "Filter on proj");
 
   public static final LBPushDownRule FILTER = new LBPushDownRule(operand(
-      FilterRel.class, operand(LBTableScan.class, none())), "Filter");
+    FilterRel.class, operand(LBTableScan.class, none())), "Filter");
 
   public static final LBPushDownRule PROJECT = new LBPushDownRule(operand(
-      ProjectRel.class, operand(LBTableScan.class, none())), "Proj");
+    ProjectRel.class, operand(LBTableScan.class, none())), "Proj");
 
 
   protected LBPushDownRule(RelOptRuleOperand rule, String id) {
@@ -91,12 +86,12 @@ public class LBPushDownRule extends RelOptRule {
 
     RexCall filterCall = null;
     if (filterIdx <= relLength
-        && call.rels[relLength - filterIdx] instanceof FilterRel) {
+      && call.rels[relLength - filterIdx] instanceof FilterRel) {
       filter = (FilterRel) call.rels[relLength - filterIdx];
 
       int topProjIdx = filterIdx + 1;
       if (topProjIdx <= relLength
-          && call.rels[relLength - topProjIdx] instanceof ProjectRel) {
+        && call.rels[relLength - topProjIdx] instanceof ProjectRel) {
         topProj = (ProjectRel) call.rels[relLength - topProjIdx];
       }
 
@@ -121,13 +116,13 @@ public class LBPushDownRule extends RelOptRule {
       topRow = topProj.getRowType();
     }
     logger.info("Pre transformTo fieldNames (top row): "
-        + getFieldsString(topRow));
+      + getFieldsString(topRow));
     logger.info("Filter String: " + filterString);
 
     // Testing get topFields and bottom fields
     List<RelDataTypeField> bottomFields = null;
     List<RelDataTypeField> topFields = topRow == null ? null : topRow
-        .getFieldList();
+      .getFieldList();
     if (bottomFields == null) {
       bottomFields = lbTableScan.getRowType().getFieldList();
     }
@@ -165,9 +160,9 @@ public class LBPushDownRule extends RelOptRule {
         RexInputRef rif = (RexInputRef) rn;
         RelDataTypeField field = bottomFields.get(rif.getIndex());
         if (!bottomFields.get(rif.getIndex()).getName()
-            .equals(topFields.get(i).getName())) {
+          .equals(topFields.get(i).getName())) {
           renames.add(new Pair<String, String>(bottomFields.get(rif.getIndex())
-              .getName(), topFields.get(i).getName()));
+            .getName(), topFields.get(i).getName()));
           field = topFields.get(i);
         }
         newFields.add(field);
@@ -187,29 +182,29 @@ public class LBPushDownRule extends RelOptRule {
       projection.add(field.getName());
     }
     call.transformTo(new LBTableScan(lbTableScan.getCluster(), lbTableScan
-        .getTable(), lbTableScan.lbSmartTable, projection, filterString,
-        description));
+      .getTable(), lbTableScan.lbSmartTable, projection, filterString,
+      description));
 
   }
 
   // Copied from Splunk Adapter
   private boolean getFilter(SqlOperator op, List<RexNode> operands,
-      StringBuilder s, List<String> fieldNames) {
+                            StringBuilder s, List<String> fieldNames) {
     if (!valid(op.getKind())) {
       return false;
     }
 
     boolean like = false;
     switch (op.getKind()) {
-    case NOT:
-      // NOT op pre-pended
-      s = s.append(" NOT ");
-      break;
-    case CAST:
-      return asd(false, operands, s, fieldNames, 0);
-    case LIKE:
-      like = true;
-      break;
+      case NOT:
+        // NOT op pre-pended
+        s = s.append(" NOT ");
+        break;
+      case CAST:
+        return asd(false, operands, s, fieldNames, 0);
+      case LIKE:
+        like = true;
+        break;
     }
 
     for (int i = 0; i < operands.size(); i++) {
@@ -225,13 +220,13 @@ public class LBPushDownRule extends RelOptRule {
 
   // Copied from Splunk Adapter
   private boolean asd(boolean like, List<RexNode> operands, StringBuilder s,
-      List<String> fieldNames, int i) {
+                      List<String> fieldNames, int i) {
     RexNode operand = operands.get(i);
     if (operand instanceof RexCall) {
       s.append("(");
       final RexCall call = (RexCall) operand;
       boolean b = getFilter(call.getOperator(), call.getOperands(), s,
-          fieldNames);
+        fieldNames);
       if (!b) {
         return false;
       }

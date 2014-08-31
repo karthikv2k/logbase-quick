@@ -1,11 +1,9 @@
 package io.logbase.column;
 
-import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.nativelists.IntListIterator;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Each leaf node in a nested data model forms a column. A column is composed of values same type. A differentiation is
@@ -19,8 +17,6 @@ public interface Column<E> extends Operand<Column> {
   public static Map EMPTY_MAP = new HashMap(1);
   public static List EMPTY_LIST = new LinkedList();
   public static Object NULL = new NullType();
-  public static Byte TRUE = new Byte((byte)1);
-  public static Byte FALSE = new Byte((byte)0);
 
   /**
    * First valid row number for this column
@@ -93,21 +89,19 @@ public interface Column<E> extends Operand<Column> {
    *
    * @return
    */
-  public ColumnIterator<Object> getSimpleIterator(long maxRowNum);
+  public Iterator<Object> getSimpleIterator(long maxRowNum);
 
-  /**
-   * Gets an iterator to iterate through values of the column. Here the maxRowNum is the maximum row number at call time.
-   *
-   * @return
-   */
-  public ColumnIterator<Object> getSimpleIterator();
+  public BatchListIterator<Boolean> getIsPresentIterator(long maxRowNum);
 
-  public BatchIterator<Boolean> getIsPresentIterator();
+  public BatchListIterator<E> getValuesIterator(long maxIndex);
 
-  public BatchIterator<E> getValuesIterator();
+  public IntListIterator getArraySizeIterator(long maxIndex);
 
-  public BatchIterator<Integer> getArraySizeIterator();
+  public IntListIterator getArrayIndexIterator(int arrayNum, long maxIndex);
 
-  public BatchIterator<Integer> getArrayIndexIterator(int arrayNum);
+  @Override
+  public default int compareTo(Column column) {
+    return getColumnName().compareTo(column.getColumnName());
+  }
 
 }

@@ -96,11 +96,6 @@ public class SimpleView implements View {
     }
 
     @Override
-    public Iterator<Object[]> iterator() {
-      return this;
-    }
-
-    @Override
     public boolean hasNext() {
       if (iteratorIdx >= iterators.length) {
         return false;
@@ -133,19 +128,5 @@ public class SimpleView implements View {
       throw new UnsupportedOperationException();
     }
 
-    @Override
-    public int read(Object[][] buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean primitiveTypeSupport() {
-      return false;
-    }
-
-    @Override
-    public int readNative(Object buffer, int offset, int count) {
-      throw new UnsupportedOperationException();
-    }
   }
 }

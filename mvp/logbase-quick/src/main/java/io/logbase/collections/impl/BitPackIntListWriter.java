@@ -1,10 +1,11 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListWriter;
+import io.logbase.collections.nativelists.IntListIterator;
+import io.logbase.collections.nativelists.IntListWriter;
 
 import java.nio.LongBuffer;
-import java.util.IntSummaryStatistics;
 
 import static com.google.common.base.Preconditions.*;
 
@@ -12,7 +13,7 @@ import static com.google.common.base.Preconditions.*;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitPackIntListWriter implements BatchListWriter<Integer> {
+public class BitPackIntListWriter implements IntListWriter {
   private final BitPackIntList buffer;
   private final LongBuffer longBuffer;
   private int arrayIndex = 0;
@@ -26,7 +27,8 @@ public class BitPackIntListWriter implements BatchListWriter<Integer> {
     this.longBuffer = buffer.writeBuffer().asLongBuffer();
   }
 
-  private void write(int[] values, int offset, int length) {
+  @Override
+  public void addPrimitive(int[] values, int offset, int length) {
     long cur;
 
     for (int i = offset; i < length + offset; i++) {
@@ -54,25 +56,26 @@ public class BitPackIntListWriter implements BatchListWriter<Integer> {
     longBuffer.put(arrayIndex, buf);
   }
 
+
   @Override
   public void add(Integer value) {
     checkNotNull(value, "Null vales are not permitted");
     checkState(!isClosed, "Attempting to modify a closed list.");
-    holder[0] = value.intValue();
-    write(holder, 0, 1);
+    addPrimitive(value.intValue());
   }
 
   @Override
-  public void addPrimitiveArray(Object values, int offset, int length) {
+  public void add(Object values, int offset, int length) {
     checkNotNull(values, "Null vales are not permitted");
     checkArgument(values instanceof int[], "values must be int[], found " + values.getClass().getSimpleName());
     checkState(!isClosed, "Attempting to modify a closed list.");
-    write((int[]) values, offset, length);
+    addPrimitive((int[]) values, offset, length);
   }
 
   @Override
-  public boolean primitiveTypeSupport() {
-    return true;
+  public void addPrimitive(int value) {
+    holder[0] = value;
+    addPrimitive(holder, 0, 1);
   }
 
   @Override
@@ -84,25 +87,9 @@ public class BitPackIntListWriter implements BatchListWriter<Integer> {
   }
 
   @Override
-  public void addAll(BatchIterator<Integer> iterator) {
-    int[] buffer = new int[1024];
-    int cnt;
-    if (iterator.primitiveTypeSupport()) {
-      while (iterator.hasNext()) {
-        cnt = iterator.readNative(buffer, 0, buffer.length);
-        if (cnt > 0) {
-          break;
-        }
-        write(buffer, 0, cnt);
-      }
-    } else {
-      while (iterator.hasNext()) {
-        for (cnt = 0; cnt < buffer.length && iterator.hasNext(); cnt++) {
-          buffer[cnt] = iterator.next();
-        }
-        write(buffer, 0, cnt);
-      }
-    }
+  public BatchListWriter<Integer> addAll(BatchListIterator<Integer> iterator) {
+    ((IntListIterator) iterator).supplyTo(this);
+    return this;
   }
 
   public BitPackIntList getBuffer() {

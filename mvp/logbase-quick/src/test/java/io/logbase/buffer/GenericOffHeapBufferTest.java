@@ -1,6 +1,12 @@
 package io.logbase.buffer;
 
+import com.carrotsearch.junitbenchmarks.AbstractBenchmark;
+import io.logbase.collections.impl.DataGen;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,20 +14,44 @@ import static org.junit.Assert.assertEquals;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class GenericOffHeapBufferTest {
-  @Test
-  public void testGetBytes() throws Exception {
-
+public class GenericOffHeapBufferTest  extends AbstractBenchmark {
+  public static IntBuffer intBuffer = ByteBuffer.allocateDirect(1000*1000*100*4).asIntBuffer();
+  public static int temp;
+  public int[] rndData = (int[]) DataGen.genRndData(int.class, 1024*10);
+  @BeforeClass
+  public static void init(){
   }
 
   @Test
-  public void testGetLong() throws Exception {
-    /*GenericOffHeapBuffer buffer = new GenericOffHeapBuffer(2*8);
-    byte[] buf =buffer.buf.array();
-    buffer.setLong(0,Long.MAX_VALUE);
-    buffer.setLong(1,Long.MIN_VALUE);
-    assertEquals(Long.MAX_VALUE, buffer.getLong(0));
-    assertEquals(Long.MIN_VALUE, buffer.getLong(1));          */
+  public void intBufferWrite() throws Exception {
+    intBuffer.rewind();
+    int i =0;
+    while(intBuffer.hasRemaining()){
+      intBuffer.put(i);
+      i++;
+    }
+  }
+
+  @Test
+  public void intBufferWriteBatch() throws Exception {
+    intBuffer.rewind();
+    int i =0;
+    while(i+rndData.length<intBuffer.capacity()){
+      intBuffer.put(rndData, 0, rndData.length);
+      i+=rndData.length;
+    }
+    System.out.println(i);
+  }
+
+  @Test
+  public void intBufferRead() throws Exception {
+    intBuffer.rewind();
+    int i = 0, j=0;
+    while(intBuffer.hasRemaining()){
+      i = i + intBuffer.get();
+      j++;
+    }
+    System.out.println(i + " " + j);
   }
 
 }

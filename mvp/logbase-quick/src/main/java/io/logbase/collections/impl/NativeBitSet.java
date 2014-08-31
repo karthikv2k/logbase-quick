@@ -11,7 +11,7 @@ public class NativeBitSet implements LBBitSet {
 
   private BitSet bits = new BitSet();
 
-  public void set (int index) {
+  public void set(int index) {
     bits.set(index);
   }
 

@@ -27,48 +27,48 @@ public class BooleanListTest {
   }
 
   private void test(LBBitSet bitset) {
-    BooleanList list;
+    BitsetList list;
 
     /*
      * Initialize the list
      */
     if (bitset.getClass().equals(OffHeapBitSet.class)) {
       System.out.println("Boolean list with OffHeapBitSet");
-      list = new BooleanList(new OffHeapBitSet(1), values.length);
+      list = null;//new BitsetList(new OffHeapBitSet(1), values.length);
     } else {
       System.out.println("Boolean list with native BitSet");
-      list = new BooleanList();
+      list = new BitsetList();
     }
 
     /*
      * Get a writer and write all values
      */
-    BooleanListWriter writer = new BooleanListWriter(list);
+    BitsetListWriter writer = new BitsetListWriter(list);
 
     time = System.currentTimeMillis();
-    writer.addPrimitiveArray(values, 0, values.length);
+    writer.add(values, 0, values.length);
     System.out.println("write: " + (System.currentTimeMillis() - time));
 
     /*
      * Read using Iterator
      */
-    BooleanListIterator itr = new BooleanListIterator(list);
+    BitsetListIterator itr = new BitsetListIterator(list);
     time = System.currentTimeMillis();
     boolean[] holder = new boolean[1024 * 10];
     int cnt = 0;
     int totalReads = 0;
     while (cnt != -1) {
-      cnt = itr.readNative(holder, 0, holder.length);
+      cnt = itr.next(holder, 0, holder.length);
       totalReads = totalReads + cnt;
     }
     assertTrue((totalReads + 1) == num);
     System.out.println("read: " + (System.currentTimeMillis() - time));
 
-    itr = new BooleanListIterator(list);
+    itr = new BitsetListIterator(list);
     cnt = 0;
     totalReads = 0;
     while (true) {
-      cnt = itr.readNative(holder, 0, holder.length);
+      cnt = itr.next(holder, 0, holder.length);
       if (cnt == -1) break;
       for (int j = 0; j < cnt; j++) {
         assertTrue(values[totalReads] == holder[j]);
@@ -85,9 +85,9 @@ public class BooleanListTest {
       index[i] = i;
     }
 
-    BooleanListReader reader = new BooleanListReader(list, 0);
+    BitsetListReader reader = new BitsetListReader(list, 0);
     time = System.currentTimeMillis();
-    reader.getPrimitiveArray(buffer, 0, index, 0, num);
+    //reader.get(buffer, 0, index, 0, num);
     System.out.println("Read using a reader: " + (System.currentTimeMillis() - time));
 
     for (int i=0; i<num; i++) {

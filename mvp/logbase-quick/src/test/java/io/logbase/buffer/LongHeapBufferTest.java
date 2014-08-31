@@ -1,6 +1,5 @@
 package io.logbase.buffer;
 
-import io.logbase.collections.impl.IntegerLinkedArrayList;
 import org.junit.Test;
 
 import java.nio.ByteBuffer;

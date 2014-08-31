@@ -5,15 +5,15 @@ import io.logbase.collections.*;
 /**
  * Created by Kousik on 15/08/14
  */
-public class BooleanList implements BatchList<Boolean> {
+public class BitsetList implements BatchList<Boolean> {
   private int arrayIndex = 0;
   LBBitSet bits;
 
-  public BooleanList() {
+  public BitsetList() {
     this.bits = new NativeBitSet();
   }
 
-  public BooleanList(OffHeapBitSet bits, int size) {
+  public BitsetList(int size) {
     this.bits = new OffHeapBitSet(size);
   }
 
@@ -27,18 +27,18 @@ public class BooleanList implements BatchList<Boolean> {
   }
 
   @Override
-  public BatchIterator<Boolean> batchIterator(long maxIndex) {
-    return new BooleanListIterator(this);
+  public BatchListIterator<Boolean> iterator(long maxIndex) {
+    return new BitsetListIterator(this);
   }
 
   @Override
   public BatchListReader<Boolean> reader(long maxIndex) {
-    return new BooleanListReader(this, maxIndex);
+    return new BitsetListReader(this, maxIndex);
   }
 
   @Override
   public BatchListWriter<Boolean> writer() {
-    return new BooleanListWriter(this);
+    return new BitsetListWriter(this);
   }
 
 }

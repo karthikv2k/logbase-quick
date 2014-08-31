@@ -6,13 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.logbase.column.Column;
-import io.logbase.column.ColumnIterator;
 import io.logbase.utils.Utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class ListBackedColumnTest {
+public class ListBackedColumnTest {  /*
 
   static final Logger logger = LoggerFactory
       .getLogger(ListBackedColumnTest.class);
@@ -64,5 +63,5 @@ public class ListBackedColumnTest {
       }
       i++;
     }
-  }
+  }      */
 }

@@ -1,10 +1,5 @@
 package io.logbase.column.readonly;
 
-import io.logbase.collections.BatchIterator;
-import io.logbase.column.Column;
-import io.logbase.column.ColumnIterator;
-import io.logbase.column.appendonly.ListBackedColumn;
-import org.junit.Test;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 
@@ -13,7 +8,7 @@ import static junit.framework.Assert.assertTrue;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitpackIntegerColumnTest {
+public class BitpackIntegerColumnTest { /*
 
   public static ListBackedColumn createTestColumn() throws Exception {
     Integer[] values = { 1, 2, 3, 4, 5 };
@@ -67,7 +62,7 @@ public class BitpackIntegerColumnTest {
     System.out.println("readonly column read (row): " + (System.currentTimeMillis()-time));
 
     time = System.currentTimeMillis();
-    BatchIterator<Integer> valuesIt = colRO.getValuesIterator();
+    BatchListIterator<Integer> valuesIt = colRO.getValuesIterator();
     int[] holder = new int[1024];
     int cnt = 0;
     while(valuesIt.hasNext()){
@@ -76,5 +71,5 @@ public class BitpackIntegerColumnTest {
     System.out.println("readonly column read (batch): " + (System.currentTimeMillis()-time) + " " + cnt);
 
 
-  }
+  }  */
 }

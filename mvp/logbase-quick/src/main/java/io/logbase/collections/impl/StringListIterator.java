@@ -1,39 +1,25 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchIterator;
+import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.nativelists.IntListIterator;
 
 import java.nio.CharBuffer;
-import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringListIterator implements BatchIterator<CharBuffer> {
+public class StringListIterator implements BatchListIterator<CharBuffer> {
   private final CharBuffer stringBuffer;
-  private final BatchIterator<Integer> lengthIterator;
+  private final StringList list;
+  private IntListIterator lengthIterator;
   private int offset = 0;
+  private int[] lengthBuf;
 
-
-  public StringListIterator(StringListBuffer listBuffer){
-    this.stringBuffer = listBuffer.getReadBuffer();
-    lengthIterator = listBuffer.lengthList.batchIterator(listBuffer.lengthList.size());
-  }
-  @Override
-  public Iterator<CharBuffer> iterator() {
-    return this;
-  }
-
-  @Override
-  public void forEach(Consumer<? super CharBuffer> action) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public Spliterator<CharBuffer> spliterator() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+  public StringListIterator(StringList list) {
+    this.stringBuffer = list.getReadBuffer();
+    this.list = list;
+    reset();
   }
 
   @Override
@@ -42,34 +28,27 @@ public class StringListIterator implements BatchIterator<CharBuffer> {
   }
 
   @Override
-  public CharBuffer next() {
-    int length = lengthIterator.next();
-    offset += length;
-    return stringBuffer.subSequence(offset-length, offset);
+  public int next(Object buffer, int offset, int count) {
+    /*CharBuffer
+    int curCount = 0;
+    while(curCount<count){
+      lengthIterator
+      lengthIterator.nextPrimitive()
+      offset += length;
+    }
+    return stringBuffer.subSequence(offset-length, offset);*/
+    return -1;
   }
 
   @Override
-  public void remove() {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public void reset() {
+    lengthIterator = list.lengthList.primitiveIterator(list.lengthList.size());
+    lengthBuf = new int[lengthIterator.optimumBufferSize()];
   }
 
   @Override
-  public void forEachRemaining(Consumer<? super CharBuffer> action) {
-    //To change body of implemented methods use File | Settings | File Templates.
+  public Class getPrimitiveType() {
+    return CharBuffer.class;
   }
 
-  @Override
-  public int read(CharBuffer[] buffer, int offset, int count) {
-    return 0;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public boolean primitiveTypeSupport() {
-    return false;  //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public int readNative(Object buffer, int offset, int count) {
-    return -1;  //To change body of implemented methods use File | Settings | File Templates.
-  }
 }

@@ -1,18 +1,9 @@
 package io.logbase.querying.optiq;
 
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.List;
-
 import net.hydromatic.linq4j.expressions.Blocks;
 import net.hydromatic.linq4j.expressions.Expression;
 import net.hydromatic.linq4j.expressions.Expressions;
-import net.hydromatic.optiq.rules.java.EnumerableConvention;
-import net.hydromatic.optiq.rules.java.EnumerableRel;
-import net.hydromatic.optiq.rules.java.EnumerableRelImplementor;
-import net.hydromatic.optiq.rules.java.PhysType;
-import net.hydromatic.optiq.rules.java.PhysTypeImpl;
-
+import net.hydromatic.optiq.rules.java.*;
 import org.eigenbase.rel.RelNode;
 import org.eigenbase.rel.RelWriter;
 import org.eigenbase.rel.TableAccessRelBase;
@@ -26,8 +17,12 @@ import org.eigenbase.reltype.RelDataTypeField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.List;
+
 public class LBTableScan extends TableAccessRelBase implements
-    EnumerableRel {
+  EnumerableRel {
 
   static final Logger logger = LoggerFactory.getLogger(LBTableScan.class);
   final LBSmartTable lbSmartTable;
@@ -37,8 +32,8 @@ public class LBTableScan extends TableAccessRelBase implements
 
 
   protected LBTableScan(RelOptCluster cluster, RelOptTable table,
-      LBSmartTable lbSmartTable, List<String> projection, String filter,
-      String name) {
+                        LBSmartTable lbSmartTable, List<String> projection, String filter,
+                        String name) {
     super(cluster, cluster.traitSetOf(EnumerableConvention.INSTANCE), table);
     this.lbSmartTable = lbSmartTable;
     this.projection = projection;
@@ -52,7 +47,7 @@ public class LBTableScan extends TableAccessRelBase implements
     logger.debug("JavaBean table scan copy call received.");
     assert inputs.isEmpty();
     return new LBTableScan(getCluster(), table, lbSmartTable, projection,
-        filter, name);
+      filter, name);
   }
 
 
@@ -60,11 +55,10 @@ public class LBTableScan extends TableAccessRelBase implements
   public RelWriter explainTerms(RelWriter pw) {
     logger.debug("Table Scan explain terms call received.");
     return super.explainTerms(pw).item("projection", projection)
-        .item("filter", filter);
+      .item("filter", filter);
   }
 
 
-  
   @Override
   public RelDataType deriveRowType() {
     logger.debug("Table scan derive row type call received.");
@@ -72,9 +66,9 @@ public class LBTableScan extends TableAccessRelBase implements
       return table.getRowType();
     else {
       final List<RelDataTypeField> fieldList = table.getRowType()
-          .getFieldList();
+        .getFieldList();
       final RelDataTypeFactory.FieldInfoBuilder builder = getCluster()
-          .getTypeFactory().builder();
+        .getTypeFactory().builder();
       for (RelDataTypeField field : fieldList) {
         if (projection.contains(field.getName())) {
           logger.debug("Adding projected column: " + field.getName());
@@ -96,7 +90,6 @@ public class LBTableScan extends TableAccessRelBase implements
   }
 
 
-
   /**
    * This method is called when a Push down rule is fired and transformed. This
    * method specifies which method in LBSmartTable will be called and what
@@ -106,36 +99,35 @@ public class LBTableScan extends TableAccessRelBase implements
    */
   public Result implement(EnumerableRelImplementor implementor, Prefer pref) {
     PhysType physType = PhysTypeImpl.of(implementor.getTypeFactory(),
-        getRowType(), pref.preferCustom());
+      getRowType(), pref.preferCustom());
     logger.debug("Implement call received for scan: " + name);
     return implementor.result(physType, Blocks.toBlock(Expressions.call(
-        table.getExpression(LBSmartTable.class), "pushdown",
-        projection == null ? Expressions.constant(null)
-            : constantStringList(projection), Expressions.constant(filter))));
+      table.getExpression(LBSmartTable.class), "pushdown",
+      projection == null ? Expressions.constant(null)
+        : constantStringList(projection), Expressions.constant(filter))));
 
   }
 
   /**
    * Utility method to convert a List<String> to be passed down to LBSmartTable
    * pushdown method.
-   * 
-   * @param strings
-   *          List of strings to be converted to Expression.
+   *
+   * @param strings List of strings to be converted to Expression.
    * @return Expression required to be sent to pushdown method call.
    */
   private static Expression constantStringList(final List<String> strings) {
     return Expressions.call(Arrays.class, "asList",
-        Expressions.newArrayInit(Object.class, new AbstractList<Expression>() {
-          @Override
-          public Expression get(int index) {
-            return Expressions.constant(strings.get(index));
-          }
+      Expressions.newArrayInit(Object.class, new AbstractList<Expression>() {
+        @Override
+        public Expression get(int index) {
+          return Expressions.constant(strings.get(index));
+        }
 
-          @Override
-          public int size() {
-            return strings.size();
-          }
-        }));
+        @Override
+        public int size() {
+          return strings.size();
+        }
+      }));
   }
 
 }

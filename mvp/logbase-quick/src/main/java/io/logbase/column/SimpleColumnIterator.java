@@ -1,5 +1,7 @@
 package io.logbase.column;
 
+import io.logbase.collections.impl.IteratorWrapper;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,7 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class SimpleColumnIterator implements ColumnIterator<Object> {
+public class SimpleColumnIterator implements Iterator<Object>, Iterable<Object> {
   private final long maxRowNum;
   private long rowNum = 0;
   private final boolean hasArrays;
@@ -20,12 +22,12 @@ public class SimpleColumnIterator implements ColumnIterator<Object> {
 
   public SimpleColumnIterator(Column column, long maxRowNum) {
     this.maxRowNum = maxRowNum;
-    this.isPresentIterator = column.getIsPresentIterator();
-    this.valuesIterator = column.getValuesIterator();
-    this.hasArrays = column.getArrayCount()>0;
-    if(hasArrays){
-      this.arraySizeIterator = column.getArraySizeIterator();
-    }else{
+    this.isPresentIterator = new IteratorWrapper<Boolean>(column.getIsPresentIterator(maxRowNum));
+    this.valuesIterator = new IteratorWrapper<Object>(column.getValuesIterator(column.getValuesCount()));
+    this.hasArrays = column.getArrayCount() > 0;
+    if (hasArrays) {
+      this.arraySizeIterator = new IteratorWrapper<>(column.getArraySizeIterator(maxRowNum));
+    } else {
       this.arraySizeIterator = null;
     }
   }
@@ -74,18 +76,4 @@ public class SimpleColumnIterator implements ColumnIterator<Object> {
     throw new UnsupportedOperationException("Cant remove any item. Append only list.");
   }
 
-  @Override
-  public int read(Object[] buffer, int offset, int count) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public boolean primitiveTypeSupport() {
-    return false;
-  }
-
-  @Override
-  public int readNative(Object buffer, int offset, int count) {
-    throw new UnsupportedOperationException();
-  }
 }
