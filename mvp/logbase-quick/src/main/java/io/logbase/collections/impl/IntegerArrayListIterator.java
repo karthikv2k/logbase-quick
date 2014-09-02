@@ -46,10 +46,7 @@ public class IntegerArrayListIterator implements IntListIterator {
 
   @Override
   public boolean hasNext() {
-    // assuming buffers are non zero remaining items to read
-    return totalRead < maxIndex &&
-      // have any more blocks or current block has some items
-      (block<(blocks.length-1) || index<limit);
+    return remaining()>0;
   }
 
   @Override
