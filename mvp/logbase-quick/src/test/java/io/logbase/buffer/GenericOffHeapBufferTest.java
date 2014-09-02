@@ -15,9 +15,9 @@ import static org.junit.Assert.assertEquals;
  * User: karthik
  */
 public class GenericOffHeapBufferTest  extends AbstractBenchmark {
-  public static IntBuffer intBuffer = ByteBuffer.allocateDirect(1000*1000*100*4).asIntBuffer();
+  public static IntBuffer intBuffer = ByteBuffer.allocateDirect(1000*1000*1000*2).asIntBuffer();
   public static int temp;
-  public int[] rndData = (int[]) DataGen.genRndData(int.class, 1024*10);
+  public int[] rndData = (int[]) DataGen.genRndData(int.class, 1024*100);
   @BeforeClass
   public static void init(){
   }
@@ -40,7 +40,7 @@ public class GenericOffHeapBufferTest  extends AbstractBenchmark {
       intBuffer.put(rndData, 0, rndData.length);
       i+=rndData.length;
     }
-    System.out.println(i);
+    //System.out.println(i);
   }
 
   @Test
@@ -51,7 +51,18 @@ public class GenericOffHeapBufferTest  extends AbstractBenchmark {
       i = i + intBuffer.get();
       j++;
     }
-    System.out.println(i + " " + j);
+    //System.out.println(i + " " + j);
+  }
+
+  @Test
+  public void intBufferReadBatch() throws Exception {
+    intBuffer.rewind();
+    int i = 0, j=0;
+    while(intBuffer.hasRemaining()){
+      intBuffer.get(rndData, 0, Math.min(rndData.length,intBuffer.remaining()));
+      j++;
+    }
+    //System.out.println(i + " " + j);
   }
 
 }
