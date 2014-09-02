@@ -2,6 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.nativelists.IntListIterator;
 
+import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
@@ -34,18 +35,21 @@ public class IntegerArrayListIterator implements IntListIterator {
     this.list = list;
     size = list.size();
     this.maxIndex = Math.min(maxIndex, size);
-    reset();
+    rewind();
   }
 
   private void nextBlock() {
     block++;
     index = 0;
-    limit = blocks[block].capacity();
+    limit = blocks[block].remaining();
   }
 
   @Override
   public boolean hasNext() {
-    return totalRead < maxIndex;
+    // assuming buffers are non zero remaining items to read
+    return totalRead < maxIndex &&
+      // have any more blocks or current block has some items
+      (block<(blocks.length-1) || index<limit);
   }
 
   private long remaining(){
@@ -58,22 +62,35 @@ public class IntegerArrayListIterator implements IntListIterator {
     int curCnt = 0;
     int batchSize;
     while (curCnt < count) {
+      //read as much as possible in current buffer
       batchSize = Math.min((count - curCnt), limit - index);
-      blocks[block].get(buffer, offset + curCnt, batchSize);
+      try{
+        blocks[block].get(buffer, offset + curCnt, batchSize);
+      } catch (BufferUnderflowException e){
+        e.printStackTrace();
+        System.out.println("Error in writing to the buffer: input (offset, count) = " + offset +", " + count);
+      }
       index = index + batchSize;
       curCnt = curCnt + batchSize;
       totalRead = totalRead + batchSize;
       if (index >= limit) {
-        nextBlock();
+        if(hasNext()){
+          nextBlock();
+        }else{
+          break;
+        }
       }
     }
     return curCnt;
   }
 
   @Override
-  public void reset() {
+  public void rewind() {
     if (blocks.length != 0) {
-      limit = blocks[0].capacity();
+      for(IntBuffer buf : blocks){
+        buf.rewind();
+      }
+      limit = blocks[0].remaining();
     } else {
       limit = 0;
     }

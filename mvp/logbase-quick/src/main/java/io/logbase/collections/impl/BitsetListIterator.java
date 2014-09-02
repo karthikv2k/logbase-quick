@@ -50,7 +50,7 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
   }
 
   @Override
-  public void reset() {
+  public void rewind() {
     //To change body of implemented methods use File | Settings | File Templates.
   }
 

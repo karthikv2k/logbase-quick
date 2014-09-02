@@ -19,7 +19,7 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   public StringListIterator(StringList list) {
     this.stringBuffer = list.getReadBuffer();
     this.list = list;
-    reset();
+    rewind();
   }
 
   @Override
@@ -41,7 +41,7 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   }
 
   @Override
-  public void reset() {
+  public void rewind() {
     lengthIterator = list.lengthList.primitiveIterator(list.lengthList.size());
     lengthBuf = new int[lengthIterator.optimumBufferSize()];
   }

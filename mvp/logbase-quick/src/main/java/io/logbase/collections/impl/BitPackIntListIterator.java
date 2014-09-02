@@ -24,7 +24,7 @@ public class BitPackIntListIterator implements IntListIterator {
     this.listBuffer = listBuffer;
     this.longBuffer = listBuffer.readBuffer().asLongBuffer();
     this.maxIndex = Math.min(listBuffer.size(), maxIndex);
-    reset();
+    rewind();
   }
 
   @Override
@@ -73,7 +73,7 @@ public class BitPackIntListIterator implements IntListIterator {
   }
 
   @Override
-  public void reset() {
+  public void rewind() {
     arrayIndex = 0;
     totalReads = 0;
     bitIndex = 64;

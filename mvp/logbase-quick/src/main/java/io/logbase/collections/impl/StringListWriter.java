@@ -29,28 +29,18 @@ public class StringListWriter implements BatchListWriter<CharBuffer> {
 
   @Override
   public void add(Object values, int offset, int length) {
-    //To change body of implemented methods use File | Settings | File Templates.
-  }
-
-  @Override
-  public void add(CharBuffer value) {
-    lengthWriter.addPrimitive(value.length());
-    stringBuf.put(value);
-  }
-
-  @Override
-  public BatchListWriter<CharBuffer> addAll(BatchListIterator<CharBuffer> iterator) {
-    //To change body of implemented methods use File | Settings | File Templates.
-    return this;
-  }
-
-  public void addPrimitiveArray(Object values, int offset, int length) {
     checkArgument(values instanceof CharBuffer[], "values should be instance of CharBuffer[].");
     checkArgument(values != null, "values can't be null");
     CharBuffer[] valueArray = (CharBuffer[]) values;
     for (int i = 0; i < valueArray.length; i++) {
       add(valueArray[i]);
     }
+  }
+
+  @Override
+  public void add(CharBuffer value) {
+    lengthWriter.addPrimitive(value.length());
+    stringBuf.put(value);
   }
 
 }

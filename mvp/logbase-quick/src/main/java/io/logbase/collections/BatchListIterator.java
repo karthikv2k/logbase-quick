@@ -35,7 +35,7 @@ public interface BatchListIterator<E> {
   /**
    * Takes the pointer to the start.
    */
-  public void reset();
+  public void rewind();
 
   public Class getPrimitiveType();
 

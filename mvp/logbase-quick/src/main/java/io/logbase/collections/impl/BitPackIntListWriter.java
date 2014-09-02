@@ -87,12 +87,6 @@ public class BitPackIntListWriter implements IntListWriter {
     return isClosed;
   }
 
-  @Override
-  public BatchListWriter<Integer> addAll(BatchListIterator<Integer> iterator) {
-    ((IntListIterator) iterator).supplyTo(this);
-    return this;
-  }
-
   public BitPackIntList getBuffer() {
     return buffer;
   }

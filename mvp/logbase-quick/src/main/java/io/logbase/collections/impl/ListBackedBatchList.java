@@ -14,7 +14,12 @@ import java.util.List;
  * User: karthik
  */
 public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>, BatchListWriter<E> {
+  private final Class primitiveType;
   List<E> list = new ArrayList();
+
+  public ListBackedBatchList(Class primitiveType){
+    this.primitiveType = primitiveType;
+  }
 
   @Override
   public long size() {
@@ -23,7 +28,7 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
 
   @Override
   public BatchListIterator<E> iterator(long maxIndex) {
-    return new BatchListIteratorWrapper(list.iterator(), maxIndex, null);
+    return new BatchListIteratorWrapper(list.iterator(), maxIndex, primitiveType);
   }
 
   @Override
@@ -51,11 +56,6 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
   @Override
   public void add(E value) {
     list.add(value);
-  }
-
-  @Override
-  public BatchListWriter<E> addAll(BatchListIterator<E> iterator) {
-    throw new UnsupportedOperationException();
   }
 
   @Override

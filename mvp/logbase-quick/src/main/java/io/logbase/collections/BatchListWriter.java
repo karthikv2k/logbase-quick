@@ -1,5 +1,7 @@
 package io.logbase.collections;
 
+import java.lang.reflect.Array;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
@@ -27,7 +29,18 @@ public interface BatchListWriter<E> {
    *
    * @param iterator
    */
-  public BatchListWriter<E> addAll(BatchListIterator<E> iterator);
+  public default BatchListWriter<E> addAll(BatchListIterator<E> iterator){
+    int bufSize = iterator.optimumBufferSize();
+    Object buffer = Array.newInstance(iterator.getPrimitiveType(), bufSize);
+    int cnt;
+    while(iterator.hasNext()){
+      cnt = iterator.next(buffer, 0, bufSize);
+      if(cnt > 0){
+        add(buffer, 0, cnt);
+      }
+    }
+    return this;
+  }
 
   /**
    * Closing a list will make it immutable and prevent any future additions or modifications.

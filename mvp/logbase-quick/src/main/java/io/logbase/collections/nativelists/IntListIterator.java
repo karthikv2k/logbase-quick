@@ -59,7 +59,7 @@ public interface IntListIterator extends BatchListIterator<Integer> {
 
   @Override
   public default Class getPrimitiveType() {
-    return boolean.class;
+    return int.class;
   }
 
 }

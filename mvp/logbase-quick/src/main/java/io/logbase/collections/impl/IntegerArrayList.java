@@ -41,7 +41,7 @@ public class IntegerArrayList implements BatchList<Integer>, IntList {
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }
-    return tail;
+    return tail.duplicate();
   }
 
   public void incSize() {

@@ -37,7 +37,7 @@ public class BatchListIteratorWrapper<E> implements BatchListIterator<E> {
   }
 
   @Override
-  public void reset() {
+  public void rewind() {
     throw new UnsupportedOperationException();
   }
 

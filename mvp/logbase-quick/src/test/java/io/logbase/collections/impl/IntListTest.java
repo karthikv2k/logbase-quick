@@ -4,7 +4,6 @@ import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.IntListReader;
 import io.logbase.collections.nativelists.IntListWriter;
-import junit.framework.Test;
 
 import java.util.Arrays;
 
@@ -60,18 +59,20 @@ public class IntListTest {
     //iterator test
     long maxIndex = list.size()/4;
     IntListIterator it = list.primitiveIterator(maxIndex);
-    int[] buffer = new int[1024];
+    int[] buffer;
     long index;
 
     index = 0;
+    buffer = new int[1024];
     while(it.hasNext()){
       index += it.nextPrimitive(buffer, 0, buffer.length);
       assertEquals(Arrays.toString(testData),Arrays.toString(buffer));
     }
     assertEquals(maxIndex, index);
 
-    it.reset();
+    it.rewind();
     index = 0;
+    buffer = new int[1024];
     while(it.hasNext()){
       index += it.next(buffer, 0, buffer.length);
       assertEquals(Arrays.toString(testData),Arrays.toString(buffer));
@@ -81,14 +82,16 @@ public class IntListTest {
     maxIndex = list.size();
     it = list.primitiveIterator(maxIndex);
     index = 0;
+    buffer = new int[1024];
     while(it.hasNext()){
       index += it.nextPrimitive(buffer, 0, buffer.length);
       assertEquals(Arrays.toString(testData),Arrays.toString(buffer));
     }
     assertEquals(maxIndex, index);
 
-    it.reset();
+    it.rewind();
     index = 0;
+    buffer = new int[1024];
     while(it.hasNext()){
       index += it.next(buffer, 0, buffer.length);
       assertEquals(Arrays.toString(testData),Arrays.toString(buffer));

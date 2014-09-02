@@ -21,9 +21,9 @@ public class DataGen {
     double rnd = Math.random();
 
     if(type.equals(int.class)){
-      return (int)((rnd-0.5) * (Integer.MAX_VALUE - Integer.MIN_VALUE));
+      return (int)((rnd-0.5) * ((long)Integer.MAX_VALUE - Integer.MIN_VALUE));
     } else if(type.equals(long.class)){
-      return (long)((rnd-0.5) * (Long.MAX_VALUE - Long.MIN_VALUE));
+      return (long)((rnd-0.5) * ((Long.MAX_VALUE-1) - Long.MIN_VALUE));
     } else if(type.equals(boolean.class)){
       return rnd>0.5 ? true : false;
     } else if(type.equals(CharBuffer.class)){

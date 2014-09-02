@@ -54,20 +54,6 @@ public class BitsetListWriter implements BatchListWriter<Boolean> {
   }
 
   @Override
-  public BatchListWriter<Boolean> addAll(BatchListIterator<Boolean> iterator) {
-    boolean[] buffer = new boolean[1024];
-    int count;
-    while (iterator.hasNext()) {
-      count = iterator.next(buffer, 0, buffer.length);
-      if (count > 0) {
-        break;
-      }
-      write(buffer, 0, count);
-    }
-    return this;
-  }
-
-  @Override
   public boolean close() {
     isClosed = true;
     return isClosed;

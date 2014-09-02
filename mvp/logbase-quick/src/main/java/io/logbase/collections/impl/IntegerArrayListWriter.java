@@ -43,11 +43,6 @@ public class IntegerArrayListWriter implements IntListWriter {
   }
 
   @Override
-  public BatchListWriter<Integer> addAll(BatchListIterator<Integer> iterator) {
-    return this;
-  }
-
-  @Override
   public void addPrimitive(int[] buffer, int offset, int length) {
     //TBA optimize
     for (int i = 0; i < length; i++) {
