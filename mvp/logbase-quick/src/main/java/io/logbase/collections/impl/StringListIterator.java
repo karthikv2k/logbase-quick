@@ -5,6 +5,9 @@ import io.logbase.collections.nativelists.IntListIterator;
 
 import java.nio.CharBuffer;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
@@ -14,12 +17,23 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   private final StringList list;
   private IntListIterator lengthIterator;
   private int offset = 0;
-  private int[] lengthBuf;
+  private final int[] lengthBuf;
+  private final long maxIndex;
+  private long totalRead = 0;
+  private int totalOffset = 0;
 
-  public StringListIterator(StringList list) {
+  public StringListIterator(StringList list, long maxIndex) {
     this.stringBuffer = list.getReadBuffer();
     this.list = list;
+    this.maxIndex = Math.min(maxIndex, list.size());
+    lengthBuf = new int[lengthIterator.optimumBufferSize()];
     rewind();
+  }
+
+
+  @Override
+  public long remaining() {
+    return maxIndex-totalRead;
   }
 
   @Override
@@ -29,21 +43,27 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
 
   @Override
   public int next(Object buffer, int offset, int count) {
-    /*CharBuffer
-    int curCount = 0;
-    while(curCount<count){
-      lengthIterator
-      lengthIterator.nextPrimitive()
-      offset += length;
-    }
-    return stringBuffer.subSequence(offset-length, offset);*/
-    return -1;
+    checkNotNull(buffer, "Null buffer is not permitted");
+    checkArgument(buffer instanceof CharBuffer[], "buffer must be int[], found " + buffer.getClass().getSimpleName());
+    return nextPrimitive((CharBuffer[]) buffer, offset, count);
   }
 
-  @Override
+  public int nextPrimitive(CharBuffer[] buffer, int offset, int count) {
+    count = (int)Math.min(count, remaining());
+    int curCnt = 0;
+    while(curCnt < count){
+      int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(count-curCnt)));
+      for(int i=0; i<cnt; i++){
+        buffer[curCnt] = stringBuffer.subSequence(totalOffset, lengthBuf[i]);
+        curCnt++;
+      }
+    }
+    return curCnt;
+  }
+
+    @Override
   public void rewind() {
-    lengthIterator = list.lengthList.primitiveIterator(list.lengthList.size());
-    lengthBuf = new int[lengthIterator.optimumBufferSize()];
+    lengthIterator = list.lengthList.primitiveIterator(maxIndex);
   }
 
   @Override

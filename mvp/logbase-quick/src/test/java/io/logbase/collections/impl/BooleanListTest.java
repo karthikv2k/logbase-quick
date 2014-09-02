@@ -52,7 +52,7 @@ public class BooleanListTest {
     /*
      * Read using Iterator
      */
-    BitsetListIterator itr = new BitsetListIterator(list);
+    BitsetListIterator itr = new BitsetListIterator(list, list.size());
     time = System.currentTimeMillis();
     boolean[] holder = new boolean[1024 * 10];
     int cnt = 0;
@@ -64,7 +64,7 @@ public class BooleanListTest {
     assertTrue((totalReads + 1) == num);
     System.out.println("read: " + (System.currentTimeMillis() - time));
 
-    itr = new BitsetListIterator(list);
+    itr = new BitsetListIterator(list, list.size());
     cnt = 0;
     totalReads = 0;
     while (true) {

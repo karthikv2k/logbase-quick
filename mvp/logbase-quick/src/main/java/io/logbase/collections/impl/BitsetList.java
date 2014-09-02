@@ -28,7 +28,7 @@ public class BitsetList implements BatchList<Boolean> {
 
   @Override
   public BatchListIterator<Boolean> iterator(long maxIndex) {
-    return new BitsetListIterator(this);
+    return new BitsetListIterator(this, maxIndex);
   }
 
   @Override

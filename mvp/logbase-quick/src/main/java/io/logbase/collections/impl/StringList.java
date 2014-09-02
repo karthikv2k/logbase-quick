@@ -44,7 +44,7 @@ public class StringList implements BatchList<CharBuffer> {
 
   @Override
   public BatchListIterator<CharBuffer> iterator(long maxIndex) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new StringListIterator(this, maxIndex);
   }
 
   @Override
@@ -54,6 +54,6 @@ public class StringList implements BatchList<CharBuffer> {
 
   @Override
   public BatchListWriter<CharBuffer> writer() {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return new StringListWriter(this);
   }
 }

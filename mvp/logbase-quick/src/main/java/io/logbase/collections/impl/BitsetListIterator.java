@@ -9,32 +9,36 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created by Kousik on 15/08/14.
  */
 public class BitsetListIterator implements BatchListIterator<Boolean> {
+  private final long maxIndex;
   private BitsetList list;
   private int max_size;
-  private int arrayIndex;
-  private boolean[] localBuf = new boolean[10 * 1024];
-  private int localBufPos = 0;
-  private int localBufSize = 0;
+  private int totalRead = 0;
 
-  BitsetListIterator(BitsetList list) {
+  BitsetListIterator(BitsetList list, long maxIndex) {
     this.list = list;
     this.max_size = (int) list.size();
+    this.maxIndex = Math.min(max_size, maxIndex);
+  }
+
+  @Override
+  public long remaining() {
+    return maxIndex - totalRead;
   }
 
   private int readInternal(boolean[] out, int offset, int count) {
         /*
          * return -1 if there are not more elements to read from list.
          */
-    if (arrayIndex >= max_size) {
+    if (totalRead >= max_size) {
       return -1;
     }
 
     int idx;
     for (idx = offset;
-         arrayIndex < max_size && idx < offset + count;
-         idx++, arrayIndex++) {
+         totalRead < max_size && idx < offset + count;
+         idx++, totalRead++) {
 
-      out[offset + idx] = list.bits.get(arrayIndex);
+      out[offset + idx] = list.bits.get(totalRead);
     }
     return idx - offset;
   }
@@ -51,7 +55,7 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
 
   @Override
   public void rewind() {
-    //To change body of implemented methods use File | Settings | File Templates.
+    totalRead = 0;
   }
 
   @Override
@@ -61,7 +65,7 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
 
   @Override
   public boolean hasNext() {
-    return arrayIndex < max_size || localBufPos < localBufSize;
+    return remaining()>0;
   }
 
 }

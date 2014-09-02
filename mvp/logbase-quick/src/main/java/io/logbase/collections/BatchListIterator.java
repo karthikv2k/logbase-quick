@@ -37,6 +37,8 @@ public interface BatchListIterator<E> {
    */
   public void rewind();
 
+  public long remaining();
+
   public Class getPrimitiveType();
 
 }

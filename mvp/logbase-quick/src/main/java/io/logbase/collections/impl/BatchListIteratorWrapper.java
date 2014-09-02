@@ -42,6 +42,11 @@ public class BatchListIteratorWrapper<E> implements BatchListIterator<E> {
   }
 
   @Override
+  public long remaining() {
+    return -1;
+  }
+
+  @Override
   public Class getPrimitiveType() {
     return primitiveType;
   }

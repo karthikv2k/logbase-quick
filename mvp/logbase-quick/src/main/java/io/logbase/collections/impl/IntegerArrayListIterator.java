@@ -52,8 +52,9 @@ public class IntegerArrayListIterator implements IntListIterator {
       (block<(blocks.length-1) || index<limit);
   }
 
-  private long remaining(){
-    return maxIndex - totalRead;
+  @Override
+  public long remaining() {
+    return maxIndex-totalRead;
   }
 
   @Override

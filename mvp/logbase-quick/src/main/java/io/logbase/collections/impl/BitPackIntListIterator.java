@@ -16,7 +16,7 @@ public class BitPackIntListIterator implements IntListIterator {
   private final LongBuffer longBuffer;
   private int bitIndex; //index (1 indexed) where MSB of the input goes
   private int arrayIndex;
-  private long totalReads;
+  private long totalRead;
   private final long maxIndex;
 
 
@@ -35,7 +35,7 @@ public class BitPackIntListIterator implements IntListIterator {
     long cur1, cur2;
     long next;
     int i;
-    for (i = offset; totalReads < listBuffer.size() && i < offset + count; i++, totalReads++) {
+    for (i = offset; totalRead < listBuffer.size() && i < offset + count; i++, totalRead++) {
       cur = longBuffer.get(arrayIndex);
       if (bitIndex >= listBuffer.width) {
         cur1 = cur << (64 - bitIndex);
@@ -59,8 +59,9 @@ public class BitPackIntListIterator implements IntListIterator {
     return i - offset;
   }
 
-  private long remaining() {
-    return maxIndex-totalReads;
+  @Override
+  public long remaining() {
+    return maxIndex- totalRead;
   }
 
   @Override
@@ -75,13 +76,13 @@ public class BitPackIntListIterator implements IntListIterator {
   @Override
   public void rewind() {
     arrayIndex = 0;
-    totalReads = 0;
+    totalRead = 0;
     bitIndex = 64;
   }
 
   @Override
   public boolean hasNext() {
-    return totalReads < maxIndex;
+    return totalRead < maxIndex;
   }
 
 
