@@ -9,6 +9,7 @@ import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.IntListReader;
 import io.logbase.collections.nativelists.IntListWriter;
+import sun.misc.Unsafe;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
 public class IntegerArrayList implements BatchList<Integer>, IntList {
 
   private List<ByteBuffer> blocks = new ArrayList<>();
-  private int defaultBlockSize = 100*1000*1024;
+  private int defaultBlockSize = 1024;
   private long size = 0;
 
   public IntegerArrayList() {
