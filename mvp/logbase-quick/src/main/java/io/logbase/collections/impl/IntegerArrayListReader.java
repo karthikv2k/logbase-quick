@@ -2,6 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.nativelists.IntListReader;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 
@@ -13,9 +14,13 @@ public class IntegerArrayListReader implements IntListReader {
   private final IntBuffer[] blocks;
   private final long[] offset;
 
-  IntegerArrayListReader(List<IntBuffer> blocksList, long size) {
+  IntegerArrayListReader(List<ByteBuffer> blocksList, long size) {
     synchronized (blocksList) {
-      this.blocks = blocksList.toArray(new IntBuffer[0]);
+      blocks = new IntBuffer[blocksList.size()];
+      int i =0;
+      for(ByteBuffer item: blocksList){
+        blocks[i++] =  item.asIntBuffer();
+      }
     }
     offset = new long[blocks.length];
     long min;

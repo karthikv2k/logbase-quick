@@ -21,7 +21,7 @@ public class IntegerArrayListWriter implements IntListWriter {
 
   IntegerArrayListWriter(IntegerArrayList list) {
     this.list = list;
-    buf = list.addBlock();
+    buf = list.addBlock().asIntBuffer();
   }
 
   @Override
@@ -58,7 +58,7 @@ public class IntegerArrayListWriter implements IntListWriter {
   @Override
   public void addPrimitive(int value) {
     if (!buf.hasRemaining()) {
-      buf = list.addBlock();
+      buf = list.addBlock().asIntBuffer();
     }
     buf.put(value);
     list.incSize();

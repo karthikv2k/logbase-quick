@@ -1,5 +1,6 @@
 package io.logbase.collections.impl;
 
+import io.logbase.buffer.BufferFactory;
 import io.logbase.collections.BatchList;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
@@ -10,7 +11,6 @@ import io.logbase.collections.nativelists.IntListReader;
 import io.logbase.collections.nativelists.IntListWriter;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class IntegerArrayList implements BatchList<Integer>, IntList {
 
-  private List<IntBuffer> blocks = new ArrayList<>();
+  private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 100*1000*1024;
   private long size = 0;
 
@@ -31,12 +31,12 @@ public class IntegerArrayList implements BatchList<Integer>, IntList {
     this.defaultBlockSize = defaultBlockSize;
   }
 
-  public IntBuffer addBlock() {
+  public ByteBuffer addBlock() {
     return addBlock(defaultBlockSize);
   }
 
-  public IntBuffer addBlock(int blockSize) {
-    IntBuffer tail = ByteBuffer.allocateDirect(blockSize * (Integer.SIZE / 8)).asIntBuffer();
+  public ByteBuffer addBlock(int blockSize) {
+    ByteBuffer tail = BufferFactory.newBufWithIntCapacity(blockSize);
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }

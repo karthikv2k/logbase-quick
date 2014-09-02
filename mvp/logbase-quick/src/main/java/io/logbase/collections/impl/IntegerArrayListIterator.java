@@ -2,6 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.nativelists.IntListIterator;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
 
@@ -22,9 +23,13 @@ public class IntegerArrayListIterator implements IntListIterator {
   private final long maxIndex;
   private final long size;
 
-  IntegerArrayListIterator(IntegerArrayList list, List<IntBuffer> blocksList, long maxIndex) {
+  IntegerArrayListIterator(IntegerArrayList list, List<ByteBuffer> blocksList, long maxIndex) {
     synchronized (blocksList) {
-      blocks = blocksList.toArray(new IntBuffer[0]);
+      blocks = new IntBuffer[blocksList.size()];
+      int i =0;
+      for(ByteBuffer item: blocksList){
+        blocks[i++] =  item.asIntBuffer();
+      }
     }
     this.list = list;
     size = list.size();

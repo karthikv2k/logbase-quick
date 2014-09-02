@@ -1,5 +1,6 @@
 package io.logbase.collections.impl;
 
+import io.logbase.buffer.BufferFactory;
 import io.logbase.collections.BatchList;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
@@ -15,7 +16,7 @@ import java.util.IntSummaryStatistics;
  * User: karthik
  */
 public class StringList implements BatchList<CharBuffer> {
-  private final CharBuffer stringBuf;
+  private final ByteBuffer stringBuf;
   public final IntList lengthList;
 
   public StringList(IntSummaryStatistics stats) {
@@ -24,16 +25,16 @@ public class StringList implements BatchList<CharBuffer> {
 
   public StringList(int min, int max, long count, long sum) {
     //tba remove (int)
-    stringBuf = ByteBuffer.allocateDirect((int) sum * 2).asCharBuffer();
+    stringBuf = BufferFactory.newBufWithCharCapacity((int) sum);
     lengthList = new BitPackIntList(min, max, count);
   }
 
   public CharBuffer getWriteBuffer() {
-    return stringBuf.duplicate();
+    return stringBuf.duplicate().asCharBuffer();
   }
 
   public CharBuffer getReadBuffer() {
-    return stringBuf.asReadOnlyBuffer();
+    return stringBuf.asReadOnlyBuffer().asCharBuffer();
   }
 
   @Override

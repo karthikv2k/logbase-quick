@@ -1,5 +1,6 @@
 package io.logbase.collections.impl;
 
+import io.logbase.buffer.BufferFactory;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
@@ -36,7 +37,7 @@ public class BitPackIntList implements IntList {
     this.width = getWidthFromMaxInt(maxValue - minValue);
     this.listSize = listSize;
     int arraySize = (int) Math.ceil(((double) (listSize * width)) / 64) + 1;
-    buf = ByteBuffer.allocateDirect(arraySize * (Long.SIZE / 8));
+    buf = BufferFactory.newBufWithLongCapacity(arraySize);
   }
 
   public BitPackIntList(BatchListIterator<Integer> source) {
