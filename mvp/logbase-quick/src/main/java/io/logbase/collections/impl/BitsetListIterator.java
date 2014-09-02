@@ -16,15 +16,17 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
   private int localBufPos = 0;
   private int localBufSize = 0;
 
-  BitsetListIterator(BitsetList list) {
+  BitsetListIterator(BitsetList list, long max_index) {
+    checkArgument(max_index <= list.size(), "Index is out of bounds");
     this.list = list;
-    this.max_size = (int) list.size();
+    this.max_size = (int) max_index;
   }
 
   private int readInternal(boolean[] out, int offset, int count) {
-        /*
-         * return -1 if there are not more elements to read from list.
-         */
+    /*
+     * return -1 if there are not more elements to read from list.
+     */
+
     if (arrayIndex >= max_size) {
       return -1;
     }
@@ -51,7 +53,8 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
 
   @Override
   public void rewind() {
-    //To change body of implemented methods use File | Settings | File Templates.
+    arrayIndex = 0;
+
   }
 
   @Override
