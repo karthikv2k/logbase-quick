@@ -11,13 +11,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class BitsetListIterator implements BatchListIterator<Boolean> {
   private final long maxIndex;
   private BitsetList list;
-  private int max_size;
+  private int maxSize;
   private int totalRead = 0;
 
   BitsetListIterator(BitsetList list, long maxIndex) {
     this.list = list;
-    this.max_size = (int) list.size();
-    this.maxIndex = Math.min(max_size, maxIndex);
+    this.maxSize = (int) list.size();
+    this.maxIndex = Math.min(maxSize, maxIndex);
   }
 
   @Override
@@ -29,13 +29,13 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
         /*
          * return -1 if there are not more elements to read from list.
          */
-    if (totalRead >= max_size) {
+    if (totalRead >= maxSize) {
       return -1;
     }
 
     int idx;
     for (idx = offset;
-         totalRead < max_size && idx < offset + count;
+         totalRead < maxSize && idx < offset + count;
          idx++, totalRead++) {
 
       out[offset + idx] = list.bits.get(totalRead);
