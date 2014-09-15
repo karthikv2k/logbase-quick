@@ -46,7 +46,7 @@ public class SimpleColumnIterator implements Iterator<Object>, Iterable<Object> 
   public Object next() {
     checkArgument(hasNext(), "Check hashNext() before calling next().");
     rowNum++;
-    if (!isPresentIterator.next()) {
+    if (!(isPresentIterator.hasNext() && isPresentIterator.next())) {
       return null;
     } else {
       if (hasArrays) {

@@ -134,7 +134,11 @@ public class AppendOnlyColumn<E> implements Column<E> {
 
   @Override
   public int getArrayCount() {
-    return arrayIdx.length;
+    if (arrayIdx == null) {
+      return 0;
+    } else {
+      return arrayIdx.length;
+    }
   }
 
   @Override

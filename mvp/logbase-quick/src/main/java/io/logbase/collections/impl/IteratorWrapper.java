@@ -30,7 +30,7 @@ public class IteratorWrapper<E> implements Iterator<E> {
   @Override
   public E next() {
     if (index < limit) {
-      return (E) Array.get(buffer, index);
+      return (E) Array.get(buffer, index++);
     } else {
       limit = batchIterator.next(buffer, 0, bufferSize);
       return next();
