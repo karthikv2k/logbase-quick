@@ -65,8 +65,11 @@ public class SimpleColumnIterator implements Iterator<Object>, Iterable<Object> 
           return values.toArray();
         }
       } else {
-        Object value = TypeUtils.castToSQL(valuesIterator.next());
-        return value;
+        if (valuesIterator.hasNext()) {
+          Object value = TypeUtils.castToSQL(valuesIterator.next());
+          return value;
+        }
+        return null;
       }
     }
   }

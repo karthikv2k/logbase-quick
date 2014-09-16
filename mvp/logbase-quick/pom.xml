@@ -96,27 +96,5 @@
 			<artifactId>optiq-core</artifactId>
 			<version>0.8</version>
 		</dependency>
-        <!-- benchmark library dependencies -->
-        <dependency>
-            <groupId>bb</groupId>
-            <artifactId>bb</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${basedir}/src/lib/bb.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>jsci-core</groupId>
-            <artifactId>jsci-core</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${basedir}/src/lib/jsci-core.jar</systemPath>
-        </dependency>
-        <dependency>
-            <groupId>mt-13</groupId>
-            <artifactId>mt-13</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${basedir}/src/lib/mt-13.jar</systemPath>
-        </dependency>
 	</dependencies>
 </project>

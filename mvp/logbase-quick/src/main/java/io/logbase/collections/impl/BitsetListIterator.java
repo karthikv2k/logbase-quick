@@ -29,13 +29,13 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
         /*
          * return -1 if there are not more elements to read from list.
          */
-    if (totalRead >= maxSize) {
+    if (totalRead >= maxIndex) {
       return -1;
     }
 
     int idx;
     for (idx = offset;
-         totalRead < maxSize && idx < offset + count;
+         totalRead < maxIndex && idx < offset + count;
          idx++, totalRead++) {
 
       out[offset + idx] = list.bits.get(totalRead);

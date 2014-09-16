@@ -32,7 +32,10 @@ public class IteratorWrapper<E> implements Iterator<E> {
     if (index < limit) {
       return (E) Array.get(buffer, index++);
     } else {
+      // Re-init local index
+      index = 0;
       limit = batchIterator.next(buffer, 0, bufferSize);
+      assert(limit > 0);
       return next();
     }
   }

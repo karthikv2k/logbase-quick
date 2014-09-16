@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
  * User: karthik
  */
 public class GenericOffHeapBufferTest  extends AbstractBenchmark {
-  public static IntBuffer intBuffer = ByteBuffer.allocateDirect(1000*1000*1000*2).asIntBuffer();
+  public static IntBuffer intBuffer = ByteBuffer.allocateDirect(1000*1000*1000*1).asIntBuffer();
   public static int temp;
   public int[] rndData = (int[]) DataGen.genRndData(int.class, 1024*100);
   @BeforeClass

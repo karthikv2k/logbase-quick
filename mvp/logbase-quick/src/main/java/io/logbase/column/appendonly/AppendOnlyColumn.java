@@ -91,7 +91,7 @@ public class AppendOnlyColumn<E> implements Column<E> {
     valuesWriter.add(value);
 
     //close any previously opened row
-    if (rowNum != maxRowNum && maxRowNum >= 0) {
+    if (rowNum != maxRowNum && maxRowNum > 0) {
       arraySizeWriter.addPrimitive(maxRowArraySize);
       maxRowArraySize = 0;
     }
