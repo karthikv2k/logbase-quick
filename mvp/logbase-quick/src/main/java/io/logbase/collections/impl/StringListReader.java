@@ -25,18 +25,12 @@ public class StringListReader implements BatchListReader<CharBuffer> {
 
     int cnt;
     int prev = 0;
-    int start = 1;
+    int start = 0;
     int bufSize = lengthIterator.optimumBufferSize();
-    int end = bufSize;
     while(lengthIterator.hasNext()){
-      cnt = lengthIterator.nextPrimitive(offset, start, end);
-      if(cnt>0){
-        for(int i=start; i<cnt; i++){
-          offset[i] += offset[i-1];
-        }
-        start += cnt;
-        end = start + bufSize;
-      }
+      cnt = lengthIterator.nextPrimitive(offset, start, bufSize);
+      start += cnt;
+      bufSize = Integer.min(lengthIterator.optimumBufferSize(), (int) lengthIterator.remaining());
     }
   }
 

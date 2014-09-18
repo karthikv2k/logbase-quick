@@ -29,13 +29,14 @@ public class BitPackIntListIterator implements IntListIterator {
 
   @Override
   public int nextPrimitive(int[] out, int offset, int count) {
+    assert(out.length >= (offset + count));
     count = (int) Math.min(count, remaining());
 
     long cur;
     long cur1, cur2;
     long next;
     int i;
-    for (i = offset; totalRead < listBuffer.size() && i < offset + count; i++, totalRead++) {
+    for (i = 0; totalRead < listBuffer.size() && i < count; i++, totalRead++) {
       cur = longBuffer.get(arrayIndex);
       if (bitIndex >= listBuffer.width) {
         cur1 = cur << (64 - bitIndex);
@@ -56,7 +57,7 @@ public class BitPackIntListIterator implements IntListIterator {
       }
       out[offset + i] = (int) cur2 + listBuffer.minValue;
     }
-    return i - offset;
+    return i;
   }
 
   @Override

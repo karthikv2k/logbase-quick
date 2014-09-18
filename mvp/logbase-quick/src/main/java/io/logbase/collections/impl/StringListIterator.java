@@ -2,6 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.nativelists.IntListIterator;
+import io.logbase.utils.Filter;
 
 import java.nio.CharBuffer;
 
@@ -21,15 +22,26 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   private final long maxIndex;
   private long totalRead = 0;
   private int totalOffset = 0;
+  private Filter<String> filter = null;
 
   public StringListIterator(StringList list, long maxIndex) {
     this.stringBuffer = list.getReadBuffer();
     this.list = list;
     this.maxIndex = Math.min(maxIndex, list.size());
+    this.lengthIterator = list.lengthList.primitiveIterator(maxIndex);
     lengthBuf = new int[lengthIterator.optimumBufferSize()];
     rewind();
   }
 
+  public StringListIterator(StringList list, long maxIndex, Filter<String> filter) {
+    this.stringBuffer = list.getReadBuffer();
+    this.list = list;
+    this.maxIndex = Math.min(maxIndex, list.size());
+    this.lengthIterator = list.lengthList.primitiveIterator(maxIndex);
+    lengthBuf = new int[lengthIterator.optimumBufferSize()];
+    this.filter = filter;
+    rewind();
+  }
 
   @Override
   public long remaining() {
@@ -48,22 +60,44 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
     return nextPrimitive((CharBuffer[]) buffer, offset, count);
   }
 
-  public int nextPrimitive(CharBuffer[] buffer, int offset, int count) {
-    count = (int)Math.min(count, remaining());
+  public int nextPrimitive(CharBuffer[] buffer, int offset, int bufferLimit) {
+    bufferLimit = (int)Math.min(bufferLimit, remaining());
     int curCnt = 0;
-    while(curCnt < count){
-      int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(count-curCnt)));
+    int start = 0, end = 0;
+    while(curCnt < bufferLimit){
+      int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(bufferLimit-curCnt)));
+
+      /*
+       * If we don't have any more entries to read, then return
+       */
+      if (cnt ==0) {
+        return curCnt;
+      }
+
       for(int i=0; i<cnt; i++){
-        buffer[offset+curCnt] = stringBuffer.subSequence(totalOffset, lengthBuf[i]);
+        /*
+         * If a filter is initialised, return only the matched content.
+         */
+        start = totalOffset;
+        end = totalOffset + lengthBuf[i];
+        if (filter!=null &&
+          !filter.accept(stringBuffer.subSequence(start, end).toString())) {
+          totalOffset+=lengthBuf[i];
+          continue;
+        }
+
+        buffer[offset+curCnt] = stringBuffer.subSequence(start, end);
+        totalOffset+=lengthBuf[i];
         curCnt++;
       }
     }
     return curCnt;
   }
 
-    @Override
+  @Override
   public void rewind() {
     lengthIterator = list.lengthList.primitiveIterator(maxIndex);
+    totalOffset = 0;
   }
 
   @Override

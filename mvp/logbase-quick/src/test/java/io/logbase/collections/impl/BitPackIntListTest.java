@@ -26,7 +26,7 @@ public class BitPackIntListTest implements BatchListFactory<Integer> {
 
   @Test
   public void testList(){
-    IntListTest tester = new IntListTest(this, testData);
+    IntListTestSuite tester = new IntListTestSuite(this, testData);
     tester.testList();
   }
 

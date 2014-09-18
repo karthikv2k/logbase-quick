@@ -14,11 +14,11 @@ import static junit.framework.Assert.assertEquals;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class IntListTest {
+public class IntListTestSuite {
   private final BatchListFactory<Integer> factory;
   private final int[] testData;
 
-  IntListTest(BatchListFactory<Integer> factory, int[] testData){
+  IntListTestSuite(BatchListFactory<Integer> factory, int[] testData){
     this.factory = factory;
     this.testData = testData;
   }
