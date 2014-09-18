@@ -26,21 +26,23 @@ public class StringListReader implements BatchListReader<CharBuffer> {
     int cnt;
     int prev = 0;
     int start = 1;
-    int end = lengthIterator.optimumBufferSize();
+    int bufSize = lengthIterator.optimumBufferSize();
+    int end = bufSize;
     while(lengthIterator.hasNext()){
       cnt = lengthIterator.nextPrimitive(offset, start, end);
       if(cnt>0){
+        for(int i=start; i<cnt; i++){
+          offset[i] += offset[i-1];
+        }
         start += cnt;
-        end += end;
-        for()
+        end = start + bufSize;
       }
     }
-    offsetReader = offsetList.primitiveReader(offsetList.size());
   }
 
   @Override
   public CharBuffer get(long index) {
-    return
+    return stringBuf.subSequence(offset[(int)index], offset[(int)index]);
   }
 
 }

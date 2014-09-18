@@ -54,7 +54,7 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
     while(curCnt < count){
       int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(count-curCnt)));
       for(int i=0; i<cnt; i++){
-        buffer[curCnt] = stringBuffer.subSequence(totalOffset, lengthBuf[i]);
+        buffer[offset+curCnt] = stringBuffer.subSequence(totalOffset, lengthBuf[i]);
         curCnt++;
       }
     }

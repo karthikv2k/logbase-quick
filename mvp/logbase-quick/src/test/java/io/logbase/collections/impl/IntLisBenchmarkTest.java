@@ -21,8 +21,8 @@ public class IntLisBenchmarkTest extends AbstractBenchmark {
 
   public IntLisBenchmarkTest(){
     IntList list = new IntegerArrayList();
-    int[] testData = (int[]) DataGen.genRndData(int.class, GlobalConfig.DEFAULT_READ_BUFFER_SIZE*10);
-    init(list.primitiveWriter(), testData, 1000*10);
+    int[] testData = (int[]) DataGen.genRndData(int.class, GlobalConfig.DEFAULT_READ_BUFFER_SIZE);
+    init(list.primitiveWriter(), testData, 1000);
   }
 
   private void init(IntListWriter writer, int[] testData, int iterations){
