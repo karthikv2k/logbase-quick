@@ -63,33 +63,15 @@ public class StringListTestSuite {
     /*
      * Reader test - read random entries from the list and verify the content
      */
-    IntListIterator lengthIterator = (IntListIterator)list.lengthList.iterator(list.size() - 1);
+    IntListIterator lengthIterator = (IntListIterator)list.lengthList.iterator(list.size());
     CharBuffer readBuffer = list.getReadBuffer();
     StringListReader reader = new StringListReader(readBuffer, lengthIterator);
     iter = DataGen.randomInt(0, (int)list.size() - 1);
-    while(iter<=0) {
+    while(iter>=0) {
       long index = DataGen.randomInt(0, (int)list.size()-1);
       buf[0] = reader.get(index);
       assert(testData[(int)index].equals(buf[0].toString()));
       iter--;
     }
-
-
-    /*
-     * Iterator test - With filters. Match for entries which has numbers
-     * TODO - Add more test cases
-     */
-    Filter<String> filter =  new RegexFilter("(.*)\\d(.*)");
-    StringListIterator itr = new StringListIterator(list, list.size(), filter);
-
-    count=0;
-
-    while(itr.hasNext()){
-      count = itr.next(buffer, 0, (int)list.size());
-      for (int i=0; i<count; i++) {
-        assert(buffer[i].toString().matches("(.*)\\d(.*)"));
-      }
-    }
-
   }
 }

@@ -21,22 +21,27 @@ public class StringListReader implements BatchListReader<CharBuffer> {
 
     IntList offsetList = new IntegerArrayList();
     IntListWriter writer = offsetList.primitiveWriter();
-    offset = new int[(int) lengthIterator.remaining()];
+    offset = new int[(int) lengthIterator.remaining() + 1];
+    System.out.println("Size : " + offset.length);
 
     int cnt;
-    int prev = 0;
-    int start = 0;
+    int start = 1;
     int bufSize = lengthIterator.optimumBufferSize();
     while(lengthIterator.hasNext()){
       cnt = lengthIterator.nextPrimitive(offset, start, bufSize);
-      start += cnt;
-      bufSize = Integer.min(lengthIterator.optimumBufferSize(), (int) lengthIterator.remaining());
+      if(cnt>0){
+        for(int i=start; i< (start+cnt); i++){
+          offset[i] += offset[i-1];
+        }
+        start += cnt;
+        bufSize = Integer.min(lengthIterator.optimumBufferSize(), (int) lengthIterator.remaining());
+      }
     }
   }
 
   @Override
   public CharBuffer get(long index) {
-    return stringBuf.subSequence(offset[(int)index], offset[(int)index]);
+    return stringBuf.subSequence(offset[(int)index], offset[(int)index + 1]);
   }
 
 }

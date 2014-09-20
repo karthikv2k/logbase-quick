@@ -22,7 +22,6 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   private final long maxIndex;
   private long totalRead = 0;
   private int totalOffset = 0;
-  private Filter<String> filter = null;
 
   public StringListIterator(StringList list, long maxIndex) {
     this.stringBuffer = list.getReadBuffer();
@@ -30,16 +29,6 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
     this.maxIndex = Math.min(maxIndex, list.size());
     this.lengthIterator = list.lengthList.primitiveIterator(maxIndex);
     lengthBuf = new int[lengthIterator.optimumBufferSize()];
-    rewind();
-  }
-
-  public StringListIterator(StringList list, long maxIndex, Filter<String> filter) {
-    this.stringBuffer = list.getReadBuffer();
-    this.list = list;
-    this.maxIndex = Math.min(maxIndex, list.size());
-    this.lengthIterator = list.lengthList.primitiveIterator(maxIndex);
-    lengthBuf = new int[lengthIterator.optimumBufferSize()];
-    this.filter = filter;
     rewind();
   }
 
@@ -63,7 +52,6 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   public int nextPrimitive(CharBuffer[] buffer, int offset, int bufferLimit) {
     bufferLimit = (int)Math.min(bufferLimit, remaining());
     int curCnt = 0;
-    int start = 0, end = 0;
     while(curCnt < bufferLimit){
       int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(bufferLimit-curCnt)));
 
@@ -75,18 +63,7 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
       }
 
       for(int i=0; i<cnt; i++){
-        /*
-         * If a filter is initialised, return only the matched content.
-         */
-        start = totalOffset;
-        end = totalOffset + lengthBuf[i];
-        if (filter!=null &&
-          !filter.accept(stringBuffer.subSequence(start, end).toString())) {
-          totalOffset+=lengthBuf[i];
-          continue;
-        }
-
-        buffer[offset+curCnt] = stringBuffer.subSequence(start, end);
+        buffer[offset+curCnt] = stringBuffer.subSequence(totalOffset, totalOffset + lengthBuf[i]);
         totalOffset+=lengthBuf[i];
         curCnt++;
       }
