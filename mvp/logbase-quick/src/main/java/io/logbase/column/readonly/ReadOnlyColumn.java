@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public abstract class AbstractROColumn<E> implements Column<E> {
+public class ReadOnlyColumn<E> implements Column<E> {
 
   protected final String columnName;
   protected final int arrayCount;
@@ -27,17 +27,22 @@ public abstract class AbstractROColumn<E> implements Column<E> {
   protected final BatchList<Boolean> isPresent;
   protected final IntList arraySize;
   protected final IntList[] arrayIdx;
+  protected final BatchList<E> values;
 
-  AbstractROColumn(Column<E> column) {
+  ReadOnlyColumn(Column<E> column, BatchList<E> values) {
+
+    this.values = values;
     this.columnName = column.getColumnName();
     this.arrayCount = column.getArrayCount();
     this.startRowNum = column.getStartRowNum();
 
+    //converting isPresent component
     isPresent = new BitsetList((int) column.getRowCount()); //TBA avoid int conversion
     BatchListWriter<Boolean> booleanWriter = isPresent.writer();
     booleanWriter.addAll(column.getIsPresentIterator(isPresent.size()));
     booleanWriter.close();
 
+    //converting array size component
     if (arrayCount > 0) {
       arraySize = new BitPackIntList(column.getArraySizeIterator(column.getValidRowCount()));
       IntListWriter arraySizeWriter = arraySize.primitiveWriter();
@@ -47,6 +52,7 @@ public abstract class AbstractROColumn<E> implements Column<E> {
       arraySize = null;
     }
 
+    //converting array index component
     if (arrayCount > 0) {
       arrayIdx = new IntList[arrayCount];
       for (int i = 0; i < arrayIdx.length; i++) {
@@ -58,6 +64,12 @@ public abstract class AbstractROColumn<E> implements Column<E> {
     } else {
       arrayIdx = null;
     }
+
+    //converting values component
+    BatchListWriter<E> writer = values.writer();
+    writer.addAll(column.getValuesIterator(column.getValuesCount()));
+    writer.close();
+
   }
 
   @Override
@@ -71,7 +83,9 @@ public abstract class AbstractROColumn<E> implements Column<E> {
   }
 
   @Override
-  public abstract Class getColumnType();
+  public Class getColumnType(){
+    throw new UnsupportedOperationException(); //TBD
+  }
 
   @Override
   public void append(E value, long rowNum) {
@@ -94,7 +108,9 @@ public abstract class AbstractROColumn<E> implements Column<E> {
   }
 
   @Override
-  public abstract long getValuesCount();
+  public long getValuesCount(){
+    return values.size();
+  }
 
   @Override
   public int getArrayCount() {
@@ -112,7 +128,9 @@ public abstract class AbstractROColumn<E> implements Column<E> {
   }
 
   @Override
-  public abstract BatchListIterator<E> getValuesIterator(long maxRowNum);
+  public BatchListIterator<E> getValuesIterator(long maxRowNum){
+    return values.iterator(maxRowNum);
+  }
 
   @Override
   public IntListIterator getArraySizeIterator(long maxRowNum) {

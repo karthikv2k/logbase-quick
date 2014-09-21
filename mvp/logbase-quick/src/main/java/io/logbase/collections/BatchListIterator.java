@@ -8,7 +8,9 @@ import io.logbase.utils.GlobalConfig;
  */
 public interface BatchListIterator<E> {
 
-  public abstract boolean hasNext();
+  public default boolean hasNext(){
+    return remaining()>0;
+  }
 
   /**
    * Reads up to rows values of data from the column into the buffer array. An attempt is made to read as many as

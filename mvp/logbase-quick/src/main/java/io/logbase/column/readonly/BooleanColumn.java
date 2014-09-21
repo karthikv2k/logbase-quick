@@ -11,14 +11,14 @@ import java.util.Iterator;
 /**
  * Created by Kousik on 23/08/14.
  */
-public class BooleanColumn extends AbstractROColumn<Boolean> {
+public class BooleanColumn extends ReadOnlyColumn<Boolean> {
   private final BatchList<Boolean> values;
 
   /*
    * By default choose BitsetList which uses BitSet
    */
   public BooleanColumn(Column<Boolean> column) {
-    super(column);
+    super(column, null);
     values = new BitsetList();
     values.writer().addAll(column.getValuesIterator(column.getValuesCount())).close();
   }

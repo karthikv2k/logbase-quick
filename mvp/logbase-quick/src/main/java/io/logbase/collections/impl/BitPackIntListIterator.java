@@ -81,10 +81,5 @@ public class BitPackIntListIterator implements IntListIterator {
     bitIndex = 64;
   }
 
-  @Override
-  public boolean hasNext() {
-    return totalRead < maxIndex;
-  }
-
 
 }

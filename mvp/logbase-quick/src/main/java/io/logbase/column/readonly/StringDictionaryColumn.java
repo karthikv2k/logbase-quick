@@ -20,12 +20,12 @@ import java.util.Map;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringDictionaryColumn extends AbstractROColumn<CharBuffer> {
+public class StringDictionaryColumn extends ReadOnlyColumn<CharBuffer> {
   private final BatchList<CharBuffer> dict;
   private final IntList indexList;
 
   StringDictionaryColumn(Column<CharBuffer> column) {
-    super(column);
+    super(column, null);
     BatchListIterator<CharBuffer> iterator = column.getValuesIterator(column.getValuesCount());
     Map<CharBuffer, Integer> uniqValues = new HashMap<CharBuffer, Integer>();
     IntSummaryStatistics stats = new IntSummaryStatistics();

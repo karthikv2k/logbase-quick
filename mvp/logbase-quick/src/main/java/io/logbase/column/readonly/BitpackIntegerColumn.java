@@ -14,11 +14,11 @@ import java.util.Iterator;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class BitpackIntegerColumn extends AbstractROColumn<Integer> {
+public class BitpackIntegerColumn extends ReadOnlyColumn<Integer> {
   private final IntList values;
 
   public BitpackIntegerColumn(Column<Integer> column) {
-    super(column);
+    super(column, null);
     values = new BitPackIntList(column.getValuesIterator(column.getValuesCount()));
     IntListWriter valuesWriter = values.primitiveWriter();
     ((IntListIterator) column.getValuesIterator(column.getValuesCount())).supplyTo(valuesWriter);
