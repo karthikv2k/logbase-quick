@@ -5,8 +5,10 @@ import static org.junit.Assert.*;
 import com.google.common.base.Predicates;
 import com.google.common.base.Predicate;
 
+import io.logbase.column.Column;
 import io.logbase.consumer.EventConsumer;
 import io.logbase.consumer.impl.TwitterFileConsumer;
+import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.view.View;
 import io.logbase.event.JSONEvent;
@@ -19,6 +21,7 @@ import io.logbase.querying.optiq.LBSchema;
 import io.logbase.querying.optiq.QueryExecutor;
 import io.logbase.utils.InFilter;
 
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -38,23 +41,20 @@ import java.util.List;
  */
 public class TwitterFileSampleTest {
 
+  private Node node;
+  private View view;
+
   static final Logger logger = LoggerFactory
       .getLogger(TwitterFileSampleTest.class);
 
-  /**
-   * Test case without query push down
-   */
-  @Test
-  public void testTwitterFileSample() {
-
-    logger.info("Running a Twitter File sample...");
-
+  @Before
+  public void init() {
     // Step 1: Create a local Realtime Node
     NodeConnector nodeConnector = new SimpleRealtimeNodeConnector();
-    Node node = nodeConnector.connect();
+    node = nodeConnector.connect();
 
     // Step 2: Configure and start a File consumer
-    String fileName = "twitter_events_mini.dat"; //"test_input1.json"
+    String fileName = "twitter_events_mini.dat";
     URL url = ClassLoader.getSystemResource(fileName);
     EventConsumer consumer = new TwitterFileConsumer(url.getFile());
 
@@ -69,10 +69,19 @@ public class TwitterFileSampleTest {
     // Step 3: Get a reader to fire queries
     Reader reader = node.getReader();
 
-
-    // For testing
+    // Step 4: Get a view
     logger.info("Table names in the node: " + reader.getTableNames());
-    View view = reader.getViewFactory().createView(new InFilter("Twitter"));
+    view = reader.getViewFactory().createView(new InFilter("Twitter"));
+  }
+
+  /**
+   * Test case without query push down
+   */
+  @Test
+  public void testTwitterFileSample() {
+
+    logger.info("Running a Twitter File sample...");
+
     List<CharSequence> columns = new ArrayList<CharSequence>();
     columns.add("text.String");
     columns.add("created_at.String");
@@ -83,6 +92,7 @@ public class TwitterFileSampleTest {
     Predicate<CharSequence> columnFilter = Predicates.or(columnFilter1,
         columnFilter2);
     TableIterator tableIterator = view.getIterator(columnFilter);
+
     logger.debug("Columns in table: "
       + Arrays.toString(tableIterator.getColumnNames()));
     // logger.info("Reading all rows:");
@@ -124,29 +134,6 @@ public class TwitterFileSampleTest {
 
     logger.info("Running a Smart Twitter File sample...");
 
-    // Step 1: Create a local Realtime Node
-    NodeConnector nodeConnector = new SimpleRealtimeNodeConnector();
-    Node node = nodeConnector.connect();
-
-    // Step 2: Configure and start a File consumer
-    String fileName = "twitter_events_mini.dat"; // "test_input1.json"
-    URL url = ClassLoader.getSystemResource(fileName);
-    EventConsumer consumer = new TwitterFileConsumer(url.getFile());
-
-    try {
-      consumer.init(node.getWriter("Twitter", JSONEvent.class));
-    } catch (ConsumerInitException e) {
-      logger.error("Consumer init error: " + e.getMessage());
-      System.exit(-1);
-    }
-    consumer.start();
-
-    // Step 3: Get a reader to fire queries
-    Reader reader = node.getReader();
-
-    logger.info("Table names in the node: " + reader.getTableNames());
-    View view = reader.getViewFactory().createView(new InFilter("Twitter"));
-
     // Testing Optiq with Push Down
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsSmartTable("TWITTER", view);
@@ -167,5 +154,4 @@ public class TwitterFileSampleTest {
     logger.info("Result count: " + resultCount);
     // assertEquals(resultCount, 1);
   }
-
 }

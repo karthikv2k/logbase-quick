@@ -44,6 +44,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
     // Parse json and create / append to columns
     arrayDepth = 0;
     //traverse(data, "");
+    appendRawEvent(event);
     traverse(json, "");
     rowNum++;
   }
@@ -56,6 +57,16 @@ public class RCFJSONTable implements Table<JSONEvent> {
   @Override
   public String getTableName() {
     return tableName;
+  }
+
+  private void appendRawEvent(JSONEvent event) {
+    String jsonColumnName = "Raw Event";
+    Column jsonColumn = columns.get(jsonColumnName);
+    if (jsonColumn == null) {
+      jsonColumn = columnFactory.createColumn(String.class, jsonColumnName, 0);
+      columns.put(jsonColumnName, jsonColumn);
+    }
+    jsonColumn.append(event.getJSONString().toString(), rowNum);
   }
 
   private void traverse(Object json, String parent) {
