@@ -35,7 +35,7 @@ public class AppendOnlyColumn<E> implements Column<E> {
   protected long maxRowNum = 0;
   protected int maxRowArraySize;
 
-  AppendOnlyColumn(String columnName, int arrayCount, BatchList<E> values) {
+  public AppendOnlyColumn(String columnName, int arrayCount, BatchList<E> values) {
     this.columnName = columnName;
     this.arrayCount = arrayCount;
 
