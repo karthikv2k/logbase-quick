@@ -32,7 +32,7 @@ public class AppendOnlyColumn<E> implements Column<E> {
   protected final IntListWriter[] arrayIdxWriter;
   protected final BatchList<E> values;
   protected final BatchListWriter<E> valuesWriter;
-  protected long maxRowNum = 0;
+  protected long maxRowNum = -1;
   protected int maxRowArraySize;
 
   public AppendOnlyColumn(String columnName, int arrayCount, BatchList<E> values) {

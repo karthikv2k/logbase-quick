@@ -9,29 +9,35 @@ import io.logbase.functions.FunctionFactory;
 import org.junit.Test;
 
 /**
- * Created by Kousik on 24/09/14.
+ * Created by Kousik on 30/09/14.
  */
-public class SearchTest {
-
+public class ANDTest {
+  // TODO generalise function test cases
   @Test
   public void test() {
-    Column testColumn;
+    Column testColumnA;
+    Column testColumnB;
     ColumnFactory columnFactory = new AppendOnlyColumnFactory();
-    String[] values = {"test", "two", "three", "one ", "two", "three", " one\\", "one"};
-    Boolean[] validMatch = {false, false, false, true, false, false, true, true};
+    Boolean[] valuesA = {true, false, false, false, true, false, false, false};
+    Boolean[] valuesB = {false, false, false, false, true, false, false, true};
+
+    Boolean[] validMatch = {false, false, false, false, true, false, false, false};
     int rowNum = 0;
 
     //Create a column and append the values
-    testColumn = columnFactory.createColumn(String.class, "Test column", 0);
-    for (String str: values) {
-      testColumn.append(str, rowNum++);
+    testColumnA = columnFactory.createColumn(Boolean.class, "Test columnA", 0);
+    testColumnB = columnFactory.createColumn(Boolean.class, "Test columnB", 0);
+
+    for (int i=0; i<valuesA.length; i++) {
+      testColumnA.append(valuesA[i].booleanValue(), rowNum);
+      testColumnB.append(valuesB[i].booleanValue(), rowNum);
+      rowNum++;
     }
 
-    // Search for occurrence of text - "one"
-
+    // Execute the function
     FunctionFactory factory = new FunctionFactory();
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.SEARCH);
-    Object[] operands = {testColumn, "one"};
+    Function func = factory.createFunction(FunctionFactory.FunctionOperators.AND);
+    Object[] operands = {testColumnA, testColumnB};
     func.init(operands);
     func.execute();
 

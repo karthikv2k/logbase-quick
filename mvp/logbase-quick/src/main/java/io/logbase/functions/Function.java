@@ -4,7 +4,7 @@ package io.logbase.functions;
  * Created with IntelliJ IDEA.
  * User: Karthik
  */
-public interface Functions {
+public interface Function {
 
   /**
    * Initialize the Function with a list of operands.

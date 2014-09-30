@@ -9,29 +9,28 @@ import io.logbase.functions.FunctionFactory;
 import org.junit.Test;
 
 /**
- * Created by Kousik on 24/09/14.
+ * Created by Kousik on 30/09/14.
  */
-public class SearchTest {
+public class EqualsTest {
 
   @Test
   public void test() {
     Column testColumn;
     ColumnFactory columnFactory = new AppendOnlyColumnFactory();
-    String[] values = {"test", "two", "three", "one ", "two", "three", " one\\", "one"};
-    Boolean[] validMatch = {false, false, false, true, false, false, true, true};
+    Integer[] values = {1, 2, 3, 4, 5, 6, 8, 8};
+    Boolean[] validMatch = {false, false, false, false, false, false, true, true};
     int rowNum = 0;
 
     //Create a column and append the values
-    testColumn = columnFactory.createColumn(String.class, "Test column", 0);
-    for (String str: values) {
-      testColumn.append(str, rowNum++);
+    testColumn = columnFactory.createColumn(Integer.class, "Test column", 0);
+    for (Integer in: values) {
+      testColumn.append(in, rowNum++);
     }
 
-    // Search for occurrence of text - "one"
-
+    // Find all entries matching "8"
     FunctionFactory factory = new FunctionFactory();
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.SEARCH);
-    Object[] operands = {testColumn, "one"};
+    Function func = factory.createFunction(FunctionFactory.FunctionOperators.EQUALS);
+    Object[] operands = {testColumn, 8};
     func.init(operands);
     func.execute();
 
@@ -42,11 +41,12 @@ public class SearchTest {
     while(itr.hasNext()) {
       Boolean value = (Boolean)itr.next();
       if (validMatch[rowNum].booleanValue()) {
-        assert(value.booleanValue());
+        assert(value.booleanValue() == true);
       } else {
         assert(value == null);
       }
       rowNum++;
     }
   }
+
 }
