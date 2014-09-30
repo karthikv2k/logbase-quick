@@ -7,8 +7,14 @@ import io.logbase.column.SimpleColumnIterator;
  * Created by Kousik on 30/09/14.
  */
 public class AND extends BinaryFunction {
+
+  public AND(Object[] operands) {
+    super(operands);
+  }
+
   @Override
-  public void execute() {
+  public Object execute() {
+    Column rows = super.getRowColumn();
     Column[] operands = super.getOperands();
     SimpleColumnIterator itrA = new SimpleColumnIterator(operands[0], operands[0].getRowCount());
     SimpleColumnIterator itrB = new SimpleColumnIterator(operands[1], operands[1].getRowCount());
@@ -20,9 +26,10 @@ public class AND extends BinaryFunction {
 
       if (bufferA != null && bufferB != null &&
           bufferA.booleanValue() && bufferB.booleanValue()) {
-        super.append(true, rowNum);
+        rows.append(true, rowNum);
       }
       rowNum++;
     }
+    return rows;
   }
 }

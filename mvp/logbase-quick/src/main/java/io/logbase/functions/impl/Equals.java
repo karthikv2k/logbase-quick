@@ -18,12 +18,10 @@ public class Equals<E> implements Function {
   private BitsetList validRowList;
   private Column rows;
 
-  public Equals() {
+  public Equals(Object[] operands) {
     this.validRowList = new BitsetList();
     this.rows = new AppendOnlyColumn("Valid Rows", 0, validRowList);
-  }
-  @Override
-  public void init(Object[] operands) {
+
     checkArgument(operands.length == 2, "Only 2 operands expected");
     for (Object operand: operands) {
       checkNotNull(operand, "Operand(s) should not be NULL");
@@ -36,7 +34,7 @@ public class Equals<E> implements Function {
   }
 
   @Override
-  public void execute() {
+  public Object execute() {
     SimpleColumnIterator itr = new SimpleColumnIterator(column, column.getRowCount());
     long rowNum = 0;
     Object obj;
@@ -47,7 +45,7 @@ public class Equals<E> implements Function {
       }
       rowNum++;
     }
-
+    return rows;
   }
 
   private boolean compareTo(Object obj) {
@@ -68,10 +66,5 @@ public class Equals<E> implements Function {
     }
 
     return (result == 0);
-  }
-
-  @Override
-  public Object getOutput() {
-    return rows;
   }
 }

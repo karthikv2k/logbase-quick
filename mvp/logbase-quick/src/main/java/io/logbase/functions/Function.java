@@ -1,5 +1,7 @@
 package io.logbase.functions;
 
+import io.logbase.exceptions.InvalidOperandException;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Karthik
@@ -7,19 +9,8 @@ package io.logbase.functions;
 public interface Function {
 
   /**
-   * Initialize the Function with a list of operands.
-   * Operands can be - columns, scalar values ...
-   *
-   * @param operands
-   */
-  public void init(Object[] operands);
-
-  public void execute();
-
-  /**
    * Returns either scalar or vector objects as per the function definition
    * @return
    */
-  public Object getOutput();
-
+  public Object execute() throws InvalidOperandException;
 }

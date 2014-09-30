@@ -14,7 +14,7 @@ import org.junit.Test;
 public class SearchTest {
 
   @Test
-  public void test() {
+  public void test() throws Exception{
     Column testColumn;
     ColumnFactory columnFactory = new AppendOnlyColumnFactory();
     String[] values = {"test", "two", "three", "one ", "two", "three", " one\\", "one"};
@@ -30,13 +30,11 @@ public class SearchTest {
     // Search for occurrence of text - "one"
 
     FunctionFactory factory = new FunctionFactory();
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.SEARCH);
     Object[] operands = {testColumn, "one"};
-    func.init(operands);
-    func.execute();
+    Function func = factory.createFunction(FunctionFactory.FunctionOperators.SEARCH, operands);
+    Column rowColumn = (Column)func.execute();
 
     //Validate the result
-    Column rowColumn = (Column)func.getOutput();
     SimpleColumnIterator itr = new SimpleColumnIterator(rowColumn, rowColumn.getRowCount());
     rowNum = 0;
     while(itr.hasNext()) {

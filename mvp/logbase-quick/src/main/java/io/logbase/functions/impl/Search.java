@@ -21,13 +21,10 @@ public class Search implements Function {
   private Column rows;
   RegexFilter filter;
 
-  public Search() {
+  public Search(Object[] operands) {
     this.validRowList = new BitsetList();
     this.rows = new AppendOnlyColumn("Valid Rows", 0, validRowList);
-  }
 
-  @Override
-  public void init(Object[] operands) {
     checkArgument(operands.length == 2, "Only 2 operands expected");
     for (Object operand: operands) {
       checkNotNull(operand, "Operand(s) should not be NULL");
@@ -40,7 +37,7 @@ public class Search implements Function {
   }
 
   @Override
-  public void execute() {
+  public Object execute() {
     String regexDelimiter = "(\\W|^|$)"; // Any special character, end or beginning of line
     String pattern = regexDelimiter + this.searchString + regexDelimiter;
     SimpleColumnIterator itr = new SimpleColumnIterator(column, column.getRowCount());
@@ -54,10 +51,6 @@ public class Search implements Function {
       }
       rowNum++;
     }
-  }
-
-  @Override
-  public Column<Boolean> getOutput() {
     return rows;
   }
 }

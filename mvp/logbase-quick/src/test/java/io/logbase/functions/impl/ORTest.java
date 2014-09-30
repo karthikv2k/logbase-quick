@@ -13,7 +13,7 @@ import org.junit.Test;
  */
 public class ORTest {
   @Test
-  public void test() {
+  public void test() throws Exception{
     Column testColumnA;
     Column testColumnB;
     ColumnFactory columnFactory = new AppendOnlyColumnFactory();
@@ -35,13 +35,11 @@ public class ORTest {
 
     // Execute the function
     FunctionFactory factory = new FunctionFactory();
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.OR);
     Object[] operands = {testColumnA, testColumnB};
-    func.init(operands);
-    func.execute();
+    Function func = factory.createFunction(FunctionFactory.FunctionOperators.OR, operands);
+    Column rowColumn = (Column)func.execute();
 
     //Validate the result
-    Column rowColumn = (Column)func.getOutput();
     SimpleColumnIterator itr = new SimpleColumnIterator(rowColumn, rowColumn.getRowCount());
     rowNum = 0;
     while(itr.hasNext()) {

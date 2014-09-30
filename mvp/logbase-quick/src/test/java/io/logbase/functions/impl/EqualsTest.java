@@ -14,7 +14,7 @@ import org.junit.Test;
 public class EqualsTest {
 
   @Test
-  public void test() {
+  public void test() throws Exception{
     Column testColumn;
     ColumnFactory columnFactory = new AppendOnlyColumnFactory();
     Integer[] values = {1, 2, 3, 4, 5, 6, 8, 8};
@@ -29,13 +29,12 @@ public class EqualsTest {
 
     // Find all entries matching "8"
     FunctionFactory factory = new FunctionFactory();
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.EQUALS);
     Object[] operands = {testColumn, 8};
-    func.init(operands);
-    func.execute();
+    Function func = factory.createFunction(FunctionFactory.FunctionOperators.EQUALS, operands);
+    Column rowColumn = (Column)func.execute();
+
 
     //Validate the result
-    Column rowColumn = (Column)func.getOutput();
     SimpleColumnIterator itr = new SimpleColumnIterator(rowColumn, rowColumn.getRowCount());
     rowNum = 0;
     while(itr.hasNext()) {

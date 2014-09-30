@@ -17,16 +17,16 @@ public class FunctionFactory<E> {
     SEARCH
   }
 
-  public Function createFunction(FunctionOperators operator) {
+  public Function createFunction(FunctionOperators operator, Object[] operands) {
     switch (operator) {
       case AND:
-        return new AND();
+        return new AND(operands);
       case OR:
-        return new OR();
+        return new OR(operands);
       case SEARCH:
-        return new Search();
+        return new Search(operands);
       case EQUALS:
-        return new Equals<E>();
+        return new Equals<E>(operands);
       default:
         assert(false);
     }

@@ -16,14 +16,11 @@ public abstract class BinaryFunction implements Function {
   private BitsetList validRowList;
   private Column rows;
 
-  public BinaryFunction() {
-    operands = new Column[2];
+  public BinaryFunction(Object[] operands) {
+    this.operands = new Column[2];
     this.validRowList = new BitsetList();
     this.rows = new AppendOnlyColumn("Valid Rows", 0, validRowList);
-  }
 
-  @Override
-  public void init(Object[] operands) {
     checkArgument(operands.length == 2, "Only 2 operands expected");
     for (Object operand: operands) {
       checkNotNull(operand, "Operand(s) should not be NULL");
@@ -36,16 +33,11 @@ public abstract class BinaryFunction implements Function {
 
   }
 
-  @Override
-  public Object getOutput() {
-    return rows;
-  }
-
   protected Column[] getOperands() {
     return operands;
   }
 
-  protected void append(Boolean value, long rowNum) {
-    rows.append(value, rowNum);
+  protected Column getRowColumn() {
+    return rows;
   }
 }
