@@ -3,6 +3,9 @@ package io.logbase.view;
 import com.google.common.base.Predicate;
 
 import io.logbase.column.Column;
+import io.logbase.functions.FunctionFactory;
+import io.logbase.querying.optiq.Expression;
+import io.logbase.querying.optiq.ExpressionExecutor;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.Utils;
@@ -28,6 +31,11 @@ public class SimpleView implements View {
   @Override
   public TableIterator getIterator(Predicate<CharSequence> filter) {
     return new CombinedTableIterator(filter);
+  }
+
+  @Override
+  public TableIterator getIterator(Predicate<CharSequence> filter, Expression expression) {
+    return new CombinedTableIterator(filter, expression);
   }
 
   @Override
@@ -59,10 +67,21 @@ public class SimpleView implements View {
       this(Utils.ALWAYS_TRUE_PATTERN);
     }
 
-    CombinedTableIterator(Predicate<CharSequence> filter) {
+    public CombinedTableIterator(Predicate<CharSequence> filter) {
+      init(filter, null);
+    }
+
+    public CombinedTableIterator(Predicate<CharSequence> filter, Expression expression) {
+      FunctionFactory factory = new FunctionFactory();
+      Column validRows = (Column) ExpressionExecutor.execute(expression,
+          factory, this);
+      init(filter, validRows);
+    }
+
+    private void init(Predicate<CharSequence> filter, Column validRows) {
       iterators = new TableIterator[tables.length];
       for (int i = 0; i < iterators.length; i++) {
-        iterators[i] = tables[i].getIterator(filter);
+        iterators[i] = tables[i].getIterator(filter, validRows);
       }
 
       SortedSet<String> allColumns = new TreeSet<String>();
@@ -129,7 +148,6 @@ public class SimpleView implements View {
     public void remove() {
       throw new UnsupportedOperationException();
     }
-
   }
 
   @Override

@@ -19,6 +19,8 @@ public interface Table<E extends Event> extends Comparable<Table> {
 
   public TableIterator getIterator(Predicate<CharSequence> columnFilter);
 
+  public TableIterator getIterator(Predicate<CharSequence> columnFilter, Column validRows);
+
   public long getLatestEventTime();
 
   public Set<String> getColumnNames();
