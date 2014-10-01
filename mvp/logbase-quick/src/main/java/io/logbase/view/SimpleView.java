@@ -1,6 +1,8 @@
 package io.logbase.view;
 
 import com.google.common.base.Predicate;
+
+import io.logbase.column.Column;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.Utils;
@@ -128,5 +130,17 @@ public class SimpleView implements View {
       throw new UnsupportedOperationException();
     }
 
+  }
+
+  @Override
+  public Column getColumn(String columnName) {
+    // TODO Need to improve this and take out of Table
+    for (Table t : tables) {
+      for (Object colKey : t.getColumns().keySet()) {
+        if (colKey.equals(columnName))
+          return (Column) t.getColumns().get(colKey);
+      }
+    }
+    return null;
   }
 }

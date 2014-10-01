@@ -2,8 +2,11 @@ package io.logbase.querying.optiq;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+
+import io.logbase.functions.FunctionFactory;
 import io.logbase.view.View;
 import net.hydromatic.linq4j.Enumerator;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,9 +73,15 @@ public class LBEnumerator implements Enumerator<Object> {
       }
       logger.debug("No. of select columns added to filter: "
         + selectProjects.size());
-      Predicate<CharSequence> selectColumnFilter = Predicates
+      Predicate<CharSequence> projectPredicate = Predicates
         .in(selectProjects);
-      rowIterator = view.getIterator(selectColumnFilter);
+
+      // TODO for table filter
+      Expression filterExpression = null;
+      if (filter != null)
+        filterExpression = new FilterExpression(filter);
+
+      rowIterator = view.getIterator(projectPredicate);
     }
   }
 

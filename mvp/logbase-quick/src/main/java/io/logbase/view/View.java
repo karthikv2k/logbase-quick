@@ -1,6 +1,8 @@
 package io.logbase.view;
 
 import com.google.common.base.Predicate;
+
+import io.logbase.column.Column;
 import io.logbase.table.TableIterator;
 
 import java.util.Set;
@@ -16,5 +18,8 @@ public interface View {
   public long getNumRows();
 
   public Set<String> getColumnNames();
+
+  // This is a hack, we have to revisit views all together
+  public Column getColumn(String columnName);
 
 }
