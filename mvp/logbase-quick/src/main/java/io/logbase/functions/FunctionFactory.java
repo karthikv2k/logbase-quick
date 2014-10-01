@@ -10,14 +10,14 @@ import io.logbase.functions.impl.Search;
  */
 public class FunctionFactory<E> {
 
-  public enum FunctionOperators {
+  public enum FunctionOperator {
     AND,
     OR,
     EQUALS,
     SEARCH
   }
 
-  public Function createFunction(FunctionOperators operator, Object[] operands) {
+  public Function createFunction(FunctionOperator operator, Object[] operands) {
     switch (operator) {
       case AND:
         return new AND(operands);
