@@ -150,6 +150,11 @@ public class RCFJSONTable implements Table<JSONEvent> {
   }
 
   @Override
+  public TableIterator getIterator(Predicate<CharSequence> filter, Column validRows) {
+    return new SimpleTableIterator(this, this.rowNum, filter, validRows);
+  }
+
+  @Override
   public long getLatestEventTime() {
     return latestTime;
   }
