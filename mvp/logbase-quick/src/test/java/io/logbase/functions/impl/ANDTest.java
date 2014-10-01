@@ -37,7 +37,8 @@ public class ANDTest {
     // Execute the function
     FunctionFactory factory = new FunctionFactory();
     Object[] operands = {testColumnA, testColumnB};
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.AND, operands);
+    Function func = factory.createFunction(
+        FunctionFactory.FunctionOperator.AND, operands);
     Column rowColumn = (Column)func.execute();
 
     //Validate the result

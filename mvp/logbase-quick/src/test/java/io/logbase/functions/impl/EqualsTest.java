@@ -30,7 +30,8 @@ public class EqualsTest {
     // Find all entries matching "8"
     FunctionFactory factory = new FunctionFactory();
     Object[] operands = {testColumn, 8};
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.EQUALS, operands);
+    Function func = factory.createFunction(
+        FunctionFactory.FunctionOperator.EQUALS, operands);
     Column rowColumn = (Column)func.execute();
 
 

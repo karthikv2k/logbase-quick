@@ -36,7 +36,8 @@ public class ORTest {
     // Execute the function
     FunctionFactory factory = new FunctionFactory();
     Object[] operands = {testColumnA, testColumnB};
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.OR, operands);
+    Function func = factory.createFunction(FunctionFactory.FunctionOperator.OR,
+        operands);
     Column rowColumn = (Column)func.execute();
 
     //Validate the result

@@ -31,7 +31,8 @@ public class SearchTest {
 
     FunctionFactory factory = new FunctionFactory();
     Object[] operands = {testColumn, "one"};
-    Function func = factory.createFunction(FunctionFactory.FunctionOperators.SEARCH, operands);
+    Function func = factory.createFunction(
+        FunctionFactory.FunctionOperator.SEARCH, operands);
     Column rowColumn = (Column)func.execute();
 
     //Validate the result
