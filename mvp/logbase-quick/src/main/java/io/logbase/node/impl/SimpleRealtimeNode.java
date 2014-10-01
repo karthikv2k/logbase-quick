@@ -1,6 +1,6 @@
 package io.logbase.node.impl;
 
-import io.logbase.column.appendonly.AppendOnlyColumnFactory;
+import io.logbase.column.ColumnFactory;
 import io.logbase.event.Event;
 import io.logbase.event.JSONEvent;
 import io.logbase.node.Node;
@@ -12,7 +12,7 @@ import io.logbase.view.ViewFactoryV1;
 public class SimpleRealtimeNode extends BaseNode implements Node {
 
   public SimpleRealtimeNode() {
-    super(new TableFactoryV1(), new AppendOnlyColumnFactory());
+    super(new TableFactoryV1(), ColumnFactory.INSTANCE);
   }
 
   @Override

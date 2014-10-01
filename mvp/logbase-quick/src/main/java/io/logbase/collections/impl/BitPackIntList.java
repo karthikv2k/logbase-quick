@@ -40,10 +40,6 @@ public class BitPackIntList implements IntList {
     buf = BufferFactory.newBufWithLongCapacity(arraySize);
   }
 
-  public BitPackIntList(BatchListIterator<Integer> source) {
-    this(getStats(source));
-  }
-
   private static IntSummaryStatistics getStats(BatchListIterator<Integer> source) {
     checkArgument(source != null, "source can't be null");
     checkArgument(source.hasNext(), "source can't be empty");

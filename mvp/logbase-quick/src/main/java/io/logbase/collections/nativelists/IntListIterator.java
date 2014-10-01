@@ -46,7 +46,7 @@ public interface IntListIterator extends BatchListIterator<Integer> {
    *
    * @param consumer
    */
-  public default void supplyTo(LongConsumer consumer) {
+  public default void supplyToLong(LongConsumer consumer) {
     int[] buf = new int[optimumBufferSize()];
     int cnt;
     while (hasNext()) {

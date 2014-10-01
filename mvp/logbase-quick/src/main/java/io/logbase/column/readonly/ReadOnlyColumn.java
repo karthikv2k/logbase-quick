@@ -29,7 +29,7 @@ public class ReadOnlyColumn<E> implements Column<E> {
   protected final IntList[] arrayIdx;
   protected final BatchList<E> values;
 
-  ReadOnlyColumn(Column<E> column, BatchList<E> values) {
+  public ReadOnlyColumn(Column<E> column, BatchList<E> values) {
 
     this.values = values;
     this.columnName = column.getColumnName();

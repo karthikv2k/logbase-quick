@@ -76,7 +76,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyMap";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = columnFactory.createColumn(Map.class, columnName, arrayDepth);
+          columnGeneric = columnFactory.createAppendOnlyColumn(Map.class, columnName, arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
@@ -95,7 +95,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
         String columnName = parent.substring(1) + ".EmptyList";
         Column columnGeneric = columns.get(columnName);
         if (columnGeneric == null) {
-          columnGeneric = columnFactory.createColumn(List.class, columnName, arrayDepth);
+          columnGeneric = columnFactory.createAppendOnlyColumn(List.class, columnName, arrayDepth);
         }
         columns.put(columnName, columnGeneric);
         if (arrayDepth > 0) {
@@ -119,7 +119,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
       columnName = parent.substring(1) + "." + TypeUtils.getSQLType(json).getSimpleName();
       Column columnGeneric = columns.get(columnName);
       if (columnGeneric == null) {
-        columnGeneric = columnFactory.createColumn(type, columnName, arrayDepth);
+        columnGeneric = columnFactory.createAppendOnlyColumn(type, columnName, arrayDepth);
         columns.put(columnName, columnGeneric);
       }
       if (arrayDepth > 0) {

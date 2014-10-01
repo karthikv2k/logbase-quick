@@ -19,7 +19,7 @@ import java.util.List;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class IntegerArrayList implements BatchList<Integer>, IntList {
+public class IntegerArrayList implements IntList {
 
   private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 1024;
