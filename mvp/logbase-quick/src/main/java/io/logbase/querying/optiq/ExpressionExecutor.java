@@ -25,8 +25,8 @@ public class ExpressionExecutor {
       }
       expression.storeLastOperationOutput(output);
     }
-    System.out.println("Output of operation: "
-        + expression.getLastOperationOutput().getClass());
+    // System.out.println("Output of operation: "
+    // + expression.getLastOperationOutput().getClass());
     return expression.getLastOperationOutput();
   }
 
