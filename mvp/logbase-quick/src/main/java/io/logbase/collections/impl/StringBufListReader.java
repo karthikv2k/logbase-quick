@@ -1,10 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchListReader;
-import io.logbase.collections.nativelists.IntList;
-import io.logbase.collections.nativelists.IntListIterator;
-import io.logbase.collections.nativelists.IntListReader;
-import io.logbase.collections.nativelists.IntListWriter;
+import io.logbase.collections.nativelists.*;
 
 import java.nio.CharBuffer;
 
@@ -12,11 +9,11 @@ import java.nio.CharBuffer;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringListReader implements BatchListReader<CharBuffer> {
+public class StringBufListReader implements StringListReader {
   private final CharBuffer stringBuf;
   private final int[] offset;
 
-  StringListReader(CharBuffer stringBuf, IntListIterator lengthIterator) {
+  StringBufListReader(CharBuffer stringBuf, IntListIterator lengthIterator) {
     this.stringBuf = stringBuf;
 
     IntList offsetList = new IntegerArrayList();

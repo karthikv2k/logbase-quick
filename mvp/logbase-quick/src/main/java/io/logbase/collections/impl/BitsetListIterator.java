@@ -1,6 +1,6 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.nativelists.BooleanListIterator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -8,7 +8,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * Created by Kousik on 15/08/14.
  */
-public class BitsetListIterator implements BatchListIterator<Boolean> {
+public class BitsetListIterator implements BooleanListIterator {
   private final long maxIndex;
   private BitsetList list;
   private int maxSize;
@@ -25,7 +25,8 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
     return maxIndex - totalRead;
   }
 
-  private int readInternal(boolean[] out, int offset, int count) {
+  @Override
+  public int nextPrimitive(boolean[] out, int offset, int count) {
         /*
          * return -1 if there are not more elements to read from list.
          */
@@ -50,7 +51,7 @@ public class BitsetListIterator implements BatchListIterator<Boolean> {
       buffer.getClass().getSimpleName());
     boolean[] nativeBuffer = (boolean[]) buffer;
     checkArgument(offset + rows <= nativeBuffer.length, "length of buffer should be greater than offset+rows.");
-    return readInternal(nativeBuffer, offset, rows);
+    return nextPrimitive(nativeBuffer, offset, rows);
   }
 
   @Override

@@ -2,7 +2,7 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.nativelists.IntListIterator;
-import io.logbase.utils.Filter;
+import io.logbase.collections.nativelists.StringListIterator;
 
 import java.nio.CharBuffer;
 
@@ -13,9 +13,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringListIterator implements BatchListIterator<CharBuffer> {
+public class StringBufListIterator implements StringListIterator {
   private final CharBuffer stringBuffer;
-  private final StringList list;
+  private final StringBufList list;
   private IntListIterator lengthIterator;
   private int offset = 0;
   private final int[] lengthBuf;
@@ -23,7 +23,7 @@ public class StringListIterator implements BatchListIterator<CharBuffer> {
   private long totalRead = 0;
   private int totalOffset = 0;
 
-  public StringListIterator(StringList list, long maxIndex) {
+  public StringBufListIterator(StringBufList list, long maxIndex) {
     this.stringBuffer = list.getReadBuffer();
     this.list = list;
     this.maxIndex = Math.min(maxIndex, list.size());

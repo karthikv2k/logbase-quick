@@ -5,7 +5,7 @@ import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.impl.BitPackIntList;
 import io.logbase.collections.impl.IntegerArrayList;
-import io.logbase.collections.impl.StringList;
+import io.logbase.collections.impl.StringBufList;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListWriter;
 import io.logbase.column.Column;
@@ -58,7 +58,7 @@ public class StringDictionaryColumn extends ReadOnlyColumn<CharBuffer> {
       indexMap[uniqValues.get(uniqValuesSorted[i])] = i;
     }
 
-    dict = new StringList(stats);
+    dict = new StringBufList(stats);
     BatchListWriter<CharBuffer> dictWriter = dict.writer();
     for (CharBuffer value : uniqValuesSorted) {
       dictWriter.add(value);

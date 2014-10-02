@@ -44,7 +44,7 @@ public class ReadOnlyColumn<E> implements Column<E> {
 
     //converting array size component
     if (arrayCount > 0) {
-      arraySize = new BitPackIntList(column.getArraySizeIterator(column.getValidRowCount()));
+      arraySize = null;//new BitPackIntList(column.getArraySizeIterator(column.getValidRowCount()));
       IntListWriter arraySizeWriter = arraySize.primitiveWriter();
       arraySizeWriter.addAll(column.getArraySizeIterator(column.getValidRowCount()));
       arraySizeWriter.close();
@@ -56,7 +56,7 @@ public class ReadOnlyColumn<E> implements Column<E> {
     if (arrayCount > 0) {
       arrayIdx = new IntList[arrayCount];
       for (int i = 0; i < arrayIdx.length; i++) {
-        arrayIdx[i] = new BitPackIntList(column.getArrayIndexIterator(i, column.getValuesCount()));
+        arrayIdx[i] = null;//new BitPackIntList(column.getArrayIndexIterator(i, column.getValuesCount()));
         IntListWriter arrayIdxWriter = arrayIdx[i].primitiveWriter();
         arrayIdxWriter.addAll(column.getArrayIndexIterator(i, column.getValuesCount()));
         arrayIdxWriter.close();

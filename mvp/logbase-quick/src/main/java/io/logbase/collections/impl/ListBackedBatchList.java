@@ -42,6 +42,11 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
   }
 
   @Override
+  public Class<E> type() {
+    return primitiveType;
+  }
+
+  @Override
   public E get(long index) {
     return list.get((int) index);
   }
@@ -62,4 +67,6 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
   public boolean close() {
     return false;
   }
+
+
 }

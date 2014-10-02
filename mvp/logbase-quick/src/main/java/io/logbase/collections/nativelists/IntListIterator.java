@@ -35,7 +35,7 @@ public interface IntListIterator extends BatchListIterator<Integer> {
     int cnt;
     while (hasNext()) {
       cnt = nextPrimitive(buf, 0, buf.length);
-      for (int i = 0; i < buf.length; i++) {
+      for (int i = 0; i < cnt; i++) {
         consumer.accept(buf[i]);
       }
     }
@@ -51,7 +51,7 @@ public interface IntListIterator extends BatchListIterator<Integer> {
     int cnt;
     while (hasNext()) {
       cnt = nextPrimitive(buf, 0, buf.length);
-      for (int i = 0; i < buf.length; i++) {
+      for (int i = 0; i < cnt; i++) {
         consumer.accept(buf[i]);
       }
     }

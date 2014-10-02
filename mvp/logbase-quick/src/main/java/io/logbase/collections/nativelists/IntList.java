@@ -21,4 +21,9 @@ public interface IntList extends BatchList<Integer> {
 
   public IntListWriter primitiveWriter();
 
+  @Override
+  public default Class<Integer> type(){
+    return Integer.class;
+  }
+
 }

@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
+import io.logbase.column.NullType;
 import io.logbase.column.TypeUtils;
 import io.logbase.event.JSONEvent;
 import io.logbase.table.Table;
@@ -63,7 +64,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
     String jsonColumnName = "Raw Event";
     Column jsonColumn = columns.get(jsonColumnName);
     if (jsonColumn == null) {
-      jsonColumn = columnFactory.createColumn(String.class, jsonColumnName, 0);
+      jsonColumn = columnFactory.createAppendOnlyColumn(NullType.class, jsonColumnName, 0);
       columns.put(jsonColumnName, jsonColumn);
     }
     jsonColumn.append(event.getJSONString().toString(), rowNum);

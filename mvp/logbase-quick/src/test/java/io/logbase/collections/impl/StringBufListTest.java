@@ -13,7 +13,7 @@ import java.util.IntSummaryStatistics;
 /**
  * Created by Kousik on 18/09/14.
  */
-public class StringListTest implements BatchListFactory {
+public class StringBufListTest implements BatchListFactory {
   public static String[] testData;
   private BufferedReader br;
   private int count = 0;
@@ -45,6 +45,6 @@ public class StringListTest implements BatchListFactory {
 
   @Override
   public BatchList<CharBuffer> newInstance() {
-    return new StringList(stats);
+    return new StringBufList(stats);
   }
 }

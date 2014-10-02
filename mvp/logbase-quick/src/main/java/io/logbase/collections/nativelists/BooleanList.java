@@ -21,4 +21,9 @@ public interface BooleanList extends BatchList<Boolean> {
 
   public BooleanListWriter primitiveWriter();
 
+  @Override
+  public default Class<Boolean> type(){
+    return Boolean.class;
+  }
+
 }

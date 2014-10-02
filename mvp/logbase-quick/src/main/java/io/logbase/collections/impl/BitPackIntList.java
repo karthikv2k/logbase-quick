@@ -4,6 +4,7 @@ import io.logbase.buffer.BufferFactory;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
+import io.logbase.collections.Utils;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.IntListReader;
@@ -34,7 +35,7 @@ public class BitPackIntList implements IntList {
     checkArgument(minValue < maxValue, "maxValue should be a greater than minValue.");
     this.minValue = minValue;
     this.maxValue = maxValue;
-    this.width = getWidthFromMaxInt(maxValue - minValue);
+    this.width = Utils.getWidthFromMaxInt(maxValue - minValue);
     this.listSize = listSize;
     int arraySize = (int) Math.ceil(((double) (listSize * width)) / 64) + 1;
     buf = BufferFactory.newBufWithLongCapacity(arraySize);
@@ -47,16 +48,6 @@ public class BitPackIntList implements IntList {
     IntListIterator intIT = (IntListIterator) source;
     intIT.supplyTo(summaryStatistics);
     return summaryStatistics;
-  }
-
-  /**
-   * give the number of bits needed to encode an int given the max value
-   *
-   * @param bound max int that we want to encode
-   * @return the number of bits required
-   */
-  private static int getWidthFromMaxInt(int bound) {
-    return 32 - Integer.numberOfLeadingZeros(bound);
   }
 
   public void incSize() {

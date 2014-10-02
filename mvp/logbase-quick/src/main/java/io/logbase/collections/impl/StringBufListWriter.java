@@ -1,8 +1,8 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.nativelists.IntListWriter;
+import io.logbase.collections.nativelists.StringListWriter;
 
 import java.nio.CharBuffer;
 
@@ -12,12 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public class StringListWriter implements BatchListWriter<CharBuffer> {
+public class StringBufListWriter implements StringListWriter {
   private final CharBuffer stringBuf;
   private final IntListWriter lengthWriter;
   public final String CHARSET = "UTF-8";
 
-  StringListWriter(StringList list) {
+  StringBufListWriter(StringBufList list) {
     stringBuf = list.getWriteBuffer();
     lengthWriter = list.lengthList.primitiveWriter();
   }

@@ -1,14 +1,13 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.BatchListIterator;
-import io.logbase.collections.BatchListWriter;
+import io.logbase.collections.nativelists.BooleanListWriter;
 
 import static com.google.common.base.Preconditions.*;
 
 /**
  * Created by Kousik on 25/08/14.
  */
-public class BitsetListWriter implements BatchListWriter<Boolean> {
+public class BitsetListWriter implements BooleanListWriter {
 
   private BitsetList list;
   boolean isClosed = false;
@@ -24,7 +23,8 @@ public class BitsetListWriter implements BatchListWriter<Boolean> {
    * Iterate the given array from offset till length and insert
    * entries into the BitSet
    */
-  public void write(boolean[] values, int offset, int length) {
+  @Override
+  public void addNative(boolean[] values, int offset, int length) {
     int start = offset;
     int end = offset + length;
 
@@ -38,11 +38,16 @@ public class BitsetListWriter implements BatchListWriter<Boolean> {
   }
 
   @Override
+  public void accept(boolean value) {
+    holder[0] = value;
+    addNative(holder, 0, 1);
+  }
+
+  @Override
   public void add(Boolean value) {
     checkNotNull(value, "Null vales are not permitted");
     checkState(!isClosed, "Attempting to modify a closed list.");
-    holder[0] = value.booleanValue();
-    write(holder, 0, 1);
+    accept(value);
   }
 
   @Override
@@ -50,7 +55,7 @@ public class BitsetListWriter implements BatchListWriter<Boolean> {
     checkNotNull(values, "Null vales are not permitted");
     checkArgument(values instanceof boolean[], "values must be boolean[], found " + values.getClass().getSimpleName());
     checkState(!isClosed, "Attempting to modify a closed list.");
-    write((boolean[]) values, offset, length);
+    addNative((boolean[]) values, offset, length);
   }
 
   @Override

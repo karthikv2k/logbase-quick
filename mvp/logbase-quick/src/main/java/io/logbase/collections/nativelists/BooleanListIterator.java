@@ -19,7 +19,7 @@ public interface BooleanListIterator extends BatchListIterator<Boolean> {
    * @param count  - number of desired values to be read.
    * @return
    */
-  public int nextPrimitive(int[] buffer, int offset, int count);
+  public int nextPrimitive(boolean[] buffer, int offset, int count);
 
   @Override
   public default Class getPrimitiveType() {

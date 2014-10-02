@@ -2,8 +2,6 @@ package io.logbase.collections.impl;
 
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.column.TypeUtils;
-import io.logbase.utils.Filter;
-import io.logbase.utils.RegexFilter;
 
 import java.nio.CharBuffer;
 
@@ -22,8 +20,8 @@ public class StringListTestSuite {
   }
 
   public void testList(){
-    StringList list = (StringList) factory.newInstance();
-    StringListWriter writer = new StringListWriter(list);
+    StringBufList list = (StringBufList) factory.newInstance();
+    StringBufListWriter writer = new StringBufListWriter(list);
     long totalWrites=0;
 
     /*
@@ -38,7 +36,7 @@ public class StringListTestSuite {
     /*
      * Iterator test, read in batch
      */
-    StringListIterator it = new StringListIterator(list, list.size());
+    StringBufListIterator it = new StringBufListIterator(list, list.size());
 
     int count =0;
     CharBuffer[] buffer = new CharBuffer[(int)list.size()];
@@ -65,7 +63,7 @@ public class StringListTestSuite {
      */
     IntListIterator lengthIterator = (IntListIterator)list.lengthList.iterator(list.size());
     CharBuffer readBuffer = list.getReadBuffer();
-    StringListReader reader = new StringListReader(readBuffer, lengthIterator);
+    StringBufListReader reader = new StringBufListReader(readBuffer, lengthIterator);
     iter = DataGen.randomInt(0, (int)list.size() - 1);
     while(iter>=0) {
       long index = DataGen.randomInt(0, (int)list.size()-1);

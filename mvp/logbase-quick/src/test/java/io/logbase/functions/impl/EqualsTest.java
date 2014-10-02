@@ -3,7 +3,6 @@ package io.logbase.functions.impl;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.SimpleColumnIterator;
-import io.logbase.column.appendonly.AppendOnlyColumnFactory;
 import io.logbase.functions.Function;
 import io.logbase.functions.FunctionFactory;
 import org.junit.Test;
@@ -16,13 +15,13 @@ public class EqualsTest {
   @Test
   public void test() throws Exception{
     Column testColumn;
-    ColumnFactory columnFactory = new AppendOnlyColumnFactory();
+    ColumnFactory columnFactory = ColumnFactory.INSTANCE;
     Integer[] values = {1, 2, 3, 4, 5, 6, 8, 8};
     Boolean[] validMatch = {false, false, false, false, false, false, true, true};
     int rowNum = 0;
 
     //Create a column and append the values
-    testColumn = columnFactory.createColumn(Integer.class, "Test column", 0);
+    testColumn = columnFactory.createAppendOnlyColumn(Integer.class, "Test column", 0);
     for (Integer in: values) {
       testColumn.append(in, rowNum++);
     }

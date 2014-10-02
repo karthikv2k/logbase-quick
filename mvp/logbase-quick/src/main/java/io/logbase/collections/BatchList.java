@@ -26,4 +26,6 @@ public interface BatchList<E> {
 
   public BatchListWriter<E> writer();
 
+  public Class<E> type();
+
 }

@@ -3,7 +3,6 @@ package io.logbase.functions.impl;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.SimpleColumnIterator;
-import io.logbase.column.appendonly.AppendOnlyColumnFactory;
 import io.logbase.functions.Function;
 import io.logbase.functions.FunctionFactory;
 import org.junit.Test;
@@ -17,7 +16,7 @@ public class ANDTest {
   public void test() throws Exception{
     Column testColumnA;
     Column testColumnB;
-    ColumnFactory columnFactory = new AppendOnlyColumnFactory();
+    ColumnFactory columnFactory = ColumnFactory.INSTANCE;
     Boolean[] valuesA = {true, false, false, false, true, false, false, false};
     Boolean[] valuesB = {false, false, false, false, true, false, false, true};
 
@@ -25,8 +24,8 @@ public class ANDTest {
     int rowNum = 0;
 
     //Create a column and append the values
-    testColumnA = columnFactory.createColumn(Boolean.class, "Test columnA", 0);
-    testColumnB = columnFactory.createColumn(Boolean.class, "Test columnB", 0);
+    testColumnA = columnFactory.createAppendOnlyColumn(Boolean.class, "Test columnA", 0);
+    testColumnB = columnFactory.createAppendOnlyColumn(Boolean.class, "Test columnB", 0);
 
     for (int i=0; i<valuesA.length; i++) {
       testColumnA.append(valuesA[i].booleanValue(), rowNum);
