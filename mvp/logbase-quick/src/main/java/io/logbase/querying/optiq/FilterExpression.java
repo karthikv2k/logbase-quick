@@ -28,11 +28,11 @@ public class FilterExpression implements Expression {
   }
 
   private void tokenize(String stringExpression) {
-    System.out.println("Expression received: " + stringExpression);
+    // System.out.println("Expression received: " + stringExpression);
 
     // Split by separator
     List<String> tokens1 = Arrays.asList(stringExpression.split(" "));
-    System.out.println("Tokens1: " + tokens1);
+    // System.out.println("Tokens1: " + tokens1);
 
     // Merge tokens that are actually sentences
     List<String> tokens2 = new ArrayList<String>();
@@ -63,7 +63,7 @@ public class FilterExpression implements Expression {
         mergedToken = "";
       }
     }
-    System.out.println("Tokens2: " + tokens2);
+    // System.out.println("Tokens2: " + tokens2);
 
     // Split by brackets
     List<String> tokens3 = new ArrayList<String>();
@@ -95,7 +95,7 @@ public class FilterExpression implements Expression {
       }
 
     }
-    System.out.println("Tokens3: " + tokens3);
+    // System.out.println("Tokens3: " + tokens3);
 
     // Form the tree
     Stack stack = new Stack();

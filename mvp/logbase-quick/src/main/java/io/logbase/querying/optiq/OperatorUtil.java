@@ -17,7 +17,7 @@ public class OperatorUtil {
       return null;
   }
 
-  public static Operation customize(Operation operation, Object master) {
+  public static Operation addOperationContext(Operation operation, Object master) {
     View view = (View) master;
 
     // TODO
