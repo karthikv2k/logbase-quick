@@ -35,7 +35,7 @@ public class SimpleView implements View {
 
   @Override
   public TableIterator getIterator(Predicate<CharSequence> filter, Expression expression) {
-    return new CombinedTableIterator(filter, expression);
+    return new CombinedTableIterator(filter, expression, this);
   }
 
   @Override
@@ -71,10 +71,11 @@ public class SimpleView implements View {
       init(filter, null);
     }
 
-    public CombinedTableIterator(Predicate<CharSequence> filter, Expression expression) {
+    public CombinedTableIterator(Predicate<CharSequence> filter,
+        Expression expression, View view) {
       FunctionFactory factory = new FunctionFactory();
       Column validRows = (Column) ExpressionExecutor.execute(expression,
-          factory, this);
+          factory, view);
       init(filter, validRows);
     }
 

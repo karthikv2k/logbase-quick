@@ -81,7 +81,8 @@ public class LBEnumerator implements Enumerator<Object> {
       if (filter != null)
         filterExpression = new FilterExpression(filter);
 
-      rowIterator = view.getIterator(projectPredicate);
+      rowIterator = view.getIterator(projectPredicate, filterExpression);
+      // rowIterator = view.getIterator(projectPredicate);
     }
   }
 

@@ -1,7 +1,5 @@
 package io.logbase.querying.optiq;
 
-import com.fasterxml.jackson.annotation.JsonFormat.Value;
-
 import io.logbase.column.Column;
 import io.logbase.functions.FunctionFactory.FunctionOperator;
 import io.logbase.view.View;
@@ -31,21 +29,21 @@ public class OperatorUtil {
       String columnName = null;
       Column column = null;
       Object value = null;
-      if (operation.getOperands()[1] instanceof String) {
-        columnName = (String) operation.getOperands()[1];
+      if (operation.getOperands()[0] instanceof String) {
+        columnName = (String) operation.getOperands()[0];
         Class valueClass = getJavaColumnType(columnName);
-        if (Value.class.equals(String.class)) {
+        String strValue = (String) operation.getOperands()[1];
+        if (valueClass.equals(String.class)) {
           // trim value and cast to String
-          String strValue = (String) operation.getOperands()[2];
           value = strValue.substring(1, strValue.length() - 1);
-        } else if (Value.class.equals(Double.class)) {
-          value = (Double) operation.getOperands()[2];
-        } else if (Value.class.equals(Long.class)) {
-          value = (Long) operation.getOperands()[2];
-        } else if (Value.class.equals(Integer.class)) {
-          value = (Integer) operation.getOperands()[2];
-        } else if (Value.class.equals(Float.class)) {
-          value = (Float) operation.getOperands()[2];
+        } else if (valueClass.equals(Double.class)) {
+          value = Double.parseDouble(strValue);
+        } else if (valueClass.equals(Long.class)) {
+          value = Long.parseLong(strValue);
+        } else if (valueClass.equals(Integer.class)) {
+          value = Integer.parseInt(strValue);
+        } else if (valueClass.equals(Float.class)) {
+          value = Float.parseFloat(strValue);
         } else {
           // Some unsupported type
           throw new UnsupportedOperationException();
