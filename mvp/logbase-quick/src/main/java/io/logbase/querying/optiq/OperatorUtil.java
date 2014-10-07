@@ -33,9 +33,13 @@ public class OperatorUtil {
         columnName = (String) operation.getOperands()[0];
         Class valueClass = getJavaColumnType(columnName);
         String strValue = (String) operation.getOperands()[1];
+        System.out.println("StrValue: " + strValue);
         if (valueClass.equals(String.class)) {
           // trim value and cast to String
-          value = strValue.substring(1, strValue.length() - 1);
+          if (strValue.startsWith("\"") && strValue.endsWith("\""))
+            value = strValue.substring(1, strValue.length() - 1);
+          else
+            value = strValue;
         } else if (valueClass.equals(Double.class)) {
           value = Double.parseDouble(strValue);
         } else if (valueClass.equals(Long.class)) {
