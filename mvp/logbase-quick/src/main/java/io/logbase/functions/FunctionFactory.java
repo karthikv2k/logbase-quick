@@ -1,9 +1,6 @@
 package io.logbase.functions;
 
-import io.logbase.functions.impl.AND;
-import io.logbase.functions.impl.Equals;
-import io.logbase.functions.impl.OR;
-import io.logbase.functions.impl.Search;
+import io.logbase.functions.impl.*;
 
 /**
  * Created by Kousik on 30/09/14.
@@ -14,7 +11,12 @@ public class FunctionFactory<E> {
     AND,
     OR,
     EQUALS,
-    SEARCH
+    SEARCH,
+    GREATERTHAN,
+    LESSERTHAN,
+    GREATERTHANEQUALS,
+    LESSERTHANEQUALS,
+    NOTEQUALS
   }
 
   public Function createFunction(FunctionOperator operator, Object[] operands) {
@@ -27,6 +29,16 @@ public class FunctionFactory<E> {
         return new Search(operands);
       case EQUALS:
         return new Equals<E>(operands);
+      case GREATERTHAN:
+        return new GreaterThan<E>(operands);
+      case GREATERTHANEQUALS:
+        return new GreaterThanEquals<E>(operands);
+      case LESSERTHAN:
+        return new LesserThan<E>(operands);
+      case LESSERTHANEQUALS:
+        return new LesserThanEquals<E>(operands);
+      case NOTEQUALS:
+        return new NotEquals<E>(operands);
       default:
         assert(false);
     }
