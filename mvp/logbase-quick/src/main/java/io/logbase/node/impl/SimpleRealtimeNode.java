@@ -11,7 +11,19 @@ import io.logbase.view.ViewFactoryV1;
 
 public class SimpleRealtimeNode extends BaseNode implements Node {
 
-  public SimpleRealtimeNode() {
+  private static SimpleRealtimeNode node;
+
+  public static SimpleRealtimeNode getInstance() {
+    if (node == null) {
+      synchronized (SimpleRealtimeNode.class) {
+        if (node == null)
+          node = new SimpleRealtimeNode();
+      }
+    }
+    return node;
+  }
+
+  private SimpleRealtimeNode() {
     super(new TableFactoryV1(), ColumnFactory.INSTANCE);
   }
 

@@ -7,7 +7,7 @@ public class SimpleNodeFactory implements NodeFactory {
 
   @Override
   public Node createNode() {
-    return new SimpleRealtimeNode();
+    return SimpleRealtimeNode.getInstance();
   }
 
 }

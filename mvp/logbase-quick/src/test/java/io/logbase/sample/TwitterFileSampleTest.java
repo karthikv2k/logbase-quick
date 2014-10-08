@@ -76,8 +76,9 @@ public class TwitterFileSampleTest {
 
   /**
    * Test case without query push down
+   * 
    */
-  @Test
+  @Ignore
   public void testTwitterFileSample() {
 
     logger.info("Running a Twitter File sample...");

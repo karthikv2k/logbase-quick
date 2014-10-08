@@ -8,7 +8,7 @@ public class SimpleRealtimeNodeConnector implements NodeConnector {
   private Node node;
 
   public SimpleRealtimeNodeConnector() {
-    node = new SimpleRealtimeNode();
+    node = SimpleRealtimeNode.getInstance();
   }
 
   @Override
