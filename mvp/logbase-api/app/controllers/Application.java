@@ -25,6 +25,7 @@ public class Application extends Controller {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsSmartTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
+    // TODO form the query from args.
     String sql = "SELECT \"text.String\", \"source.String\" "
         + " from \"TEST\".\"TWITTER\" where (\"id_str.String\" = '461506965680951296') and (\"id.Double\" = 461506965680951296 or \"text.String\" = '@smiley_bieber15 nxuq')";
     int resultCount = 0;
