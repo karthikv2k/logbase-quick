@@ -24,6 +24,8 @@
 				<version>2.9</version>
 				<configuration>
 					<argLine>-Xmx2048M</argLine>
+                    <argLine>-Djub.consumers=CONSOLE,H2</argLine>
+                    <argLine>-Djub.db.file=./results/benchmarks</argLine>
 				</configuration>
 			</plugin>
         </plugins>
@@ -96,5 +98,10 @@
 			<artifactId>optiq-core</artifactId>
 			<version>0.8</version>
 		</dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.175</version>
+        </dependency>
 	</dependencies>
 </project>
