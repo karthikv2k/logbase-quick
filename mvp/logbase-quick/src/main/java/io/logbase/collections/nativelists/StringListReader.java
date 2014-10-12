@@ -10,4 +10,7 @@ import java.nio.CharBuffer;
  * User: karthik
  */
 public interface StringListReader extends BatchListReader<CharBuffer> {
+
+  public CharBuffer getAsCharBuffer(long index);
+
 }

@@ -38,7 +38,11 @@ public class StringBufListReader implements StringListReader {
 
   @Override
   public CharBuffer get(long index) {
-    return stringBuf.subSequence(offset[(int)index], offset[(int)index + 1]);
+    return getAsCharBuffer(index);
   }
 
+  @Override
+  public CharBuffer getAsCharBuffer(long index) {
+    return stringBuf.subSequence(offset[(int)index], offset[(int)index + 1]);
+  }
 }

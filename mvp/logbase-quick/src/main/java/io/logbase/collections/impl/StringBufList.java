@@ -1,12 +1,8 @@
 package io.logbase.collections.impl;
 
 import io.logbase.buffer.BufferFactory;
-import io.logbase.collections.BatchList;
-import io.logbase.collections.BatchListIterator;
-import io.logbase.collections.BatchListReader;
-import io.logbase.collections.BatchListWriter;
-import io.logbase.collections.nativelists.IntList;
-import io.logbase.collections.nativelists.StringList;
+import io.logbase.collections.*;
+import io.logbase.collections.nativelists.*;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
@@ -21,13 +17,8 @@ public class StringBufList implements StringList {
   public final IntList lengthList;
 
   public StringBufList(IntSummaryStatistics stats) {
-    this(stats.getMin(), stats.getMax(), stats.getCount(), stats.getSum());
-  }
-
-  public StringBufList(int min, int max, long count, long sum) {
-    //tba remove (int)
-    stringBuf = BufferFactory.newBufWithCharCapacity((int) sum);
-    lengthList = new BitPackIntList(min, max, count);
+    stringBuf = BufferFactory.newBufWithCharCapacity((int) stats.getSum()); //TBD remove (int)
+    lengthList = IntListFactory.newReadOnlyList(stats, null, true);
   }
 
   public CharBuffer getWriteBuffer() {
@@ -45,21 +36,31 @@ public class StringBufList implements StringList {
 
   @Override
   public BatchListIterator<CharBuffer> iterator(long maxIndex) {
-    return new StringBufListIterator(this, maxIndex);
+    return primitiveIterator(maxIndex);
   }
 
   @Override
   public BatchListReader<CharBuffer> reader(long maxIndex) {
-    return null;  //To change body of implemented methods use File | Settings | File Templates.
+    return primitiveReader(maxIndex);
   }
 
   @Override
   public BatchListWriter<CharBuffer> writer() {
-    return new StringBufListWriter(this);
+    return primitiveWriter();
   }
 
   @Override
-  public Class<CharBuffer> type(){
-    return CharBuffer.class;
+  public StringListIterator primitiveIterator(long maxIndex) {
+    return new StringBufListIterator(this, maxIndex);
+  }
+
+  @Override
+  public StringListReader primitiveReader(long maxIndex) {
+    return new StringBufListReader(getReadBuffer(), lengthList.primitiveIterator(maxIndex));
+  }
+
+  @Override
+  public StringListWriter primitiveWriter() {
+    return new StringBufListWriter(this);
   }
 }

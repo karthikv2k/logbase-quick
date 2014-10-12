@@ -1,5 +1,6 @@
 package io.logbase.column;
 
+import io.logbase.collections.BatchList;
 import io.logbase.collections.IntListFactory;
 import io.logbase.collections.Utils;
 import io.logbase.collections.impl.BitPackIntList;
@@ -11,6 +12,7 @@ import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.column.appendonly.AppendOnlyColumn;
 import io.logbase.column.readonly.ReadOnlyColumn;
 
+import java.nio.CharBuffer;
 import java.util.IntSummaryStatistics;
 import java.util.LongSummaryStatistics;
 
@@ -29,16 +31,21 @@ public class ColumnFactory {
   }
 
 
-  public static <T> Column createReadOnlyColumn(Column<T> appendOnly){
+  public static <T> Column createReadOnlyColumn(Column<T> sourceColumn){
 
-    if(appendOnly.getColumnType().equals(Integer.class)){
-      Column<Integer> intColumn = (Column<Integer>) appendOnly;
-      IntListIterator iterator = (IntListIterator) intColumn.getValuesIterator(intColumn.getValuesCount());
+    if(sourceColumn.getColumnType().equals(Integer.class)){
+      Column<Integer> intSourceColumn = (Column<Integer>) sourceColumn;
+      IntListIterator iterator = (IntListIterator) intSourceColumn.getValuesIterator(intSourceColumn.getValuesCount());
       IntSummaryStatistics columnStats = (IntSummaryStatistics)
         Utils.getListStats(iterator);
       iterator.rewind();
       IntList intList = IntListFactory.newReadOnlyList(columnStats, iterator, false);
-     // ReadOnlyColumn<Integer> roList = new ReadOnlyColumn<>(intList, bitPackIntList);
+      ReadOnlyColumn<Integer> roColumn = new ReadOnlyColumn<>(intSourceColumn, intList);
+      return roColumn;
+    }else if(sourceColumn.getColumnType().equals(CharBuffer.class)){
+      //TBD
+    }else if(sourceColumn.getColumnType().equals(Boolean.class)){
+      //TBD
     }
     return null;
   }

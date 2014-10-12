@@ -1,6 +1,7 @@
 package io.logbase.collections.impl;
 
 import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.StringArrayHolder;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.StringListIterator;
 
@@ -17,8 +18,6 @@ public class StringBufListIterator implements StringListIterator {
   private final CharBuffer stringBuffer;
   private final StringBufList list;
   private IntListIterator lengthIterator;
-  private int offset = 0;
-  private final int[] lengthBuf;
   private final long maxIndex;
   private long totalRead = 0;
   private int totalOffset = 0;
@@ -28,7 +27,6 @@ public class StringBufListIterator implements StringListIterator {
     this.list = list;
     this.maxIndex = Math.min(maxIndex, list.size());
     this.lengthIterator = list.lengthList.primitiveIterator(maxIndex);
-    lengthBuf = new int[lengthIterator.optimumBufferSize()];
     rewind();
   }
 
@@ -38,37 +36,10 @@ public class StringBufListIterator implements StringListIterator {
   }
 
   @Override
-  public boolean hasNext() {
-    return lengthIterator.hasNext();
-  }
-
-  @Override
   public int next(Object buffer, int offset, int count) {
     checkNotNull(buffer, "Null buffer is not permitted");
-    checkArgument(buffer instanceof CharBuffer[], "buffer must be int[], found " + buffer.getClass().getSimpleName());
-    return nextPrimitive((CharBuffer[]) buffer, offset, count);
-  }
-
-  public int nextPrimitive(CharBuffer[] buffer, int offset, int bufferLimit) {
-    bufferLimit = (int)Math.min(bufferLimit, remaining());
-    int curCnt = 0;
-    while(curCnt < bufferLimit){
-      int cnt = lengthIterator.nextPrimitive(lengthBuf, 0, Math.min(lengthBuf.length,(bufferLimit-curCnt)));
-
-      /*
-       * If we don't have any more entries to read, then return
-       */
-      if (cnt ==0) {
-        return curCnt;
-      }
-
-      for(int i=0; i<cnt; i++){
-        buffer[offset+curCnt] = stringBuffer.subSequence(totalOffset, totalOffset + lengthBuf[i]);
-        totalOffset+=lengthBuf[i];
-        curCnt++;
-      }
-    }
-    return curCnt;
+    checkArgument(buffer instanceof StringArrayHolder, "buffer must be StringArrayHolder, found " + buffer.getClass().getSimpleName());
+    return nextPrimitive((StringArrayHolder) buffer, offset, count);
   }
 
   @Override
@@ -82,4 +53,18 @@ public class StringBufListIterator implements StringListIterator {
     return CharBuffer.class;
   }
 
+  @Override
+  public int nextPrimitive(StringArrayHolder buffer, int offset, int count) {
+    count = (int)Math.min(count, remaining());
+    int cnt = lengthIterator.nextPrimitive(buffer.offsets, 0, count);
+    assert cnt==count;
+    int sum = 0;
+    for(int i=0; i<count; i++){
+      sum = sum +buffer.offsets[i];
+    }
+    stringBuffer.subSequence(totalOffset, totalOffset+sum);
+    totalOffset = totalOffset + sum;
+    totalRead = totalRead + count;
+    return count;
+  }
 }

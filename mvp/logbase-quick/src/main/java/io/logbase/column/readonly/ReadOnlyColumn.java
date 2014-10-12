@@ -29,24 +29,24 @@ public class ReadOnlyColumn<E> implements Column<E> {
   protected final IntList[] arrayIdx;
   protected final BatchList<E> values;
 
-  public ReadOnlyColumn(Column<E> column, BatchList<E> values) {
+  public ReadOnlyColumn(Column<E> sourceColumn, BatchList<E> valuesROList) {
 
-    this.values = values;
-    this.columnName = column.getColumnName();
-    this.arrayCount = column.getArrayCount();
-    this.startRowNum = column.getStartRowNum();
+    this.values = valuesROList;
+    this.columnName = sourceColumn.getColumnName();
+    this.arrayCount = sourceColumn.getArrayCount();
+    this.startRowNum = sourceColumn.getStartRowNum();
 
     //converting isPresent component
-    isPresent = new BitsetList((int) column.getRowCount()); //TBA avoid int conversion
+    isPresent = new BitsetList((int) sourceColumn.getRowCount()); //TBA avoid int conversion
     BatchListWriter<Boolean> booleanWriter = isPresent.writer();
-    booleanWriter.addAll(column.getIsPresentIterator(isPresent.size()));
+    booleanWriter.addAll(sourceColumn.getIsPresentIterator(isPresent.size()));
     booleanWriter.close();
 
     //converting array size component
     if (arrayCount > 0) {
       arraySize = null;//new BitPackIntList(column.getArraySizeIterator(column.getValidRowCount()));
       IntListWriter arraySizeWriter = arraySize.primitiveWriter();
-      arraySizeWriter.addAll(column.getArraySizeIterator(column.getValidRowCount()));
+      arraySizeWriter.addAll(sourceColumn.getArraySizeIterator(sourceColumn.getValidRowCount()));
       arraySizeWriter.close();
     } else {
       arraySize = null;
@@ -58,7 +58,7 @@ public class ReadOnlyColumn<E> implements Column<E> {
       for (int i = 0; i < arrayIdx.length; i++) {
         arrayIdx[i] = null;//new BitPackIntList(column.getArrayIndexIterator(i, column.getValuesCount()));
         IntListWriter arrayIdxWriter = arrayIdx[i].primitiveWriter();
-        arrayIdxWriter.addAll(column.getArrayIndexIterator(i, column.getValuesCount()));
+        arrayIdxWriter.addAll(sourceColumn.getArrayIndexIterator(i, sourceColumn.getValuesCount()));
         arrayIdxWriter.close();
       }
     } else {
@@ -66,8 +66,8 @@ public class ReadOnlyColumn<E> implements Column<E> {
     }
 
     //converting values component
-    BatchListWriter<E> writer = values.writer();
-    writer.addAll(column.getValuesIterator(column.getValuesCount()));
+    BatchListWriter<E> writer = valuesROList.writer();
+    writer.addAll(sourceColumn.getValuesIterator(sourceColumn.getValuesCount()));
     writer.close();
 
   }

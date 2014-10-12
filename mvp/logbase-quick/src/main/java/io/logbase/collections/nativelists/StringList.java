@@ -10,12 +10,12 @@ import java.nio.CharBuffer;
  */
 public interface StringList extends BatchList<CharBuffer> {
 
- /* public StringListIterator primitiveIterator(long maxIndex);
+  public StringListIterator primitiveIterator(long maxIndex);
 
   public StringListReader primitiveReader(long maxIndex);
 
   public StringListWriter primitiveWriter();
-  */
+
 
   @Override
   public default Class<CharBuffer> type(){
