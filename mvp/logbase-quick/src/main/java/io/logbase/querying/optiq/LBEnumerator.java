@@ -61,7 +61,7 @@ public class LBEnumerator implements Enumerator<Object> {
           allProjects.add(columnName);
         }
       }
-      logger.debug("No. of columns added to filter: " + allProjects.size());
+      logger.debug("No. of columns to project: " + allProjects.size());
       Predicate<CharSequence> allColumnFilter = Predicates.in(allProjects);
       rowIterator = view.getIterator(allColumnFilter);
     } else {
@@ -71,8 +71,8 @@ public class LBEnumerator implements Enumerator<Object> {
           selectProjects.add(p);
         }
       }
-      logger.debug("No. of select columns added to filter: "
-        + selectProjects.size());
+      logger
+          .debug("No. of select columns to project: " + selectProjects.size());
       Predicate<CharSequence> projectPredicate = Predicates
         .in(selectProjects);
 
@@ -103,7 +103,10 @@ public class LBEnumerator implements Enumerator<Object> {
   public boolean moveNext() {
     if (this.rowIterator.hasNext()) {
       final Object[] row = this.rowIterator.next();
-      current = row;
+      if (row.length > 1)
+        current = row;
+      else
+        current = row[0];
       return true;
     } else {
       current = null;

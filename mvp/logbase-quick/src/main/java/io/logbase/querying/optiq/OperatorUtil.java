@@ -63,8 +63,7 @@ public class OperatorUtil {
   }
 
   private static Class getJavaColumnType(String columnName) {
-    // TODO improve the raw event handling
-    if (columnName.endsWith(".String") || (columnName.equals("Raw Event")))
+    if (columnName.endsWith(".String"))
       return String.class;
     if (columnName.endsWith(".Double"))
       return Double.class;

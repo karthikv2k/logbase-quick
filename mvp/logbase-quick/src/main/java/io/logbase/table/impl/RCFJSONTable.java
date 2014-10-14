@@ -61,10 +61,11 @@ public class RCFJSONTable implements Table<JSONEvent> {
   }
 
   private void appendRawEvent(JSONEvent event) {
-    String jsonColumnName = "Raw Event";
+    String jsonColumnName = "RawEvent.String";
     Column jsonColumn = columns.get(jsonColumnName);
     if (jsonColumn == null) {
-      jsonColumn = columnFactory.createAppendOnlyColumn(NullType.class, jsonColumnName, 0);
+      jsonColumn = columnFactory.createAppendOnlyColumn(String.class,
+          jsonColumnName, 0);
       columns.put(jsonColumnName, jsonColumn);
     }
     jsonColumn.append(event.getJSONString().toString(), rowNum);

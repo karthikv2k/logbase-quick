@@ -2,12 +2,13 @@ package controllers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import io.logbase.column.Column;
-import io.logbase.exceptions.InvalidOperandException;
-import io.logbase.functions.Function;
-import io.logbase.functions.FunctionFactory;
-import io.logbase.functions.FunctionFactory.FunctionOperator;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+
 import io.logbase.node.Node;
 import io.logbase.node.NodeConnector;
 import io.logbase.node.impl.SimpleRealtimeNodeConnector;
@@ -30,40 +31,30 @@ public class Application extends Controller {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsSmartTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    // TODO form the query from args.
-    // Column rawEventColumn = view.getColumn("Raw Event");
-    // FunctionFactory ff = new FunctionFactory();
-    // Function searchFunction = ff.createFunction(FunctionOperator.SEARCH,
-    // new Object[] { rawEventColumn,
-    // args });
-    // Column filteredRows = null;
-    // try {
-    // filteredRows = (Column) searchFunction.execute();
-    // // No method to get raw events by passing
-    // } catch (InvalidOperandException e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-
-    // String sql = "SELECT \"text.String\", \"source.String\" "
-    // +
-    // " from \"TEST\".\"TWITTER\" where (\"id_str.String\" = '461506965680951296') and (\"id.Double\" = 461506965680951296 or \"text.String\" = '@smiley_bieber15 nxuq')";
-    String sql = "SELECT \"Raw Event\""
-        + " from \"TEST\".\"TWITTER\" where \"Raw Event\" LIKE 'beiber'";
+    String sql = "SELECT \"RawEvent.String\""
+        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '" + args
+        + "'";
     int resultCount = 0;
+    ObjectMapper mapper = new ObjectMapper();
+    ArrayNode output = null;
+    JsonNode jsonEvent = null;
+    List<JsonNode> eventsArray = new ArrayList();
     try {
       ResultSet results = queryExec.execute(sql);
       while (results.next()) {
         resultCount++;
-        // logger.debug("Text is: " + results.getString("text.String")
-        // + " Source is: " + results.getString("source.String"));
+        String event = results.getString("RawEvent.String");
+        Logger.debug("Got Event: " + event);
+        jsonEvent = mapper.readTree(event);
+        eventsArray.add(jsonEvent);
       }
-    } catch (SQLException e) {
+    } catch (Exception e) {
       Logger.error("Error while executing optiq query: " + sql);
     }
     Logger.info("Result count: " + resultCount);
 
-    return ok("You said: " + args);
+    output = mapper.valueToTree(eventsArray);
+    return ok(output);
   }
 
 }

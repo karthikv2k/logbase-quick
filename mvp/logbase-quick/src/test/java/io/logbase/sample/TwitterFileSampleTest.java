@@ -72,6 +72,7 @@ public class TwitterFileSampleTest {
     // Step 4: Get a view
     logger.info("Table names in the node: " + reader.getTableNames());
     view = reader.getViewFactory().createView(new InFilter("Twitter"));
+    logger.info("Columns in view: " + view.getColumnNames());
   }
 
   /**
@@ -141,6 +142,8 @@ public class TwitterFileSampleTest {
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
     String sql = "SELECT \"text.String\", \"source.String\" "
         + " from \"TEST\".\"TWITTER\" where (\"id_str.String\" = '461506965680951296') and (\"id.Double\" = 461506965680951296 or \"text.String\" = '@smiley_bieber15 nxuq')";
+    sql = "SELECT \"RawEvent.String\" "
+        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE 'BIEBER'";
     int resultCount = 0;
     try {
       ResultSet results = queryExec.execute(sql);
@@ -153,6 +156,6 @@ public class TwitterFileSampleTest {
       logger.error("Error while executing optiq query: " + sql);
     }
     logger.info("Result count: " + resultCount);
-    assertEquals(resultCount, 1);
+    assertEquals(resultCount, 2);
   }
 }

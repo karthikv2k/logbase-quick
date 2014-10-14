@@ -118,6 +118,14 @@ public class LBPushDownRule extends RelOptRule {
     logger.info("Pre transformTo fieldNames (top row): "
       + getFieldsString(topRow));
     logger.info("Filter String: " + filterString);
+    // TODO improve this
+    // Doing a hack for RawEvent like operation
+    if (filterString.startsWith("RawEvent.String")) {
+      String hackedFilterString = filterString.replace("RawEvent.String",
+          "RawEvent.String LIKE ");
+      logger.info("Filter String hacked! " + hackedFilterString);
+      filterString = hackedFilterString;
+    }
 
     // Testing get topFields and bottom fields
     List<RelDataTypeField> bottomFields = null;
