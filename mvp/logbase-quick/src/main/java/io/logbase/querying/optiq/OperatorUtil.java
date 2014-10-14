@@ -13,6 +13,8 @@ public class OperatorUtil {
       return FunctionOperator.AND;
     else if (input.equals("OR"))
       return FunctionOperator.OR;
+    else if (input.equals("LIKE"))
+      return FunctionOperator.SEARCH;
     else
       return null;
   }
@@ -24,7 +26,8 @@ public class OperatorUtil {
     // master is view for us
     // If operator is EQUALS, change operand to column and value
     // Do any other customization for other operators
-    if (operation.getOperator() == FunctionOperator.EQUALS) {
+    if ((operation.getOperator() == FunctionOperator.EQUALS)
+        || (operation.getOperator() == FunctionOperator.SEARCH)) {
       // Change the variable to column
       String columnName = null;
       Column column = null;
@@ -60,7 +63,8 @@ public class OperatorUtil {
   }
 
   private static Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith(".String"))
+    // TODO improve the raw event handling
+    if (columnName.endsWith(".String") || (columnName.equals("Raw Event")))
       return String.class;
     if (columnName.endsWith(".Double"))
       return Double.class;
