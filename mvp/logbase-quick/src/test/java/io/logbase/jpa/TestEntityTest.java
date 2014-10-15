@@ -33,6 +33,9 @@ public class TestEntityTest {
     Query q1 = em.createQuery("SELECT COUNT(t) FROM TestEntity t");
     Long count = (Long) q1.getSingleResult();
     logger.info("No. of messages in TestEntity: " + count);
+    // Close the database connection:
+    em.close();
+    emf.close();
     assertTrue("Table should not be empty", count > 0);
   }
 
