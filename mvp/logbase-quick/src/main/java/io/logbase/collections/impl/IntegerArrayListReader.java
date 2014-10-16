@@ -37,7 +37,7 @@ public class IntegerArrayListReader implements IntListReader {
 
   @Override
   public Integer get(long index) {
-    return getAsInt(index);
+    return new Integer(getAsInt(index));
   }
 
   @Override
