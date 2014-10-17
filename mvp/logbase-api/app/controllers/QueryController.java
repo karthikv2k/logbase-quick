@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import io.logbase.api.ui.query.QueryRequest;
 import io.logbase.api.ui.query.QueryUtils;
@@ -112,11 +113,12 @@ public class QueryController extends Controller {
     } else {
       int reqid = req.findPath("reqid").intValue();
       List<String> columns = new ArrayList<String>();
-      ArrayNode columnArray = (ArrayNode) req.findParent("columns");
+      ArrayNode columnArray = (ArrayNode) req.findPath("columns");
       for (JsonNode jn : columnArray) {
         columns.add(jn.textValue());
       }
       Logger.info("Created table with columns: " + columns);
+      QueryUtils.createTableColumns(reqid, columns);
       return ok();
     }
   }
@@ -126,9 +128,10 @@ public class QueryController extends Controller {
     if (!QueryUtils.isValidRequest(reqid)) {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
-      // TODO
-
-      return ok();
+      List<Map<String, Object>> tabularResults = QueryUtils.getTable(reqid);
+      ObjectMapper mapper = new ObjectMapper();
+      ArrayNode result = mapper.valueToTree(tabularResults);
+      return ok(result);
     }
   }
 

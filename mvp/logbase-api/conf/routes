@@ -10,7 +10,7 @@ GET		/eventsp						controllers.QueryController.eventsP(reqid: Int, offset: Long,
 GET		/eventscount					controllers.QueryController.eventsCount(reqid: Int)
 GET		/columns						controllers.QueryController.columns(reqid: Int)
 POST	/table							controllers.QueryController.createTable()
-GET		/table							controllers.QueryController.table(reqId: Int)
+GET		/table							controllers.QueryController.table(reqid: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -1,6 +1,8 @@
 package io.logbase.api.ui.query;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -110,5 +112,57 @@ public class QueryUtils {
     columnMap.put(reqid, columns);
   }
   
+  public static List<Map<String, Object>> getTable(int reqid) {
+    List<Map<String, Object>> results = null;
+    // TODO
+    // Execute query with the passed columns
+    QueryRequest queryRequest = queryRequests.get(reqid);
+    View view = node.getReader().getViewFactory()
+        .createView(new InFilter("Twitter"));
+    LBSchema lbSchema = new LBSchema("TEST");
+    lbSchema.addAsSmartTable("TWITTER", view);
+    QueryExecutor queryExec = new QueryExecutor(lbSchema);
+
+    String selectClause = "";
+    for (String column : columnMap.get(reqid)) {
+      if (selectClause.equals(""))
+        selectClause = selectClause + "\"" + column + "\"";
+      else
+        selectClause = selectClause + ", \"" + column + "\"";
+    }
+    Logger.info("Select clause: " + selectClause);
+    String sql = "SELECT " + selectClause
+        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
+        + queryRequest.getArgs() + "'";
+    try {
+      ResultSet resultSet = queryExec.execute(sql);
+      results = getEntitiesFromResultSet(resultSet);
+    } catch (Exception e) {
+      Logger.error("Error while executing optiq query: " + sql);
+    }
+    return results;
+  }
+
+  private static List<Map<String, Object>> getEntitiesFromResultSet(
+      ResultSet resultSet) throws SQLException {
+    List<Map<String, Object>> entities = new ArrayList<Map<String, Object>>();
+    while (resultSet.next()) {
+      entities.add(getEntityFromResultSet(resultSet));
+    }
+    return entities;
+  }
+
+  private static Map<String, Object> getEntityFromResultSet(ResultSet resultSet)
+      throws SQLException {
+    ResultSetMetaData metaData = resultSet.getMetaData();
+    int columnCount = metaData.getColumnCount();
+    Map<String, Object> resultsMap = new HashMap<>();
+    for (int i = 1; i <= columnCount; ++i) {
+      String columnName = metaData.getColumnName(i).toLowerCase();
+      Object object = resultSet.getObject(i);
+      resultsMap.put(columnName, object);
+    }
+    return resultsMap;
+  }
 
 }
