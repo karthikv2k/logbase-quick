@@ -1,8 +1,12 @@
 package io.logbase.collections.impl;
 
-import io.logbase.collections.nativelists.IntListIterator;
+import io.logbase.collections.BatchList;
+import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.BatchListReader;
+import io.logbase.collections.BatchListWriter;
 import io.logbase.column.TypeUtils;
 
+import java.lang.reflect.Array;
 import java.nio.CharBuffer;
 
 import static junit.framework.Assert.assertEquals;
@@ -10,25 +14,25 @@ import static junit.framework.Assert.assertEquals;
 /**
  * Created by Kousik on 18/09/14.
  */
-public class StringListTestSuite {
-  private final BatchListFactory<CharBuffer> factory;
+public class StringListTestSuite<E> {
+  private final BatchListFactory<E> factory;
   private final String[] testData;
 
-  StringListTestSuite(BatchListFactory<CharBuffer> factory, String[] testData){
+  StringListTestSuite(BatchListFactory<E> factory, String[] testData){
     this.factory = factory;
     this.testData = testData;
   }
 
   public void testList(){
-    StringBufList list = (StringBufList) factory.newInstance();
-    StringBufListWriter writer = new StringBufListWriter(list);
+    BatchList list = factory.newInstance();
+    BatchListWriter writer = list.writer();
     long totalWrites=0;
 
     /*
      * Writer test
      */
     for(int i=0; i<testData.length; i++){
-      writer.add((CharBuffer) TypeUtils.castToLB(testData[i]));
+      writer.add(testData[i]);
       totalWrites++;
     }
     assertEquals(list.size(), totalWrites);
@@ -36,10 +40,10 @@ public class StringListTestSuite {
     /*
      * Iterator test, read in batch
      */
-    StringBufListIterator it = new StringBufListIterator(list, list.size());
+    BatchListIterator it = list.iterator(list.size());
 
     int count =0;
-    CharBuffer[] buffer = new CharBuffer[(int)list.size()];
+    E[] buffer = (E[]) Array.newInstance(list.type(), (int)list.size());
     count = it.next(buffer, 0, (int)list.size());
     for (int i = 0; i < count; i++) {
       assert(testData[i].equals(buffer[i].toString()));
@@ -49,7 +53,7 @@ public class StringListTestSuite {
      * Iterator test, read one entry at a time
      */
 
-    CharBuffer[] buf = new CharBuffer[1];
+    E[] buf = (E[]) Array.newInstance(list.type(), (int)list.size());
     int iter = 0;
     it.rewind();
     while (it.hasNext()) {
@@ -61,13 +65,11 @@ public class StringListTestSuite {
     /*
      * Reader test - read random entries from the list and verify the content
      */
-    IntListIterator lengthIterator = (IntListIterator)list.lengthList.iterator(list.size());
-    CharBuffer readBuffer = list.getReadBuffer();
-    StringBufListReader reader = new StringBufListReader(readBuffer, lengthIterator);
+    BatchListReader reader = list.reader(list.size());
     iter = DataGen.randomInt(0, (int)list.size() - 1);
     while(iter>=0) {
       long index = DataGen.randomInt(0, (int)list.size()-1);
-      buf[0] = reader.get(index);
+      buf[0] = (E)reader.get(index);
       assert(testData[(int)index].equals(buf[0].toString()));
       iter--;
     }

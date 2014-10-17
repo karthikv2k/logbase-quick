@@ -12,6 +12,7 @@ import io.logbase.column.ColumnFactory;
 import io.logbase.functions.Function;
 import io.logbase.functions.FunctionFactory;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestRule;
@@ -70,7 +71,7 @@ public class SearchBenchmarkTest extends AbstractBenchmark {
   }
 
   @BenchmarkOptions(benchmarkRounds = 3, warmupRounds = 2)
-  @Test
+  @Ignore
   public void baseSearch() throws Exception{
     FunctionFactory factory = new FunctionFactory();
     Object[] operands = {column, "cover myself"};

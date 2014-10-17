@@ -3,10 +3,7 @@ package io.logbase.column;
 import io.logbase.collections.BatchList;
 import io.logbase.collections.IntListFactory;
 import io.logbase.collections.Utils;
-import io.logbase.collections.impl.BitPackIntList;
-import io.logbase.collections.impl.BitsetList;
-import io.logbase.collections.impl.IntegerArrayList;
-import io.logbase.collections.impl.ListBackedBatchList;
+import io.logbase.collections.impl.*;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.column.appendonly.AppendOnlyColumn;
@@ -25,6 +22,14 @@ public class ColumnFactory {
       return new AppendOnlyColumn(name, numArrays, new IntegerArrayList());
     } else if (type.equals(Boolean.class)) {
       return new AppendOnlyColumn(name, numArrays, new BitsetList());
+    } else if (type.equals(Float.class)) {
+      return new AppendOnlyColumn(name, numArrays, new FloatArrayList());
+    } else if (type.equals(Double.class)) {
+      return new AppendOnlyColumn(name, numArrays, new DoubleArrayList());
+    } else if (type.equals(Long.class)) {
+      return new AppendOnlyColumn(name, numArrays, new LongArrayList());
+    } else if (type.equals(String.class)) {
+      return new AppendOnlyColumn(name, numArrays, new StringDictionaryList());
     } else {
       return new AppendOnlyColumn(name, numArrays, new ListBackedBatchList(TypeUtils.getPrimitiveType(type)));
     }
