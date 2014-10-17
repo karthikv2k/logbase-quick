@@ -56,15 +56,40 @@ public class QueryController extends Controller {
 
   public static Result events(int reqid) {
     Logger.info("Processing events for query request: " + reqid);
-    QueryRequest queryRequest = QueryUtils.getQueryRequest(reqid);
-    if (queryRequest == null) {
+    if (!QueryUtils.isValidRequest(reqid)) {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       ObjectMapper mapper = new ObjectMapper();
       // Fire query
-      List<String> events = QueryUtils.getEvents(queryRequest);
-      ArrayNode output = mapper.valueToTree(events);
-      return ok(output);
+      List<String> events = QueryUtils.getEvents(reqid);
+      ArrayNode result = mapper.valueToTree(events);
+      return ok(result);
+    }
+  }
+
+  public static Result eventsP(int reqid, long offset, int max) {
+    Logger.info("Processing events for query request: " + reqid);
+    if (!QueryUtils.isValidRequest(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      ObjectMapper mapper = new ObjectMapper();
+      // Fire query
+      List<String> events = QueryUtils.getEventsP(reqid, offset, max);
+      ArrayNode result = mapper.valueToTree(events);
+      return ok(result);
+    }
+  }
+
+  public static Result eventsCount(int reqid) {
+    Logger.info("Processing events for query request: " + reqid);
+    if (!QueryUtils.isValidRequest(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      // Fire query
+      Long eventCount = QueryUtils.getEventsCount(reqid);
+      ObjectNode result = Json.newObject();
+      result.put("eventscount", eventCount);
+      return ok(result);
     }
   }
 

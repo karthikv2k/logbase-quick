@@ -21,9 +21,9 @@ public class QueryUtils {
   private static Node node = nodeConnector.connect();
   private static int reqid = 0;
   private static Map<Integer, QueryRequest> queryRequests = new HashMap<Integer, QueryRequest>();
+  private static Map<Integer, List<String>> queryResults = new HashMap<Integer, List<String>>();
 
   public static int postQuery(QueryRequest queryRequest) {
-    // TODO
     reqid++;
     // Store request somewhere
     queryRequests.put(reqid, queryRequest);
@@ -31,11 +31,48 @@ public class QueryUtils {
     return reqid;
   }
 
-  public static QueryRequest getQueryRequest(int reqid) {
-    return queryRequests.get(reqid);
+  public static boolean isValidRequest(int reqid) {
+    return queryRequests.get(reqid) == null ? false : true;
   }
 
-  public static List<String> getEvents(QueryRequest queryRequest) {
+  public static List<String> getEvents(int reqid) {
+    List<String> cachedEvents = queryResults.get(reqid);
+    if (cachedEvents != null)
+      return cachedEvents;
+    else
+      return fetchEvents(reqid);
+  }
+
+  public static List<String> getEventsP(int reqid, long offset, int max) {
+    List<String> events = null;
+    List<String> selectEvents = new ArrayList<String>();
+    List<String> cachedEvents = queryResults.get(reqid);
+    if (cachedEvents != null)
+      events = cachedEvents;
+    else
+      events = fetchEvents(reqid);
+    if (offset <= events.size()) {
+      int start = (int) (offset - 1);
+      int end = start + max - 1;
+      if (end >= events.size())
+        end = events.size() - 1;
+      for (int i = start; i <= end; i++)
+        selectEvents.add(events.get(i));
+    }
+    return selectEvents;
+  }
+
+  public static long getEventsCount(int reqid){
+    List<String> cachedEvents = queryResults.get(reqid);
+    if (cachedEvents != null)
+      return cachedEvents.size();
+    else
+      return fetchEvents(reqid).size();
+  }
+
+  private static List<String> fetchEvents(int reqid) {
+    // TODO This needs to be improved with multi table support etc.
+    QueryRequest queryRequest = queryRequests.get(reqid);
     List<String> events = new ArrayList<String>();
     View view = node.getReader().getViewFactory()
         .createView(new InFilter("Twitter"));
@@ -57,6 +94,7 @@ public class QueryUtils {
       Logger.error("Error while executing optiq query: " + sql);
     }
     Logger.info("Result count: " + resultCount);
+    queryResults.put(reqid, events);
     return events;
   }
 
