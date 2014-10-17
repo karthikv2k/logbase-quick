@@ -110,6 +110,7 @@ public class QueryUtils {
   }
   
   public static void createTableColumns(int reqid, List<String> columns) {
+    Logger.debug("Adding table for reqid: " + reqid);
     tableRequests.put(reqid, columns);
     // Remove any cached results
     tableResults.remove(reqid);
@@ -202,6 +203,7 @@ public class QueryUtils {
   }
 
   public static boolean isValidTable(int reqid) {
+    Logger.debug("Checking validity for table in reqid: " + reqid);
     return tableRequests.get(reqid) == null ? false : true;
   }
 

@@ -117,8 +117,9 @@ public class QueryController extends Controller {
       for (JsonNode jn : columnArray) {
         columns.add(jn.textValue());
       }
-      Logger.info("Created table with columns: " + columns);
       QueryUtils.createTableColumns(reqid, columns);
+      Logger.info("Created table with columns: " + columns + " and reqid: "
+          + reqid);
       return ok();
     }
   }
