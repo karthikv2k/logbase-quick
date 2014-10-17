@@ -1,12 +1,13 @@
 package io.logbase.api.ui.query;
 
+import java.util.List;
+
 public class QueryRequest {
 
   private String args;
   private long from;
   private long to;
-  private int dataset;
-  private String source;
+  private List<Integer> source;
 
   public String getArgs() {
     return args;
@@ -32,19 +33,11 @@ public class QueryRequest {
     this.to = to;
   }
 
-  public int getDataset() {
-    return dataset;
-  }
-
-  public void setDataset(int dataset) {
-    this.dataset = dataset;
-  }
-
-  public String getSource() {
+  public List<Integer> getSource() {
     return source;
   }
 
-  public void setSource(String source) {
+  public void setSource(List<Integer> source) {
     this.source = source;
   }
 

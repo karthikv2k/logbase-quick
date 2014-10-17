@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.List;
 
 import io.logbase.api.ui.query.QueryRequest;
 import io.logbase.api.ui.query.QueryUtils;
@@ -9,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import play.libs.Json;
@@ -51,4 +53,19 @@ public class QueryController extends Controller {
       return ok(result);
     }
   }
+
+  public static Result events(int reqid) {
+    Logger.info("Processing events for query request: " + reqid);
+    QueryRequest queryRequest = QueryUtils.getQueryRequest(reqid);
+    if (queryRequest == null) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      ObjectMapper mapper = new ObjectMapper();
+      // Fire query
+      List<String> events = QueryUtils.getEvents(queryRequest);
+      ArrayNode output = mapper.valueToTree(events);
+      return ok(output);
+    }
+  }
+
 }

@@ -5,6 +5,7 @@
 # Home page
 GET		/search							controllers.Application.search(args)
 POST	/query							controllers.QueryController.query()
+GET		/events							controllers.QueryController.events(reqid: Int)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
