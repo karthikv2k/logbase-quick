@@ -22,6 +22,7 @@ public class QueryUtils {
   private static int reqid = 0;
   private static Map<Integer, QueryRequest> queryRequests = new HashMap<Integer, QueryRequest>();
   private static Map<Integer, List<String>> queryResults = new HashMap<Integer, List<String>>();
+  private static Map<Integer, List<String>> columnMap = new HashMap<Integer, List<String>>();
 
   public static int postQuery(QueryRequest queryRequest) {
     reqid++;
@@ -104,5 +105,10 @@ public class QueryUtils {
     List<String> columns = new ArrayList(view.getColumnNames());
     return columns;
   }
+  
+  public static void createTableColumns(int reqid, List<String> columns) {
+    columnMap.put(reqid, columns);
+  }
+  
 
 }

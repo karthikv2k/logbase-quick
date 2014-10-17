@@ -1,6 +1,7 @@
 package controllers;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import io.logbase.api.ui.query.QueryRequest;
@@ -100,6 +101,34 @@ public class QueryController extends Controller {
       ObjectMapper mapper = new ObjectMapper();
       ArrayNode result = mapper.valueToTree(columns);
       return ok(result);
+    }
+  }
+  
+  @BodyParser.Of(BodyParser.Json.class)
+  public static Result createTable() {
+    JsonNode req = request().body().asJson();
+    if (req == null) {
+      return badRequest("Expecting Json data");
+    } else {
+      int reqid = req.findPath("reqid").intValue();
+      List<String> columns = new ArrayList<String>();
+      ArrayNode columnArray = (ArrayNode) req.findParent("columns");
+      for (JsonNode jn : columnArray) {
+        columns.add(jn.textValue());
+      }
+      Logger.info("Created table with columns: " + columns);
+      return ok();
+    }
+  }
+
+  public static Result table(int reqid) {
+    Logger.info("Processing table for query request: " + reqid);
+    if (!QueryUtils.isValidRequest(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      // TODO
+
+      return ok();
     }
   }
 
