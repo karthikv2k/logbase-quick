@@ -125,12 +125,37 @@ public class QueryController extends Controller {
 
   public static Result table(int reqid) {
     Logger.info("Processing table for query request: " + reqid);
-    if (!QueryUtils.isValidRequest(reqid)) {
+    if (!QueryUtils.isValidTable(reqid)) {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       List<Map<String, Object>> tabularResults = QueryUtils.getTable(reqid);
       ObjectMapper mapper = new ObjectMapper();
       ArrayNode result = mapper.valueToTree(tabularResults);
+      return ok(result);
+    }
+  }
+
+  public static Result tableP(int reqid, long offset, int max) {
+    Logger.info("Processing paginated table for query request: " + reqid);
+    if (!QueryUtils.isValidTable(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      ObjectMapper mapper = new ObjectMapper();
+      List<Map<String, Object>> tabularResults = QueryUtils.getTableP(reqid,
+          offset, max);
+      ArrayNode result = mapper.valueToTree(tabularResults);
+      return ok(result);
+    }
+  }
+
+  public static Result tableRowCount(int reqid) {
+    Logger.info("Processing table row count for query request: " + reqid);
+    if (!QueryUtils.isValidTable(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      Long tableRowCount = QueryUtils.getTableRowCount(reqid);
+      ObjectNode result = Json.newObject();
+      result.put("tablerowcount", tableRowCount);
       return ok(result);
     }
   }

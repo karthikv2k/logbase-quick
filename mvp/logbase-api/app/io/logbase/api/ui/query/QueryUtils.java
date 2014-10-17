@@ -24,7 +24,8 @@ public class QueryUtils {
   private static int reqid = 0;
   private static Map<Integer, QueryRequest> queryRequests = new HashMap<Integer, QueryRequest>();
   private static Map<Integer, List<String>> queryResults = new HashMap<Integer, List<String>>();
-  private static Map<Integer, List<String>> columnMap = new HashMap<Integer, List<String>>();
+  private static Map<Integer, List<String>> tableRequests = new HashMap<Integer, List<String>>();
+  private static Map<Integer, List<Map<String, Object>>> tableResults = new HashMap<Integer, List<Map<String, Object>>>();
 
   public static int postQuery(QueryRequest queryRequest) {
     reqid++;
@@ -109,38 +110,73 @@ public class QueryUtils {
   }
   
   public static void createTableColumns(int reqid, List<String> columns) {
-    columnMap.put(reqid, columns);
+    tableRequests.put(reqid, columns);
+    // Remove any cached results
+    tableResults.remove(reqid);
   }
   
   public static List<Map<String, Object>> getTable(int reqid) {
-    List<Map<String, Object>> results = null;
-    // TODO
-    // Execute query with the passed columns
-    QueryRequest queryRequest = queryRequests.get(reqid);
-    View view = node.getReader().getViewFactory()
-        .createView(new InFilter("Twitter"));
-    LBSchema lbSchema = new LBSchema("TEST");
-    lbSchema.addAsSmartTable("TWITTER", view);
-    QueryExecutor queryExec = new QueryExecutor(lbSchema);
+    if (tableResults.containsKey(reqid)) {
+      return tableResults.get(reqid);
+    } else {
+      List<Map<String, Object>> results = null;
+      // TODO
+      // Execute query with the passed columns
+      QueryRequest queryRequest = queryRequests.get(reqid);
+      View view = node.getReader().getViewFactory()
+          .createView(new InFilter("Twitter"));
+      LBSchema lbSchema = new LBSchema("TEST");
+      lbSchema.addAsSmartTable("TWITTER", view);
+      QueryExecutor queryExec = new QueryExecutor(lbSchema);
 
-    String selectClause = "";
-    for (String column : columnMap.get(reqid)) {
-      if (selectClause.equals(""))
-        selectClause = selectClause + "\"" + column + "\"";
-      else
-        selectClause = selectClause + ", \"" + column + "\"";
+      String selectClause = "";
+      for (String column : tableRequests.get(reqid)) {
+        if (selectClause.equals(""))
+          selectClause = selectClause + "\"" + column + "\"";
+        else
+          selectClause = selectClause + ", \"" + column + "\"";
+      }
+      Logger.info("Select clause: " + selectClause);
+      String sql = "SELECT " + selectClause
+          + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
+          + queryRequest.getArgs() + "'";
+      try {
+        ResultSet resultSet = queryExec.execute(sql);
+        results = getEntitiesFromResultSet(resultSet);
+      } catch (Exception e) {
+        Logger.error("Error while executing optiq query: " + sql);
+      }
+      tableResults.put(reqid, results);
+      return results;
     }
-    Logger.info("Select clause: " + selectClause);
-    String sql = "SELECT " + selectClause
-        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
-        + queryRequest.getArgs() + "'";
-    try {
-      ResultSet resultSet = queryExec.execute(sql);
-      results = getEntitiesFromResultSet(resultSet);
-    } catch (Exception e) {
-      Logger.error("Error while executing optiq query: " + sql);
+  }
+
+  public static List<Map<String, Object>> getTableP(int reqid, long offset,
+      int max) {
+    List<Map<String, Object>> result = null;
+    List<Map<String, Object>> filteredResult = new ArrayList<Map<String, Object>>();
+    if (tableResults.containsKey(reqid))
+      result = tableResults.get(reqid);
+    else
+      result = getTable(reqid);
+
+    // filter
+    if (offset <= result.size()) {
+      int start = (int) (offset - 1);
+      int end = start + max - 1;
+      if (end >= result.size())
+        end = result.size() - 1;
+      for (int i = start; i <= end; i++)
+        filteredResult.add(result.get(i));
     }
-    return results;
+    return filteredResult;
+  }
+
+  public static long getTableRowCount(int reqid) {
+    if (tableResults.containsKey(reqid))
+      return tableResults.size();
+    else
+      return getTable(reqid).size();
   }
 
   private static List<Map<String, Object>> getEntitiesFromResultSet(
@@ -163,6 +199,10 @@ public class QueryUtils {
       resultsMap.put(columnName, object);
     }
     return resultsMap;
+  }
+
+  public static boolean isValidTable(int reqid) {
+    return tableRequests.get(reqid) == null ? false : true;
   }
 
 }
