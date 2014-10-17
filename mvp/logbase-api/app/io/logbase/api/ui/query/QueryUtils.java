@@ -98,4 +98,11 @@ public class QueryUtils {
     return events;
   }
 
+  public static List<String> getColumns(int reqid) {
+    View view = node.getReader().getViewFactory()
+        .createView(new InFilter("Twitter"));
+    List<String> columns = new ArrayList(view.getColumnNames());
+    return columns;
+  }
+
 }

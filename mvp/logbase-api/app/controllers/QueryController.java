@@ -60,7 +60,6 @@ public class QueryController extends Controller {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       ObjectMapper mapper = new ObjectMapper();
-      // Fire query
       List<String> events = QueryUtils.getEvents(reqid);
       ArrayNode result = mapper.valueToTree(events);
       return ok(result);
@@ -68,12 +67,11 @@ public class QueryController extends Controller {
   }
 
   public static Result eventsP(int reqid, long offset, int max) {
-    Logger.info("Processing events for query request: " + reqid);
+    Logger.info("Processing paginated events for query request: " + reqid);
     if (!QueryUtils.isValidRequest(reqid)) {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       ObjectMapper mapper = new ObjectMapper();
-      // Fire query
       List<String> events = QueryUtils.getEventsP(reqid, offset, max);
       ArrayNode result = mapper.valueToTree(events);
       return ok(result);
@@ -81,14 +79,26 @@ public class QueryController extends Controller {
   }
 
   public static Result eventsCount(int reqid) {
-    Logger.info("Processing events for query request: " + reqid);
+    Logger.info("Processing event count for query request: " + reqid);
+    if (!QueryUtils.isValidRequest(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      Long eventCount = QueryUtils.getEventsCount(reqid);
+      ObjectNode result = Json.newObject();
+      result.put("eventscount", eventCount);
+      return ok(result);
+    }
+  }
+
+  public static Result columns(int reqid) {
+    Logger.info("Processing columns for query request: " + reqid);
     if (!QueryUtils.isValidRequest(reqid)) {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       // Fire query
-      Long eventCount = QueryUtils.getEventsCount(reqid);
-      ObjectNode result = Json.newObject();
-      result.put("eventscount", eventCount);
+      List<String> columns = QueryUtils.getColumns(reqid);
+      ObjectMapper mapper = new ObjectMapper();
+      ArrayNode result = mapper.valueToTree(columns);
       return ok(result);
     }
   }
