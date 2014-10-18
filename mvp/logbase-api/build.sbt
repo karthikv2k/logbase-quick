@@ -8,10 +8,14 @@ scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
   "io.logbase" % "logbase-quick" % "1.0-SNAPSHOT",
+  "com.objectdb" % "objectdb" % "2.5.7",
   javaJdbc,
   javaEbean,
   cache,
   javaWs
 )
 
-resolvers += Resolver.mavenLocal
+resolvers ++= Seq(
+	Resolver.mavenLocal,
+	"ObjectDB Repository" at "http://m2.objectdb.com"
+)

@@ -2,9 +2,13 @@ package io.logbase.api.ui.query;
 
 import java.util.List;
 
+import javax.persistence.Embeddable;
+
+@Embeddable
 public class QueryRequest {
 
   private String args;
+  private String argsType;
   private long from;
   private long to;
   private List<Integer> source;
@@ -39,6 +43,14 @@ public class QueryRequest {
 
   public void setSource(List<Integer> source) {
     this.source = source;
+  }
+
+  public String getArgsType() {
+    return argsType;
+  }
+
+  public void setArgsType(String argsType) {
+    this.argsType = argsType;
   }
 
 }
