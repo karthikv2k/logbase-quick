@@ -73,16 +73,17 @@ public class LBTable extends AbstractQueryableTable implements
    * @return The java class of the column. Returns null if not an applicable
    *         type.
    */
+  // TODO This logic has to be improved
   public static Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith(".String"))
+    if (columnName.endsWith(".String") || columnName.endsWith(".String.LBM"))
       return String.class;
-    if (columnName.endsWith(".Double"))
+    if (columnName.endsWith(".Double") || columnName.endsWith(".Double.LBM"))
       return Double.class;
-    if (columnName.endsWith(".Float"))
+    if (columnName.endsWith(".Float") || columnName.endsWith(".Float.LBM"))
       return Float.class;
-    if (columnName.endsWith(".Int"))
+    if (columnName.endsWith(".Int") || columnName.endsWith(".Int.LBM"))
       return Integer.class;
-    if (columnName.endsWith(".Long"))
+    if (columnName.endsWith(".Long") || columnName.endsWith(".Long.LBM"))
       return Long.class;
     else
       return null;

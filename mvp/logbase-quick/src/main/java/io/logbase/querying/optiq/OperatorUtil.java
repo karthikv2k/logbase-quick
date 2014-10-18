@@ -34,9 +34,8 @@ public class OperatorUtil {
       Object value = null;
       if (operation.getOperands()[0] instanceof String) {
         columnName = (String) operation.getOperands()[0];
-        Class valueClass = getJavaColumnType(columnName);
+        Class valueClass = LBTable.getJavaColumnType(columnName);
         String strValue = (String) operation.getOperands()[1];
-        System.out.println("StrValue: " + strValue);
         if (valueClass.equals(String.class)) {
           // trim value and cast to String
           if (strValue.startsWith("\"") && strValue.endsWith("\""))
@@ -60,21 +59,6 @@ public class OperatorUtil {
       }
     }
     return operation;
-  }
-
-  private static Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith(".String"))
-      return String.class;
-    if (columnName.endsWith(".Double"))
-      return Double.class;
-    if (columnName.endsWith(".Float"))
-      return Float.class;
-    if (columnName.endsWith(".Int"))
-      return Integer.class;
-    if (columnName.endsWith(".Long"))
-      return Long.class;
-    else
-      return null;
   }
 
 }

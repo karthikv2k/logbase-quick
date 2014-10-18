@@ -51,7 +51,7 @@ public class LBSmartTable extends AbstractQueryableTable implements
     RelDataType type;
     Class clazz;
     for (String columnName : allColumnNames) {
-      clazz = getJavaColumnType(columnName);
+      clazz = LBTable.getJavaColumnType(columnName);
       if (clazz != null) {
         names.add(columnName);
         type = typeFactory.createJavaType(clazz);
@@ -61,29 +61,6 @@ public class LBSmartTable extends AbstractQueryableTable implements
     logger.debug("Total no. of columns in view: " + names.size());
     logger.debug("Columns in view: " + names);
     return typeFactory.createStructType(Pair.zip(names, types));
-  }
-
-  /**
-   * This method determines if a LogBase column will be added to the Optiq table
-   * and returns the column data type.
-   *
-   * @param columnName Logbase column name
-   * @return The java class of the column. Returns null if not an applicable
-   *         type.
-   */
-  public static Class getJavaColumnType(String columnName) {
-    if (columnName.endsWith(".String"))
-      return String.class;
-    if (columnName.endsWith(".Double"))
-      return Double.class;
-    if (columnName.endsWith(".Float"))
-      return Float.class;
-    if (columnName.endsWith(".Int"))
-      return Integer.class;
-    if (columnName.endsWith(".Long"))
-      return Long.class;
-    else
-      return null;
   }
 
   // This method has to return an Enumerator which contains an iterator
