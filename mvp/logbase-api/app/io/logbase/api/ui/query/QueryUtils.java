@@ -219,4 +219,28 @@ public class QueryUtils {
     tableResults.remove(reqid);
   }
 
+  public static List<Long> getTimeline(int reqid) {
+    List<Long> timeline = new ArrayList<Long>();
+    QueryRequest queryRequest = queryRequests.get(reqid);
+    View view = node.getReader().getViewFactory()
+        .createView(new InFilter("Twitter"));
+    LBSchema lbSchema = new LBSchema("TEST");
+    lbSchema.addAsSmartTable("TWITTER", view);
+    QueryExecutor queryExec = new QueryExecutor(lbSchema);
+    String sql = "SELECT \"TimeStamp.Long.LBM\""
+        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
+        + queryRequest.getArgs() + "'";
+    try {
+      ResultSet results = queryExec.execute(sql);
+      while (results.next()) {
+        Long ts = results.getLong("TimeStamp.Long.LBM");
+        timeline.add(ts);
+      }
+      Logger.info("Formed timeline with size: " + timeline.size());
+    } catch (Exception e) {
+      Logger.error("Error while executing optiq query: " + sql);
+    }
+    return timeline;
+  }
+
 }

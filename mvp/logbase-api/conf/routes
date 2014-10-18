@@ -15,6 +15,7 @@ GET		/tablerowcount					controllers.QueryController.tableRowCount(reqid: Int)
 GET		/tablep							controllers.QueryController.tableP(reqid: Int, offset: Long, max: Int)
 DELETE	/table							controllers.QueryController.clearTable(reqid: Int)
 DELETE	/query							controllers.QueryController.clearQuery(reqid: Int)
+GET		/timeline						controllers.QueryController.timeline(reqid: Int)
 
 POST	/workspace						controllers.WorkspaceController.saveWorkspace()
 GET		/workspace						controllers.WorkspaceController.getWorkspace(wsname)

@@ -173,4 +173,17 @@ public class QueryController extends Controller {
     return ok();
   }
 
+  public static Result timeline(int reqid) {
+    Logger.info("Processing timeline for query request: " + reqid);
+    if (!QueryUtils.isValidRequest(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      ObjectMapper mapper = new ObjectMapper();
+      List<Long> timeline = QueryUtils.getTimeline(reqid);
+      ArrayNode result = mapper.valueToTree(timeline);
+      return ok(result);
+    }
+  }
+
+
 }
