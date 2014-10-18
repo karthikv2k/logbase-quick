@@ -41,7 +41,6 @@ public class TwitterTimeStampExtractor implements TimeStampExtractor<JSONEvent> 
     }
 
     time = sdf.parse(str, pos).getTime();
-    System.out.println(time);
     return time;
   }
 }
