@@ -4,14 +4,13 @@ import com.google.common.base.Predicate;
 import com.google.gson.Gson;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
-import io.logbase.column.NullType;
 import io.logbase.column.TypeUtils;
 import io.logbase.event.JSONEvent;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.GlobalConfig;
+import io.logbase.utils.TimeStamp.JSONTimeStampExtractor;
 import io.logbase.utils.TimeStamp.TimeStampExtractor;
-import io.logbase.utils.TimeStamp.TwitterTimeStampExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +37,7 @@ public class RCFJSONTable implements Table<JSONEvent> {
     columns = new ConcurrentSkipListMap<String, Column>();
     this.columnFactory = columnFactory;
     gson = new Gson();
-    tsExtactor = new TwitterTimeStampExtractor();
+    tsExtactor = new JSONTimeStampExtractor();
   }
 
   @Override
