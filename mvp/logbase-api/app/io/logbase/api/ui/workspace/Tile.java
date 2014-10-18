@@ -11,8 +11,9 @@ public class Tile {
 
   private static final long serialVersionUID = 1L;
 
+  private String name;
   @OneToMany(fetch = FetchType.EAGER)
-  List<QueryUnit> queries;
+  private List<QueryUnit> queries;
 
   public List<QueryUnit> getQueries() {
     return queries;
@@ -20,6 +21,14 @@ public class Tile {
 
   public void setQueries(List<QueryUnit> queries) {
     this.queries = queries;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
 }

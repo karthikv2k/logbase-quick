@@ -9,7 +9,6 @@ import java.util.List;
 import io.logbase.api.ui.query.QueryRequest;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class WorkspaceUtilsTest {
