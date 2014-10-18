@@ -207,4 +207,16 @@ public class QueryUtils {
     return tableRequests.get(reqid) == null ? false : true;
   }
 
+  public static void clearTable(int reqid) {
+    tableRequests.remove(reqid);
+    tableResults.remove(reqid);
+  }
+
+  public static void clearQuery(int reqid) {
+    queryRequests.remove(reqid);
+    queryResults.remove(reqid);
+    tableRequests.remove(reqid);
+    tableResults.remove(reqid);
+  }
+
 }

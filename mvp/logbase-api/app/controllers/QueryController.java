@@ -161,4 +161,16 @@ public class QueryController extends Controller {
     }
   }
 
+  public static Result clearTable(int reqid) {
+    Logger.info("Clearing table query request: " + reqid);
+    QueryUtils.clearTable(reqid);
+    return ok();
+  }
+
+  public static Result clearQuery(int reqid) {
+    Logger.info("Clearing query request: " + reqid);
+    QueryUtils.clearQuery(reqid);
+    return ok();
+  }
+
 }
