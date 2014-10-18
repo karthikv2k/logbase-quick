@@ -10,6 +10,8 @@ import io.logbase.event.JSONEvent;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.GlobalConfig;
+import io.logbase.utils.TimeStamp.TimeStampExtractor;
+import io.logbase.utils.TimeStamp.TwitterTimeStampExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,22 +32,26 @@ public class RCFJSONTable implements Table<JSONEvent> {
   private int rowNum = 0;
   private final ColumnFactory columnFactory;
   private long latestTime;
+  private TimeStampExtractor tsExtactor;
 
   public RCFJSONTable(ColumnFactory columnFactory) {
     columns = new ConcurrentSkipListMap<String, Column>();
     this.columnFactory = columnFactory;
     gson = new Gson();
+    tsExtactor = new TwitterTimeStampExtractor();
   }
 
   @Override
   public void insert(JSONEvent event) {
     latestTime = Math.max(latestTime, event.getTimestamp());
     Map json = gson.fromJson(event.getJSONString(), Map.class);
+    tsExtactor.timestamp(event);
     // logger.debug("Received event data: " + gson.toJson(json));
     // Parse json and create / append to columns
     arrayDepth = 0;
     //traverse(data, "");
     appendRawEvent(event);
+    appendTimeStamp(event);
     traverse(json, "");
     rowNum++;
   }
@@ -69,6 +75,17 @@ public class RCFJSONTable implements Table<JSONEvent> {
       columns.put(jsonColumnName, jsonColumn);
     }
     jsonColumn.append(event.getJSONString().toString(), rowNum);
+  }
+
+  private void appendTimeStamp(JSONEvent event) {
+    String jsonColumnName = "TimeStamp.Long.LBM";
+    Column jsonColumn = columns.get(jsonColumnName);
+    if (jsonColumn == null) {
+      jsonColumn = columnFactory.createAppendOnlyColumn(Long.class,
+        jsonColumnName, 0);
+      columns.put(jsonColumnName, jsonColumn);
+    }
+    jsonColumn.append(tsExtactor.timestamp(event), rowNum);
   }
 
   private void traverse(Object json, String parent) {
