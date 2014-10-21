@@ -17,6 +17,19 @@ public class LbqlBaseListener implements LbqlListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterPredicexpr(@NotNull LbqlParser.PredicexprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitPredicexpr(@NotNull LbqlParser.PredicexprContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPredicate(@NotNull LbqlParser.PredicateContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -24,6 +37,45 @@ public class LbqlBaseListener implements LbqlListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPredicate(@NotNull LbqlParser.PredicateContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterShowcsv(@NotNull LbqlParser.ShowcsvContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitShowcsv(@NotNull LbqlParser.ShowcsvContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterShowcmd(@NotNull LbqlParser.ShowcmdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitShowcmd(@NotNull LbqlParser.ShowcmdContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterTextexpr(@NotNull LbqlParser.TextexprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitTextexpr(@NotNull LbqlParser.TextexprContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -43,26 +95,78 @@ public class LbqlBaseListener implements LbqlListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpr(@NotNull LbqlParser.ExprContext ctx) { }
+	@Override public void enterExpexp(@NotNull LbqlParser.ExpexpContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitExpr(@NotNull LbqlParser.ExprContext ctx) { }
+	@Override public void exitExpexp(@NotNull LbqlParser.ExpexpContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCommand(@NotNull LbqlParser.CommandContext ctx) { }
+	@Override public void enterUnquotedtxt(@NotNull LbqlParser.UnquotedtxtContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitCommand(@NotNull LbqlParser.CommandContext ctx) { }
+	@Override public void exitUnquotedtxt(@NotNull LbqlParser.UnquotedtxtContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExprgroup(@NotNull LbqlParser.ExprgroupContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExprgroup(@NotNull LbqlParser.ExprgroupContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterQuotedtxt(@NotNull LbqlParser.QuotedtxtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitQuotedtxt(@NotNull LbqlParser.QuotedtxtContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterExpopexp(@NotNull LbqlParser.ExpopexpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitExpopexp(@NotNull LbqlParser.ExpopexpContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNumbertxt(@NotNull LbqlParser.NumbertxtContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNumbertxt(@NotNull LbqlParser.NumbertxtContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
