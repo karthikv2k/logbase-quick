@@ -8,6 +8,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Test;
 
+import play.Logger;
+
 public class LbqlTest {
 
   @Test
@@ -17,7 +19,8 @@ public class LbqlTest {
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     LbqlParser parser = new LbqlParser(tokens);
     ParseTree tree = parser.statement();
-    assertEquals(tree.toStringTree(parser), "(statement (expr Test))");
+    System.out.println("Parsed Test expression: " + tree.toStringTree(parser));
+    assertEquals(tree.toStringTree(parser), "(statement (expr (text Test)))");
   }
 
 }
