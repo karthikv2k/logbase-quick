@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import play.Logger;
 
-public class LbqlTest {
+public class LbqlParserTest {
 
   @Test
   public void parse() {
