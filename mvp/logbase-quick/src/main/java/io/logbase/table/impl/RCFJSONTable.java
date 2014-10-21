@@ -201,4 +201,9 @@ public class RCFJSONTable implements Table<JSONEvent> {
     }
   }
 
+  @Override
+  public ColumnFactory getColumnFactory() {
+    return this.columnFactory;
+  }
+
 }

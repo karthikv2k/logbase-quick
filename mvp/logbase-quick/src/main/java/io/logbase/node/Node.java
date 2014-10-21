@@ -12,5 +12,14 @@ public interface Node {
 
   public Table createTable(String tableName, Class<? extends Event> eventType);
 
+  /**
+   * The thread which converts an Append only table to Read only table, updates
+   * the node with the new table name.
+   *
+   * @param AppendOnlyTable
+   * @param ReadOnlyTable
+   */
+  public void updateTables(Table AppendOnlyTable, Table ReadOnlyTable);
+
   public SortedSetMultimap<String, Table> getTables();
 }

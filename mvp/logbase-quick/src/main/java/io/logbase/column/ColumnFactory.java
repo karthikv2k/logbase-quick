@@ -1,6 +1,5 @@
 package io.logbase.column;
 
-import io.logbase.collections.BatchList;
 import io.logbase.collections.IntListFactory;
 import io.logbase.collections.Utils;
 import io.logbase.collections.impl.*;
@@ -10,8 +9,7 @@ import io.logbase.column.appendonly.AppendOnlyColumn;
 import io.logbase.column.readonly.ReadOnlyColumn;
 
 import java.nio.CharBuffer;
-import java.util.IntSummaryStatistics;
-import java.util.LongSummaryStatistics;
+import java.util.IntSummaryStatistics;;
 
 public class ColumnFactory {
 
@@ -37,8 +35,7 @@ public class ColumnFactory {
 
 
   public static <T> Column createReadOnlyColumn(Column<T> sourceColumn){
-
-    if(sourceColumn.getColumnType().equals(Integer.class)){
+    if(TypeUtils.getBaseType(sourceColumn.getColumnType()).equals(Integer.class)){
       Column<Integer> intSourceColumn = (Column<Integer>) sourceColumn;
       IntListIterator iterator = (IntListIterator) intSourceColumn.getValuesIterator(intSourceColumn.getValuesCount());
       IntSummaryStatistics columnStats = (IntSummaryStatistics)
@@ -47,9 +44,9 @@ public class ColumnFactory {
       IntList intList = IntListFactory.newReadOnlyList(columnStats, iterator, false);
       ReadOnlyColumn<Integer> roColumn = new ReadOnlyColumn<>(intSourceColumn, intList);
       return roColumn;
-    }else if(sourceColumn.getColumnType().equals(CharBuffer.class)){
+    }else if(TypeUtils.getBaseType(sourceColumn.getColumnType()).equals(String.class)){
       //TBD
-    }else if(sourceColumn.getColumnType().equals(Boolean.class)){
+    }else if(TypeUtils.getBaseType(sourceColumn.getColumnType()).equals(Boolean.class)){
       //TBD
     }
     return null;

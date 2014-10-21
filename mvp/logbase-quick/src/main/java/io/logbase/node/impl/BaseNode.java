@@ -13,7 +13,6 @@ public abstract class BaseNode implements Node {
 
   protected SortedSetMultimap<String, Table> tables = TreeMultimap.create(Ordering.natural(), Ordering.natural());
   final TableFactory tableFactory;
-
   final ColumnFactory columnFactory;
 
   public BaseNode(TableFactory tableFactory, ColumnFactory columnFactory) {
@@ -32,5 +31,12 @@ public abstract class BaseNode implements Node {
   @Override
   public SortedSetMultimap<String, Table> getTables() {
     return tables;
+  }
+
+  @Override
+  public void updateTables(Table AppendOnlyTable, Table ReadOnlyTable) {
+    // TODO - locking for the node
+    tables.put(ReadOnlyTable.getTableName(), ReadOnlyTable);
+    tables.remove(AppendOnlyTable.getTableName(), AppendOnlyTable);
   }
 }

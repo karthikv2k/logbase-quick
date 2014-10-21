@@ -2,7 +2,9 @@ package io.logbase.table;
 
 import com.google.common.base.Predicate;
 import io.logbase.column.Column;
+import io.logbase.column.ColumnFactory;
 import io.logbase.event.Event;
+import io.logbase.node.Node;
 
 import java.util.Map;
 import java.util.Set;
@@ -28,4 +30,6 @@ public interface Table<E extends Event> extends Comparable<Table> {
   public Map<String, Column> getColumns();
 
   int getNumOfRows();
+
+  public ColumnFactory getColumnFactory();
 }

@@ -1,5 +1,7 @@
 package io.logbase.column;
 
+import io.logbase.collections.impl.*;
+
 import java.nio.CharBuffer;
 
 public class TypeUtils {
@@ -17,7 +19,7 @@ public class TypeUtils {
   public static Object castToLB(Object value) {
     if (value == null) {
       return Column.NULL;
-    } else if (value instanceof String) {
+    /*} else if (value instanceof String) {
       return CharBuffer.wrap((String) value);
     /*} else if (value instanceof Boolean){
       return (Boolean) value ? Column.TRUE : Column.FALSE;*/
@@ -37,6 +39,26 @@ public class TypeUtils {
       return double.class;
     } else if(t.equals(Boolean.class)){
       return boolean.class;
+    } else {
+      return t;
+    }
+  }
+
+  public static Class getBaseType(Class t) {
+    if (t.equals(IntegerArrayList.class) ||
+      t.equals(BitPackIntList.class)) {
+      return Integer.class;
+    } else if (t.equals(FloatArrayList.class)) {
+      return Float.class;
+    } else if (t.equals(BitsetList.class)) {
+      return Boolean.class;
+    } else if (t.equals(LongArrayList.class)) {
+      return Long.class;
+    } else if (t.equals(DoubleArrayList.class)) {
+      return Double.class;
+    } else if (t.equals(StringBufList.class) ||
+      t.equals(StringDictionaryList.class)) {
+      return String.class;
     } else {
       return t;
     }
