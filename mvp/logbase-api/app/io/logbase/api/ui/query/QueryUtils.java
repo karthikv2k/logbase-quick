@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import play.Logger;
+import io.logbase.api.antlr.LbqlSqlTranslator;
+import io.logbase.api.antlr.TranslatorUtils;
 import io.logbase.node.Node;
 import io.logbase.node.NodeConnector;
 import io.logbase.node.impl.SimpleRealtimeNodeConnector;
@@ -83,9 +85,10 @@ public class QueryUtils {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsSmartTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    String sql = "SELECT \"RawEvent.String\""
-        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
-        + queryRequest.getArgs() + "'";
+    LbqlSqlTranslator translator = TranslatorUtils.translate(queryRequest
+        .getArgs());
+    String sql = "SELECT \"RawEvent.String\" " + translator.getFromClause()
+        + " " + translator.getWhereClause();
     int resultCount = 0;
     try {
       ResultSet results = queryExec.execute(sql);

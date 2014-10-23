@@ -11,6 +11,7 @@ public class LbqlSqlTranslator extends LbqlBaseListener {
   private String whereClause = "";
   private String selectClause = "";
   private String fromClause = "";
+  private String sql = null;
   private Stack<String> stack = new Stack<String>();
   private final String RAW_EVENT_COL = "\"RawEvent.String\"";
   private final String DEFAULT_TABLE = "\"TEST\".\"TWITTER\"";
@@ -58,8 +59,7 @@ public class LbqlSqlTranslator extends LbqlBaseListener {
       selectClause = "SELECT " + RAW_EVENT_COL;
     if (fromClause.equals(""))
       fromClause = "FROM " + DEFAULT_TABLE;
-    System.out.println("SQL: " + selectClause + " \n" + fromClause + " \n"
-        + whereClause);
+    sql = selectClause + " " + fromClause + " " + whereClause;
   }
 
   @Override
@@ -97,6 +97,22 @@ public class LbqlSqlTranslator extends LbqlBaseListener {
               + "\"";
       }
     }
+  }
+
+  public String getSql() {
+    return sql;
+  }
+
+  public String getSelectClause() {
+    return selectClause;
+  }
+
+  public String getWhereClause() {
+    return whereClause;
+  }
+
+  public String getFromClause() {
+    return fromClause;
   }
 
 }
