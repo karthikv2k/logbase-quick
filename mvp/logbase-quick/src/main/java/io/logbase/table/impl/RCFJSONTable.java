@@ -44,7 +44,6 @@ public class RCFJSONTable implements Table<JSONEvent> {
   public void insert(JSONEvent event) {
     latestTime = Math.max(latestTime, event.getTimestamp());
     Map json = gson.fromJson(event.getJSONString(), Map.class);
-    tsExtactor.timestamp(event);
     // logger.debug("Received event data: " + gson.toJson(json));
     // Parse json and create / append to columns
     arrayDepth = 0;
@@ -193,8 +192,10 @@ public class RCFJSONTable implements Table<JSONEvent> {
     if (temp == 0) {
       if (this.latestTime > table.getLatestEventTime()) {
         return 1;
-      } else {
+      } else if (this.latestTime < table.getLatestEventTime()) {
         return -1;
+      } else {
+        return 0;
       }
     } else {
       return temp;

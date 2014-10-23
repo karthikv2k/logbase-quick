@@ -8,7 +8,6 @@ import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.column.appendonly.AppendOnlyColumn;
 import io.logbase.column.readonly.ReadOnlyColumn;
 
-import java.nio.CharBuffer;
 import java.util.IntSummaryStatistics;;
 
 public class ColumnFactory {

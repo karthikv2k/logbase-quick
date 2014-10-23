@@ -106,13 +106,14 @@ public class ReadOnlyTable implements Table<Event> {
 
   @Override
   public int compareTo(Table table) {
-    // TODO - comparison is incorrect
     int temp = this.tableName.compareTo(table.getTableName());
     if (temp == 0) {
       if (this.latestTime > table.getLatestEventTime()) {
         return 1;
-      } else {
+      } else if (this.latestTime > table.getLatestEventTime()) {
         return -1;
+      } else {
+        return 0;
       }
     } else {
       return temp;

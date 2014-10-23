@@ -36,7 +36,7 @@ public abstract class BaseNode implements Node {
   @Override
   public void updateTables(Table AppendOnlyTable, Table ReadOnlyTable) {
     // TODO - locking for the node
-    tables.put(ReadOnlyTable.getTableName(), ReadOnlyTable);
+    tables.put(AppendOnlyTable.getTableName(), ReadOnlyTable);
     tables.remove(AppendOnlyTable.getTableName(), AppendOnlyTable);
   }
 }
