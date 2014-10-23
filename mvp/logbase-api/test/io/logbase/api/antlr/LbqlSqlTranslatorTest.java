@@ -12,7 +12,7 @@ public class LbqlSqlTranslatorTest {
   @Test
   public void translate() {
     CharStream cs = new ANTLRInputStream(
-        "Abishek AND (country=India OR city=Blr) LOGIN 404 | show name city");
+        "Abishek AND (country.String=India OR pincode.Int=641045) LOGIN 404 | show name city");
     LbqlLexer lexer = new LbqlLexer(cs);
     CommonTokenStream tokens = new CommonTokenStream(lexer);
     LbqlParser parser = new LbqlParser(tokens);
