@@ -26,4 +26,10 @@ public interface IntList extends BatchList<Integer> {
     return Integer.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

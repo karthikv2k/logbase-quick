@@ -26,4 +26,10 @@ public interface BooleanList extends BatchList<Boolean> {
     return Boolean.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

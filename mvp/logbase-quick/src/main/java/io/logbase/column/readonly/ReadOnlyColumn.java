@@ -147,4 +147,26 @@ public class ReadOnlyColumn<E> implements Column<E> {
   public int compareTo(Column o) {
     return columnName.compareTo(o.getColumnName());
   }
+
+  @Override
+  public long memSize() {
+    long memSize = 0;
+
+    if (isPresent != null) {
+      memSize = memSize + isPresent.memSize();
+    }
+    if (values != null) {
+      memSize = memSize + values.memSize();
+    }
+    if (arraySize != null) {
+      memSize = memSize + arraySize.memSize();
+    }
+
+    if (arrayIdx != null) {
+      for (IntList list : arrayIdx) {
+        memSize = memSize + list.memSize();
+      }
+    }
+    return memSize;
+  }
 }

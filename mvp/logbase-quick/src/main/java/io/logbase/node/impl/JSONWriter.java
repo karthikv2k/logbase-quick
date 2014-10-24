@@ -1,6 +1,5 @@
 package io.logbase.node.impl;
 
-
 import io.logbase.event.JSONEvent;
 import io.logbase.node.Node;
 import io.logbase.node.Writer;
@@ -26,13 +25,18 @@ public class JSONWriter implements Writer<JSONEvent> {
 
   @Override
   public void write(JSONEvent event) {
-    // TODO - convert tables based on memory and not on no of rows.
-    if (table.getNumOfRows() >= GlobalConfig.MAX_TABLE_ROW_COUNT) {
-      TableConverter tableConverter = new TableConverter(table, node);
-      tableConverter.start();
+    /*
+     * table.memSize is a costly operation.
+     * Do memory lookup once every "MAX_TABLE_ROW_COUNT_CHECK" times.
+     */
+    if ((table.getNumOfRows() % GlobalConfig.MAX_TABLE_ROW_COUNT_CHECK) == 0) {
+      if (table.memSize() >= GlobalConfig.MAX_TABLE_SIZE_IN_BYTES) {
+        TableConverter tableConverter = new TableConverter(table, node);
+        tableConverter.start();
 
-      // Create a new Append only table and start inserting the events
-      table = node.createTable(this.tableName, JSONEvent.class);
+        // Create a new Append only table and start inserting the events
+        table = node.createTable(this.tableName, JSONEvent.class);
+      }
     }
     table.insert(event);
   }

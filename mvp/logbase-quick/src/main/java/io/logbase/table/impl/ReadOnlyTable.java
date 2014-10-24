@@ -119,4 +119,14 @@ public class ReadOnlyTable implements Table<Event> {
       return temp;
     }
   }
+
+  @Override
+  public long memSize() {
+    long memSize = 0;
+    Object[] columnList = columns.values().toArray();
+    for (Object column : columnList) {
+      memSize = memSize + ((Column)column).memSize();
+    }
+    return memSize;
+  }
 }

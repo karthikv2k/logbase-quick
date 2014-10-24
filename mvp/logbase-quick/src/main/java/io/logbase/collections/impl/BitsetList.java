@@ -46,6 +46,11 @@ public class BitsetList implements BooleanList {
   }
 
   @Override
+  public long memSize() {
+    return (bits.size() / 8);
+  }
+
+  @Override
   public BooleanListIterator primitiveIterator(long maxIndex) {
     return new BitsetListIterator(this, maxIndex);
   }

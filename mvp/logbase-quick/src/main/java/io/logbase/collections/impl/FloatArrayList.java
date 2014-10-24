@@ -22,6 +22,7 @@ public class FloatArrayList implements FloatList {
   private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 1024;
   private long size = 0;
+  private long memSize;
 
   public FloatArrayList() {
   }
@@ -36,6 +37,7 @@ public class FloatArrayList implements FloatList {
 
   public ByteBuffer addBlock(int blockSize) {
     ByteBuffer tail = BufferFactory.newBufWithFloatCapacity(blockSize);
+    memSize = memSize + tail.capacity();
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }
@@ -79,6 +81,11 @@ public class FloatArrayList implements FloatList {
   @Override
   public BatchListWriter<Float> writer() {
     return new FloatArrayListWriter(this);
+  }
+
+  @Override
+  public long memSize() {
+    return memSize;
   }
 
 }

@@ -50,6 +50,11 @@ public class StringBufList implements StringList {
   }
 
   @Override
+  public long memSize() {
+    return lengthList.memSize() + stringBuf.capacity();
+  }
+
+  @Override
   public StringListIterator primitiveIterator(long maxIndex) {
     return new StringBufListIterator(this, maxIndex);
   }

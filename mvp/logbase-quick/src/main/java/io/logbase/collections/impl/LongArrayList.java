@@ -24,6 +24,7 @@ public class LongArrayList implements LongList {
   private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 1024;
   private long size = 0;
+  private long memSize = 0;
 
   public LongArrayList() {
   }
@@ -38,6 +39,7 @@ public class LongArrayList implements LongList {
 
   public ByteBuffer addBlock(int blockSize) {
     ByteBuffer tail = BufferFactory.newBufWithLongCapacity(blockSize);
+    memSize = memSize + tail.capacity();
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }
@@ -81,6 +83,11 @@ public class LongArrayList implements LongList {
   @Override
   public BatchListWriter<Long> writer() {
     return new LongArrayListWriter(this);
+  }
+
+  @Override
+  public long memSize() {
+    return memSize;
   }
 
 }

@@ -52,6 +52,12 @@ public class StringDictionaryList implements BatchList<String>{
     return String.class;
   }
 
+  @Override
+  public long memSize() {
+    // TODO - need to account for dictionary memory
+    return tokenIndex.memSize() + tokenCount.memSize();
+  }
+
   public void incSize() {
     size++;
   }

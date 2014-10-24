@@ -28,4 +28,10 @@ public interface BatchList<E> {
 
   public Class<E> type();
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

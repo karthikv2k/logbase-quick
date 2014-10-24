@@ -22,4 +22,10 @@ public interface StringList extends BatchList<CharBuffer> {
     return CharBuffer.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

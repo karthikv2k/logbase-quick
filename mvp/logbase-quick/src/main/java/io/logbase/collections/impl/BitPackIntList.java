@@ -96,4 +96,9 @@ public class BitPackIntList implements IntList {
   public BatchListWriter<Integer> writer() {
     return primitiveWriter();
   }
+
+  @Override
+  public long memSize() {
+    return buf.capacity();
+  }
 }

@@ -26,4 +26,10 @@ public interface LongList extends BatchList<Long> {
     return Long.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

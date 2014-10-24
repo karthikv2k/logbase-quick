@@ -26,4 +26,10 @@ public interface DoubleList extends BatchList<Double> {
     return Double.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

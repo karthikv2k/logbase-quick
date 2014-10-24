@@ -16,6 +16,7 @@ import java.util.List;
 public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>, BatchListWriter<E> {
   private final Class primitiveType;
   List<E> list = new ArrayList();
+  private long memSize = 0;
 
   public ListBackedBatchList(Class primitiveType){
     this.primitiveType = primitiveType;
@@ -47,6 +48,11 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
   }
 
   @Override
+  public long memSize(){
+    return memSize;
+  }
+
+  @Override
   public E get(long index) {
     return list.get((int) index);
   }
@@ -61,6 +67,23 @@ public class ListBackedBatchList<E> implements BatchList<E>, BatchListReader<E>,
   @Override
   public void add(E value) {
     list.add(value);
+
+    // TODO - optimize this
+    int bytes = 0;
+    if (value instanceof Integer) {
+      bytes = Integer.BYTES;
+    } else if (value instanceof Long) {
+      bytes = Long.BYTES;
+    } else if (value instanceof Float) {
+      bytes = Float.BYTES;
+    } else if (value instanceof Double) {
+      bytes = Double.BYTES;
+    } else if (value instanceof String) {
+      bytes = ((String)value).length();
+    } else {
+      bytes = 1;
+    }
+    memSize = memSize + bytes;
   }
 
   @Override

@@ -24,6 +24,7 @@ public class IntegerArrayList implements IntList {
   private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 1024;
   private long size = 0;
+  private long memSize = 0;
 
   public IntegerArrayList() {
   }
@@ -38,6 +39,7 @@ public class IntegerArrayList implements IntList {
 
   public ByteBuffer addBlock(int blockSize) {
     ByteBuffer tail = BufferFactory.newBufWithIntCapacity(blockSize);
+    memSize = memSize + tail.capacity();
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }
@@ -81,6 +83,11 @@ public class IntegerArrayList implements IntList {
   @Override
   public BatchListWriter<Integer> writer() {
     return new IntegerArrayListWriter(this);
+  }
+
+  @Override
+  public long memSize() {
+    return memSize;
   }
 
 }

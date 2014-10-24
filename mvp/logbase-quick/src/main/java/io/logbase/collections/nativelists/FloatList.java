@@ -26,4 +26,10 @@ public interface FloatList extends BatchList<Float> {
     return Float.class;
   }
 
+  /**
+   * Returns the approximate memory used by this list in bytes.
+   * @return
+   */
+  public long memSize();
+
 }

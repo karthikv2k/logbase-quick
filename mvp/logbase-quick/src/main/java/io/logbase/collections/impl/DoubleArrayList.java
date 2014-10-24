@@ -24,6 +24,7 @@ public class DoubleArrayList implements DoubleList {
   private List<ByteBuffer> blocks = new ArrayList<>();
   private int defaultBlockSize = 1024;
   private long size = 0;
+  private long memSize = 0;
 
   public DoubleArrayList() {
   }
@@ -38,6 +39,7 @@ public class DoubleArrayList implements DoubleList {
 
   public ByteBuffer addBlock(int blockSize) {
     ByteBuffer tail = BufferFactory.newBufWithDoubleCapacity(blockSize);
+    memSize = memSize + tail.capacity();
     synchronized (blocks) {
       blocks.add(tail.asReadOnlyBuffer());
     }
@@ -81,6 +83,11 @@ public class DoubleArrayList implements DoubleList {
   @Override
   public BatchListWriter<Double> writer() {
     return new DoubleArrayListWriter(this);
+  }
+
+  @Override
+  public long memSize() {
+    return memSize;
   }
 
 }

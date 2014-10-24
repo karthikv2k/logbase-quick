@@ -104,4 +104,9 @@ public interface Column<E> extends Operand<Column> {
     return getColumnName().compareTo(column.getColumnName());
   }
 
+  /**
+   * Return the approximate memory used by the backing lists in bytes.
+   * @return
+   */
+  public long memSize();
 }

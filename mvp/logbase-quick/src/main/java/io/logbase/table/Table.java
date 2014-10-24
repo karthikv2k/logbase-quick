@@ -32,4 +32,11 @@ public interface Table<E extends Event> extends Comparable<Table> {
   int getNumOfRows();
 
   public ColumnFactory getColumnFactory();
+
+  /**
+   * Returns the memory used by all the backing columns of this table in bytes.
+   *
+   * @return
+   */
+  public long memSize();
 }

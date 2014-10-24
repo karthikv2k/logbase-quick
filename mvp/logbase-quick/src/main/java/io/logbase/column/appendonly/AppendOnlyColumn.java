@@ -166,4 +166,26 @@ public class AppendOnlyColumn<E> implements Column<E> {
     return arrayIdx[arrayNum].primitiveIterator(maxRowNum);
   }
 
+  @Override
+  public long memSize() {
+    long memSize = 0;
+
+    if (isPresent != null) {
+      memSize = memSize + isPresent.memSize();
+    }
+    if (values != null) {
+      memSize = memSize + values.memSize();
+    }
+    if (arraySize != null) {
+      memSize = memSize + arraySize.memSize();
+    }
+
+    if (arrayIdx != null) {
+      for (IntList list : arrayIdx) {
+        memSize = memSize + list.memSize();
+      }
+    }
+    return memSize;
+  }
+
 }
