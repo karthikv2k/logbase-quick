@@ -19,7 +19,7 @@ public class StringDictionaryListReader implements BatchListReader {
 
   public StringDictionaryListReader(StringDictionaryList list, long maxIndex) {
     this.list = list;
-    this.maxIndex = Math.max(maxIndex, list.size());
+    this.maxIndex = Math.min(maxIndex, list.tokenCount.size());
     this.tokenCountReader = list.tokenCount.primitiveReader(this.maxIndex);
     this.offset = new int[(int)this.maxIndex + 1];
     offset[0] = 0;

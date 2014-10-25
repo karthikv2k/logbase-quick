@@ -2,14 +2,18 @@ package io.logbase.column.readonly;
 
 import io.logbase.collections.BatchList;
 import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.impl.BitPackIntList;
 import io.logbase.collections.impl.BitsetList;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
+import io.logbase.collections.nativelists.IntListReader;
 import io.logbase.collections.nativelists.IntListWriter;
 import io.logbase.column.Column;
 import io.logbase.column.SimpleColumnIterator;
+import io.logbase.column.SimpleColumnReader;
+import scala.util.parsing.input.Reader;
 
 import java.util.Iterator;
 
@@ -146,6 +150,31 @@ public class ReadOnlyColumn<E> implements Column<E> {
   @Override
   public int compareTo(Column o) {
     return columnName.compareTo(o.getColumnName());
+  }
+
+  @Override
+  public SimpleColumnReader getSimpleReader(long maxRowNum) {
+    return new SimpleColumnReader(this, maxRowNum);
+  }
+
+  @Override
+  public BatchListReader<Boolean> getIsPresentReader(long maxRowNum) {
+    return isPresent.reader(maxRowNum);
+  }
+
+  @Override
+  public BatchListReader<E> getValuesReader(long maxRowNum) {
+    return values.reader(maxRowNum);
+  }
+
+  @Override
+  public IntListReader getArraySizeReader(long maxRowNum) {
+    return (IntListReader)arraySize.reader(maxRowNum);
+  }
+
+  @Override
+  public IntListReader getArrayIndexReader(int arrayNum, long maxRowNum) {
+    return (IntListReader)arrayIdx[arrayNum].reader(maxRowNum);
   }
 
   @Override

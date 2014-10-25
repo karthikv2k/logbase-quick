@@ -1,7 +1,9 @@
 package io.logbase.column;
 
 import io.logbase.collections.BatchListIterator;
+import io.logbase.collections.BatchListReader;
 import io.logbase.collections.nativelists.IntListIterator;
+import io.logbase.collections.nativelists.IntListReader;
 
 import java.util.*;
 
@@ -98,6 +100,16 @@ public interface Column<E> extends Operand<Column> {
   public IntListIterator getArraySizeIterator(long maxIndex);
 
   public IntListIterator getArrayIndexIterator(int arrayNum, long maxIndex);
+
+  public SimpleColumnReader getSimpleReader(long maxRowNum);
+
+  public BatchListReader<Boolean> getIsPresentReader(long maxRowNum);
+
+  public BatchListReader<E> getValuesReader(long maxRowNum);
+
+  public IntListReader getArraySizeReader(long maxRowNum);
+
+  public IntListReader getArrayIndexReader(int arrayNum, long maxRowNum);
 
   @Override
   public default int compareTo(Column column) {
