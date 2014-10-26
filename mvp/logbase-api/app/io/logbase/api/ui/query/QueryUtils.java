@@ -85,10 +85,19 @@ public class QueryUtils {
     LBSchema lbSchema = new LBSchema("TEST");
     lbSchema.addAsSmartTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
-    LbqlSqlTranslator translator = TranslatorUtils.translate(queryRequest
-        .getArgs());
-    String sql = "SELECT \"RawEvent.String\" " + translator.getFromClause()
-        + " " + translator.getWhereClause();
+    String sql = null;
+    if ((queryRequest.getArgsType() != null) && (queryRequest.getArgsType().equals("sql"))) {
+    	sql = queryRequest.getArgs();
+    } else {
+    	LbqlSqlTranslator translator = TranslatorUtils.translate(queryRequest
+    	        .getArgs());
+    	    sql = "SELECT \"RawEvent.String\" " + translator.getFromClause()
+    	        + " " + translator.getWhereClause();
+    	    if(queryRequest.getFrom() > 0)
+    	    	sql = sql + " AND \"TimeStamp.Long.LBM\" > " + queryRequest.getFrom();
+    	    if(queryRequest.getFrom() > 0)
+    	    	sql = sql + " AND \"TimeStamp.Long.LBM\" < " + queryRequest.getTo();
+    }
     int resultCount = 0;
     try {
       ResultSet results = queryExec.execute(sql);
