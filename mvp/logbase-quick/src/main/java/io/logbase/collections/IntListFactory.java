@@ -15,13 +15,15 @@ public class IntListFactory {
 
   public static IntList newReadOnlyList(IntSummaryStatistics stats, IntListIterator source, boolean randomRead){
     if(Utils.getWidthFromMaxInt(stats.getMax())==32){
-      return new IntegerArrayList((int)Math.min(Integer.MAX_VALUE,stats.getCount()));
+      IntList intList = new IntegerArrayList((int)Math.min(Integer.MAX_VALUE,stats.getCount()));
+      source.supplyTo(intList.primitiveWriter());
+      return intList;
     } else {
       return new BitPackIntList(stats);
     }
   }
 
-  public static IntList newAppendOnlyList(IntSummaryStatistics stats){
+  public static IntList newAppendOnlyList(IntSummaryStatistics stats, boolean isCompressed){
     return new IntegerArrayList();
   }
 }

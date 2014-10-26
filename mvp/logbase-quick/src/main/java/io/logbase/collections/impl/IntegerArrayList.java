@@ -57,32 +57,32 @@ public class IntegerArrayList implements IntList {
 
   @Override
   public IntListIterator primitiveIterator(long maxIndex) {
-    return (IntListIterator) iterator(maxIndex);
-  }
-
-  @Override
-  public IntListReader primitiveReader(long maxIndex) {
-    return (IntListReader) reader(maxIndex);
-  }
-
-  @Override
-  public IntListWriter primitiveWriter() {
-    return (IntListWriter) writer();
-  }
-
-  @Override
-  public BatchListIterator<Integer> iterator(long maxIndex) {
     return new IntegerArrayListIterator(this, blocks, maxIndex);
   }
 
   @Override
-  public BatchListReader<Integer> reader(long maxIndex) {
+  public IntListReader primitiveReader(long maxIndex) {
     return new IntegerArrayListReader(blocks, size);
   }
 
   @Override
-  public BatchListWriter<Integer> writer() {
+  public IntListWriter primitiveWriter() {
     return new IntegerArrayListWriter(this);
+  }
+
+  @Override
+  public BatchListIterator<Integer> iterator(long maxIndex) {
+    return primitiveIterator(maxIndex);
+  }
+
+  @Override
+  public BatchListReader<Integer> reader(long maxIndex) {
+    return primitiveReader(maxIndex);
+  }
+
+  @Override
+  public BatchListWriter<Integer> writer() {
+    return primitiveWriter();
   }
 
   @Override
