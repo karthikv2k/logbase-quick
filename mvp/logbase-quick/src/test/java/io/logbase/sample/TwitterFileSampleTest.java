@@ -142,20 +142,20 @@ public class TwitterFileSampleTest {
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
     String sql = "SELECT \"text.String\", \"source.String\" "
         + " from \"TEST\".\"TWITTER\" where (\"id_str.String\" = '461506965680951296') and (\"id.Double\" = 461506965680951296 or \"text.String\" = '@smiley_bieber15 nxuq')";
-    sql = "SELECT \"RawEvent.String\" "
-        + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE 'BIEBER'";
+    //sql = "SELECT \"RawEvent.String\" "
+      //  + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE 'BIEBER'";
     int resultCount = 0;
     try {
       ResultSet results = queryExec.execute(sql);
       while (results.next()) {
         resultCount++;
-        // logger.debug("Text is: " + results.getString("text.String")
-        // + " Source is: " + results.getString("source.String"));
+         logger.debug("Text is: " + results.getString("text.String")
+         + " Source is: " + results.getString("source.String"));
       }
     } catch (SQLException e) {
       logger.error("Error while executing optiq query: " + sql);
     }
     logger.info("Result count: " + resultCount);
-    assertEquals(resultCount, 2);
+    assertEquals(resultCount, 1);
   }
 }

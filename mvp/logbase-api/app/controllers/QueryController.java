@@ -45,7 +45,7 @@ public class QueryController extends Controller {
       }
 
       // Input data validations
-      if ((queryRequest == null) || (queryRequest.getArgs() == null)) {
+      if ((queryRequest == null) || (queryRequest.getQuery() == null)) {
         return badRequest("Search argument missing");
       }
 

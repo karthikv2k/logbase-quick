@@ -7,18 +7,18 @@ import javax.persistence.Embeddable;
 @Embeddable
 public class QueryRequest {
 
-  private String args;
-  private String argsType;
+  private String query;
+  private String queryType;
   private long from;
   private long to;
-  private List<Integer> source;
+  private List<String> sources;
 
-  public String getArgs() {
-    return args;
+  public String getQuery() {
+    return query;
   }
 
-  public void setArgs(String args) {
-    this.args = args;
+  public void setQuery(String query) {
+    this.query = query;
   }
 
   public long getFrom() {
@@ -37,20 +37,20 @@ public class QueryRequest {
     this.to = to;
   }
 
-  public List<Integer> getSource() {
-    return source;
+  public List<String> getSources() {
+    return sources;
   }
 
-  public void setSource(List<Integer> source) {
-    this.source = source;
+  public void setSources(List<String> sources) {
+    this.sources = sources;
   }
 
-  public String getArgsType() {
-    return argsType;
+  public String getQueryType() {
+    return queryType;
   }
 
-  public void setArgsType(String argsType) {
-    this.argsType = argsType;
+  public void setQueryType(String queryType) {
+    this.queryType = queryType;
   }
 
 }

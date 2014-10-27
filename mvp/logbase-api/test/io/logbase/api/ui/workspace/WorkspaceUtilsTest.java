@@ -21,7 +21,7 @@ public class WorkspaceUtilsTest {
     ws.setName("Test Workspace");
     QueryUnit qu = new QueryUnit();
     QueryRequest qr = new QueryRequest();
-    qr.setArgs("BIEBER");
+    qr.setQuery("BIEBER");
     qu.setQueryRequest(qr);
     List<String> tableColumns = Arrays.asList("col1", "col2");
     qu.setTableColumns(tableColumns);
@@ -45,8 +45,8 @@ public class WorkspaceUtilsTest {
     Workspace fetchedWS = WorkspaceUtils.getWorkspace(ws.getName());
     assertEquals(fetchedWS.getName(), ws.getName());
     assertEquals(fetchedWS.getTiles().get(0).getQueries().get(0)
-        .getQueryRequest().getArgs(), ws.getTiles().get(0).getQueries().get(0)
-        .getQueryRequest().getArgs());
+        .getQueryRequest().getQuery(), ws.getTiles().get(0).getQueries().get(0)
+        .getQueryRequest().getQuery());
     assertEquals(fetchedWS.getTiles().get(0).getQueries().get(0)
         .getTableColumns().size(), ws.getTiles().get(0).getQueries().get(0)
         .getTableColumns().size());

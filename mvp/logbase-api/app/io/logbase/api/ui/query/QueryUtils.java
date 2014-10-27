@@ -86,11 +86,14 @@ public class QueryUtils {
     lbSchema.addAsSmartTable("TWITTER", view);
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
     String sql = null;
-    if ((queryRequest.getArgsType() != null) && (queryRequest.getArgsType().equals("sql"))) {
-    	sql = queryRequest.getArgs();
+    if ((queryRequest.getQueryType() != null) && (queryRequest.getQueryType().equals("sql"))) {
+    	//TODO Get raw events
+    	String tempSql = queryRequest.getQuery();
+    	int fromPosition = tempSql.toUpperCase().indexOf(" FROM ");
+    	sql = "SELECT \"RawEvent.String\" " + tempSql.substring(fromPosition);
     } else {
     	LbqlSqlTranslator translator = TranslatorUtils.translate(queryRequest
-    	        .getArgs());
+    	        .getQuery());
     	    sql = "SELECT \"RawEvent.String\" " + translator.getFromClause()
     	        + " " + translator.getWhereClause();
     	    if(queryRequest.getFrom() > 0)
@@ -141,23 +144,27 @@ public class QueryUtils {
       LBSchema lbSchema = new LBSchema("TEST");
       lbSchema.addAsSmartTable("TWITTER", view);
       QueryExecutor queryExec = new QueryExecutor(lbSchema);
-
-      String selectClause = "";
-      for (String column : tableRequests.get(reqid)) {
-        if (selectClause.equals(""))
-          selectClause = selectClause + "\"" + column + "\"";
-        else
-          selectClause = selectClause + ", \"" + column + "\"";
+      String sql = null;
+      if ((queryRequest.getQueryType() != null) && (queryRequest.getQueryType().equals("sql"))) {
+    	  sql = queryRequest.getQuery();
+      } else {
+    	  String selectClause = "";
+          for (String column : tableRequests.get(reqid)) {
+            if (selectClause.equals(""))
+              selectClause = selectClause + "\"" + column + "\"";
+            else
+              selectClause = selectClause + ", \"" + column + "\"";
+          }
+          Logger.info("Select clause: " + selectClause);
+          sql = "SELECT " + selectClause
+              + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
+              + queryRequest.getQuery() + "'";
       }
-      Logger.info("Select clause: " + selectClause);
-      String sql = "SELECT " + selectClause
-          + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
-          + queryRequest.getArgs() + "'";
       try {
         ResultSet resultSet = queryExec.execute(sql);
         results = getEntitiesFromResultSet(resultSet);
       } catch (Exception e) {
-        Logger.error("Error while executing optiq query: " + sql);
+        Logger.error("Error while executing optiq query for table: " + sql);
       }
       tableResults.put(reqid, results);
       return results;
@@ -241,7 +248,7 @@ public class QueryUtils {
     QueryExecutor queryExec = new QueryExecutor(lbSchema);
     String sql = "SELECT \"TimeStamp.Long.LBM\""
         + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
-        + queryRequest.getArgs() + "'";
+        + queryRequest.getQuery() + "'";
     try {
       ResultSet results = queryExec.execute(sql);
       while (results.next()) {
