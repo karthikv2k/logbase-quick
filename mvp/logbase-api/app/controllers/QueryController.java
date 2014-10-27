@@ -184,6 +184,68 @@ public class QueryController extends Controller {
       return ok(result);
     }
   }
+  
+  @BodyParser.Of(BodyParser.Json.class)
+  public static Result createPlot() {
+    JsonNode req = request().body().asJson();
+    if (req == null) {
+      return badRequest("Expecting Json data");
+    } else {
+      int reqid = req.findPath("reqid").intValue();
+      List<String> columns = new ArrayList<String>();
+      ArrayNode columnArray = (ArrayNode) req.findPath("columns");
+      for (JsonNode jn : columnArray) {
+        columns.add(jn.textValue());
+      }
+      QueryUtils.createPlotColumns(reqid, columns);
+      Logger.info("Created plot with columns: " + columns + " and reqid: "
+          + reqid);
+      return ok();
+    }
+  }
+
+  public static Result plot(int reqid) {
+    Logger.info("Processing plot for query request: " + reqid);
+    if (!QueryUtils.isValidPlot(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      List<Map<String, Object>> plotResults = QueryUtils.getPlot(reqid);
+      ObjectMapper mapper = new ObjectMapper();
+      ArrayNode result = mapper.valueToTree(plotResults);
+      return ok(result);
+    }
+  }
+
+  public static Result plotP(int reqid, long offset, int max) {
+    Logger.info("Processing paginated plot for query request: " + reqid);
+    if (!QueryUtils.isValidPlot(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      ObjectMapper mapper = new ObjectMapper();
+      List<Map<String, Object>> plotResults = QueryUtils.getPlotP(reqid,
+          offset, max);
+      ArrayNode result = mapper.valueToTree(plotResults);
+      return ok(result);
+    }
+  }
+
+  public static Result plotRowCount(int reqid) {
+    Logger.info("Processing plot row count for query request: " + reqid);
+    if (!QueryUtils.isValidPlot(reqid)) {
+      return notFound("Request Id: " + reqid + " not found.");
+    } else {
+      Long plotRowCount = QueryUtils.getPlotRowCount(reqid);
+      ObjectNode result = Json.newObject();
+      result.put("plotrowcount", plotRowCount);
+      return ok(result);
+    }
+  }
+
+  public static Result clearPlot(int reqid) {
+    Logger.info("Clearing plot query request: " + reqid);
+    QueryUtils.clearPlot(reqid);
+    return ok();
+  }
 
 
 }

@@ -3,19 +3,28 @@
 # ~~~~
 
 # Home page
-GET		/search							controllers.Application.search(args)
+# GET		/search							controllers.Application.search(args)
+
 POST	/query							controllers.QueryController.query()
 GET		/events							controllers.QueryController.events(reqid: Int)
 GET		/eventsp						controllers.QueryController.eventsP(reqid: Int, offset: Long, max: Int)
 GET		/eventscount					controllers.QueryController.eventsCount(reqid: Int)
+DELETE	/query							controllers.QueryController.clearQuery(reqid: Int)
+
 GET		/columns						controllers.QueryController.columns(reqid: Int)
+GET		/timeline						controllers.QueryController.timeline(reqid: Int)
+
 POST	/table							controllers.QueryController.createTable()
 GET		/table							controllers.QueryController.table(reqid: Int)
 GET		/tablerowcount					controllers.QueryController.tableRowCount(reqid: Int)
 GET		/tablep							controllers.QueryController.tableP(reqid: Int, offset: Long, max: Int)
 DELETE	/table							controllers.QueryController.clearTable(reqid: Int)
-DELETE	/query							controllers.QueryController.clearQuery(reqid: Int)
-GET		/timeline						controllers.QueryController.timeline(reqid: Int)
+
+POST	/plot							controllers.QueryController.createPlot()
+GET		/plot							controllers.QueryController.plot(reqid: Int)
+GET		/plotrowcount					controllers.QueryController.plotRowCount(reqid: Int)
+GET		/plotp							controllers.QueryController.plotP(reqid: Int, offset: Long, max: Int)
+DELETE	/plot							controllers.QueryController.clearPlot(reqid: Int)
 
 POST	/workspace						controllers.WorkspaceController.saveWorkspace()
 GET		/workspace						controllers.WorkspaceController.getWorkspace(wsname)

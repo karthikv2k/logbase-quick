@@ -28,7 +28,9 @@ public class QueryUtils {
   private static Map<Integer, List<String>> queryResults = new HashMap<Integer, List<String>>();
   private static Map<Integer, List<String>> tableRequests = new HashMap<Integer, List<String>>();
   private static Map<Integer, List<Map<String, Object>>> tableResults = new HashMap<Integer, List<Map<String, Object>>>();
-
+  private static Map<Integer, List<String>> plotRequests = new HashMap<Integer, List<String>>();
+  private static Map<Integer, List<Map<String, Object>>> plotResults = new HashMap<Integer, List<Map<String, Object>>>();
+  
   public static int postQuery(QueryRequest queryRequest) {
     reqid++;
     // Store request somewhere
@@ -146,7 +148,21 @@ public class QueryUtils {
       QueryExecutor queryExec = new QueryExecutor(lbSchema);
       String sql = null;
       if ((queryRequest.getQueryType() != null) && (queryRequest.getQueryType().equals("sql"))) {
-    	  sql = queryRequest.getQuery();
+    	  if(tableRequests.get(reqid)==null)
+    		  sql = queryRequest.getQuery();
+    	  else {
+    		  String tempSql = queryRequest.getQuery();
+    		  String selectClause = "";
+              for (String column : tableRequests.get(reqid)) {
+                if (selectClause.equals(""))
+                  selectClause = selectClause + "\"" + column + "\"";
+                else
+                  selectClause = selectClause + ", \"" + column + "\"";
+              }
+              Logger.info("Select clause replacement: " + selectClause);
+              int fromClausePosition = tempSql.toUpperCase().indexOf(" FROM ");
+              sql = "SELECT " + selectClause + tempSql.substring(fromClausePosition);
+    	  }
       } else {
     	  String selectClause = "";
           for (String column : tableRequests.get(reqid)) {
@@ -160,6 +176,7 @@ public class QueryUtils {
               + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
               + queryRequest.getQuery() + "'";
       }
+      Logger.debug("Going to fetch table for query: " + sql);
       try {
         ResultSet resultSet = queryExec.execute(sql);
         results = getEntitiesFromResultSet(resultSet);
@@ -223,7 +240,10 @@ public class QueryUtils {
 
   public static boolean isValidTable(int reqid) {
     Logger.debug("Checking validity for table in reqid: " + reqid);
-    return tableRequests.get(reqid) == null ? false : true;
+    if(queryRequests.get(reqid).getQueryType() == null || !queryRequests.get(reqid).getQueryType().equals("sql"))
+    	return tableRequests.get(reqid) == null ? false : true;
+    else
+    	return true;
   }
 
   public static void clearTable(int reqid) {
@@ -261,5 +281,108 @@ public class QueryUtils {
     }
     return timeline;
   }
+  
+  public static void createPlotColumns(int reqid, List<String> columns) {
+	    Logger.debug("Adding plot for reqid: " + reqid);
+	    plotRequests.put(reqid, columns);
+	    // Remove any cached results
+	    plotResults.remove(reqid);
+	  }
+	  
+	  public static List<Map<String, Object>> getPlot(int reqid) {
+	    if (plotResults.containsKey(reqid)) {
+	      return plotResults.get(reqid);
+	    } else {
+	      List<Map<String, Object>> results = null;
+	      // TODO
+	      // Execute query with the passed columns
+	      QueryRequest queryRequest = queryRequests.get(reqid);
+	      View view = node.getReader().getViewFactory()
+	          .createView(new InFilter("Twitter"));
+	      LBSchema lbSchema = new LBSchema("TEST");
+	      lbSchema.addAsSmartTable("TWITTER", view);
+	      QueryExecutor queryExec = new QueryExecutor(lbSchema);
+	      String sql = null;
+	      if ((queryRequest.getQueryType() != null) && (queryRequest.getQueryType().equals("sql"))) {
+	    	  if(plotRequests.get(reqid)==null)
+	    		  sql = queryRequest.getQuery();
+	    	  else {
+	    		  String tempSql = queryRequest.getQuery();
+	    		  String selectClause = "";
+	              for (String column : plotRequests.get(reqid)) {
+	                if (selectClause.equals(""))
+	                  selectClause = selectClause + "\"" + column + "\"";
+	                else
+	                  selectClause = selectClause + ", \"" + column + "\"";
+	              }
+	              Logger.info("Plot select clause replacement: " + selectClause);
+	              int fromClausePosition = tempSql.toUpperCase().indexOf(" FROM ");
+	              sql = "SELECT " + selectClause + tempSql.substring(fromClausePosition);
+	    	  }
+	      } else {
+	    	  String selectClause = "";
+	          for (String column : plotRequests.get(reqid)) {
+	            if (selectClause.equals(""))
+	              selectClause = selectClause + "\"" + column + "\"";
+	            else
+	              selectClause = selectClause + ", \"" + column + "\"";
+	          }
+	          Logger.info("Select clause: " + selectClause);
+	          sql = "SELECT " + selectClause
+	              + " from \"TEST\".\"TWITTER\" where \"RawEvent.String\" LIKE '"
+	              + queryRequest.getQuery() + "'";
+	      }
+	      Logger.debug("Going to fetch plot for query: " + sql);
+	      try {
+	        ResultSet resultSet = queryExec.execute(sql);
+	        results = getEntitiesFromResultSet(resultSet);
+	      } catch (Exception e) {
+	        Logger.error("Error while executing optiq query for plot: " + sql);
+	      }
+	      plotResults.put(reqid, results);
+	      return results;
+	    }
+	  }
+
+	  public static List<Map<String, Object>> getPlotP(int reqid, long offset,
+	      int max) {
+	    List<Map<String, Object>> result = null;
+	    List<Map<String, Object>> filteredResult = new ArrayList<Map<String, Object>>();
+	    if (plotResults.containsKey(reqid))
+	      result = plotResults.get(reqid);
+	    else
+	      result = getPlot(reqid);
+
+	    // filter
+	    if (offset <= result.size()) {
+	      int start = (int) (offset - 1);
+	      int end = start + max - 1;
+	      if (end >= result.size())
+	        end = result.size() - 1;
+	      for (int i = start; i <= end; i++)
+	        filteredResult.add(result.get(i));
+	    }
+	    return filteredResult;
+	  }
+
+	  public static long getPlotRowCount(int reqid) {
+	    if (plotResults.containsKey(reqid))
+	      return plotResults.size();
+	    else
+	      return getPlot(reqid).size();
+	  }
+	  
+	  public static boolean isValidPlot(int reqid) {
+		    Logger.debug("Checking validity for plot in reqid: " + reqid);
+		    if(queryRequests.get(reqid).getQueryType() == null || !queryRequests.get(reqid).getQueryType().equals("sql"))
+		    	return plotRequests.get(reqid) == null ? false : true;
+		    else
+		    	return true;
+		  }
+
+		  public static void clearPlot(int reqid) {
+		    plotRequests.remove(reqid);
+		    plotResults.remove(reqid);
+		  }
 
 }
