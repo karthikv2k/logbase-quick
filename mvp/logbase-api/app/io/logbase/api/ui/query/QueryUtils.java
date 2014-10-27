@@ -467,7 +467,6 @@ public class QueryUtils {
 			// iterate timeline and add counts appropriately
 			for (Long t : timeline) {
 				Long diff = (t - newMinTs) / incr;
-				System.out.println("Debug diff: " + diff);
 				// Double key = incr + (Math.ceil(diff) * incr);
 				Long key = newMinTs + (diff * incr);
 				Long value = countMap.get(key);
