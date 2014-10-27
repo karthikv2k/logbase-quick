@@ -179,7 +179,7 @@ public class QueryController extends Controller {
       return notFound("Request Id: " + reqid + " not found.");
     } else {
       ObjectMapper mapper = new ObjectMapper();
-      List<Long> timeline = QueryUtils.getTimeline(reqid);
+      List<List<Long>> timeline = QueryUtils.getTimeline(reqid);
       ArrayNode result = mapper.valueToTree(timeline);
       return ok(result);
     }
