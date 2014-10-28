@@ -1,23 +1,6 @@
 package controllers;
 
-import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
-import io.logbase.node.Node;
-import io.logbase.node.NodeConnector;
-import io.logbase.node.impl.SimpleRealtimeNodeConnector;
-import io.logbase.querying.optiq.LBSchema;
-import io.logbase.querying.optiq.QueryExecutor;
-import io.logbase.utils.InFilter;
-import io.logbase.view.View;
-import play.*;
 import play.mvc.*;
-import views.html.*;
 
 public class Application extends Controller {
 
