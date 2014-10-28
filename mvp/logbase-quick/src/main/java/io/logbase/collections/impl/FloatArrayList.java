@@ -4,10 +4,9 @@ import io.logbase.buffer.BufferFactory;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
-import io.logbase.collections.nativelists.FloatList;
-import io.logbase.collections.nativelists.FloatListIterator;
-import io.logbase.collections.nativelists.FloatListReader;
-import io.logbase.collections.nativelists.FloatListWriter;
+import io.logbase.collections.nativelists.*;
+import io.logbase.exceptions.UnsupportedFunctionPredicateException;
+import io.logbase.functions.Predicates.FunctionPredicate;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -86,6 +85,20 @@ public class FloatArrayList implements FloatList {
   @Override
   public long memSize() {
     return memSize;
+  }
+
+  @Override
+  public void execute(FunctionPredicate predicate, BooleanList booleanList) {
+    FloatListIterator iterator = this.primitiveIterator(this.size());
+    BooleanListWriter booleanWriter = booleanList.primitiveWriter();
+    float[] buffer = new float[1024];
+
+    while(iterator.hasNext()) {
+      int count = iterator.nextPrimitive(buffer, 0, buffer.length);
+      for(int i=0; i< count; i++) {
+        booleanWriter.add(predicate.apply(buffer[i]));
+      }
+    }
   }
 
 }

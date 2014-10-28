@@ -2,8 +2,11 @@ package io.logbase.column;
 
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
+import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.IntListReader;
+import io.logbase.functions.Predicates.FunctionExecutor;
+import io.logbase.functions.Predicates.FunctionPredicate;
 
 import java.util.*;
 
@@ -14,7 +17,7 @@ import java.util.*;
  * @param <E>
  */
 
-public interface Column<E> extends Operand<Column> {
+public interface Column<E> extends Operand<Column>, FunctionExecutor{
 
   public static Map EMPTY_MAP = new HashMap(1);
   public static List EMPTY_LIST = new LinkedList();

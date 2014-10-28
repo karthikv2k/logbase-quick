@@ -1,10 +1,12 @@
 package io.logbase.collections;
 
+import io.logbase.functions.Predicates.FunctionExecutor;
+
 /**
  * Created with IntelliJ IDEA.
  * User: karthik
  */
-public interface BatchList<E> {
+public interface BatchList<E> extends FunctionExecutor {
 
   /**
    * Gives size of the list in long. Some list implementations can have more than Integer.MAX_VALUE.
