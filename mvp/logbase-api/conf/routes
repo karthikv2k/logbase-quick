@@ -3,7 +3,6 @@
 # ~~~~
 
 # Home page
-# GET		/search							controllers.Application.search(args)
 
 POST	/query							controllers.QueryController.query()
 GET		/events							controllers.QueryController.events(reqid: Int)
@@ -32,6 +31,8 @@ GET		/workspacesaved					controllers.WorkspaceController.checkWorkspaceExists(ws
 DELETE	/workspace						controllers.WorkspaceController.deleteWorkspace(wsname)
 
 POST	/upload/:alias					controllers.DataSourceController.upload(alias)
+
+OPTIONS /*all  							controllers.Application.preflight(all)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
