@@ -34,13 +34,13 @@ public class OptiqBenchmark {
   public void init() {
 
 
-    String fileName = "/Volumes/Data/Downloads/slim2.json";
+    String fileName = "src/main/resources/twitter_events_mini.dat";
     Set<String> cols = new LinkedHashSet<>();
     cols.add("text.String");
     cols.add("created_at.String");
     cols.add("id.Double");
     logger.info("start loading json");
-    view = new TestView(fileName, cols, 10*1000*1000);
+    view = new TestView(fileName, cols, 1000);
     logger.info("loaded json");
   }
 
