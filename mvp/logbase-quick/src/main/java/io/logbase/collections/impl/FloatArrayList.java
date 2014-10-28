@@ -92,10 +92,11 @@ public class FloatArrayList implements FloatList {
     FloatListIterator iterator = this.primitiveIterator(this.size());
     BooleanListWriter booleanWriter = booleanList.primitiveWriter();
     float[] buffer = new float[1024];
+    int i, count;
 
     while(iterator.hasNext()) {
-      int count = iterator.nextPrimitive(buffer, 0, buffer.length);
-      for(int i=0; i< count; i++) {
+      count = iterator.nextPrimitive(buffer, 0, buffer.length);
+      for(i=0; i< count; i++) {
         booleanWriter.add(predicate.apply(buffer[i]));
       }
     }

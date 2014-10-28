@@ -2,7 +2,6 @@ package io.logbase.collections.impl;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
 import io.logbase.collections.BatchList;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
@@ -11,7 +10,6 @@ import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.collections.nativelists.BooleanListWriter;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
-import io.logbase.exceptions.UnsupportedFunctionPredicateException;
 import io.logbase.functions.Predicates.FunctionPredicate;
 
 
@@ -95,20 +93,18 @@ public class StringDictionaryList implements BatchList<String>{
       return;
     }
 
-
     // If index found, search for rows matching the index
     //TODO - optimize
-    int count, indexCount;
+    int count, indexCount, i, j;
     boolean entryFound;
     while (tokenCountIterator.hasNext()) {
       count = tokenCountIterator.nextPrimitive(tokenCountBuffer, 0, tokenCountBuffer.length);
-      for (int i=0; i<count; i++) {
+      for (i=0; i<count; i++) {
         int[] tokenIndexBuffer = new int[tokenCountBuffer[i]];
-        indexCount = tokenIndexIterator.nextPrimitive(tokenIndexBuffer, 0, tokenIndexBuffer.length);
+        indexCount = tokenIndexIterator.nextPrimitive(tokenIndexBuffer, 0, tokenCountBuffer[i]);
         entryFound = false;
-        assert(indexCount == tokenCountBuffer[i]);
 
-        for (int j=0; j<indexCount; j++) {
+        for (j=0; j<indexCount; j++) {
           if (index == tokenIndexBuffer[j]) {
             entryFound = true;
             break;

@@ -7,10 +7,15 @@ import com.carrotsearch.junitbenchmarks.BenchmarkRule;
 import com.carrotsearch.junitbenchmarks.annotation.LabelType;
 import com.carrotsearch.junitbenchmarks.h2.H2Consumer;
 
+import io.logbase.collections.impl.BitsetList;
+import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.functions.Function;
 import io.logbase.functions.FunctionFactory;
+import io.logbase.functions.Predicates.FunctionPredicate;
+import io.logbase.functions.Predicates.PredicateType;
+import io.logbase.functions.Predicates.impl.Search;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -78,5 +83,13 @@ public class SearchBenchmarkTest extends AbstractBenchmark {
     Function func = factory.createFunction(
       FunctionFactory.FunctionOperator.SEARCH, operands);
     func.execute();
+  }
+
+  @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 0)
+  @Test
+  public void predicateSearch() throws Exception {
+    FunctionPredicate predicate = new Search("cover", PredicateType.STRINGPREDICATE);
+    BooleanList list = new BitsetList();
+    column.execute(predicate, list);
   }
 }

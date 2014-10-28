@@ -94,10 +94,11 @@ public class LongArrayList implements LongList {
     LongListIterator iterator = this.primitiveIterator(this.size());
     BooleanListWriter booleanWriter = booleanList.primitiveWriter();
     long[] buffer = new long[1024];
+    int i, count;
 
     while(iterator.hasNext()) {
-      int count = iterator.nextPrimitive(buffer, 0, buffer.length);
-      for(int i=0; i< count; i++) {
+      count = iterator.nextPrimitive(buffer, 0, buffer.length);
+      for(i=0; i< count; i++) {
         booleanWriter.add(predicate.apply(buffer[i]));
       }
     }

@@ -231,9 +231,10 @@ public class AppendOnlyColumn<E> implements Column<E> {
     int validRowIndex = 0;
 
     // TODO - Need to handle arrays in column
+    int i;
     while (isPresentIterator.hasNext()) {
       count = isPresentIterator.nextPrimitive(buffer, 0, buffer.length);
-      for (int i = 0; i < count; i++) {
+      for (i = 0; i < count; i++) {
         if (buffer[i]) {
           writer.add(validRowReader.get(validRowIndex++) & !isNull);
         } else {
