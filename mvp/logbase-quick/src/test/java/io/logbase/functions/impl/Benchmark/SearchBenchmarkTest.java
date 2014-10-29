@@ -86,7 +86,7 @@ public class SearchBenchmarkTest extends AbstractBenchmark {
   }
 
   @BenchmarkOptions(benchmarkRounds = 1, warmupRounds = 0)
-  @Test
+  @Ignore
   public void predicateSearch() throws Exception {
     FunctionPredicate predicate = new Search("cover", PredicateType.STRINGPREDICATE);
     BooleanList list = new BitsetList();

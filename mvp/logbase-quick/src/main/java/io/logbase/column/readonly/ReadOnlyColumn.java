@@ -6,13 +6,12 @@ import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.impl.BitPackIntList;
 import io.logbase.collections.impl.BitsetList;
-import io.logbase.collections.nativelists.IntList;
-import io.logbase.collections.nativelists.IntListIterator;
-import io.logbase.collections.nativelists.IntListReader;
-import io.logbase.collections.nativelists.IntListWriter;
+import io.logbase.collections.nativelists.*;
 import io.logbase.column.Column;
 import io.logbase.column.SimpleColumnIterator;
 import io.logbase.column.SimpleColumnReader;
+import io.logbase.exceptions.UnsupportedFunctionPredicateException;
+import io.logbase.functions.Predicates.FunctionPredicate;
 import scala.util.parsing.input.Reader;
 
 import java.util.Iterator;
@@ -197,5 +196,33 @@ public class ReadOnlyColumn<E> implements Column<E> {
       }
     }
     return memSize;
+  }
+
+  @Override
+  public void execute(FunctionPredicate predicate, BooleanList list)
+    throws UnsupportedFunctionPredicateException {
+    BooleanList validRows =  new BitsetList();
+    BooleanListIterator isPresentIterator = (BooleanListIterator)isPresent.iterator(isPresent.size());
+    BooleanListWriter writer = list.primitiveWriter();
+    boolean isNull = predicate.isNull();
+
+    values.execute(predicate, validRows);
+    BooleanListReader validRowReader = (BooleanListReader) validRows.reader(validRows.size());
+    boolean[] buffer = new boolean[1024];
+    int count = 0;
+    int validRowIndex = 0;
+
+    // TODO - Need to handle arrays in column
+    int i;
+    while (isPresentIterator.hasNext()) {
+      count = isPresentIterator.nextPrimitive(buffer, 0, buffer.length);
+      for (i = 0; i < count; i++) {
+        if (buffer[i]) {
+          writer.add(validRowReader.get(validRowIndex++) & !isNull);
+        } else {
+          writer.add(isNull);
+        }
+      }
+    }
   }
 }
