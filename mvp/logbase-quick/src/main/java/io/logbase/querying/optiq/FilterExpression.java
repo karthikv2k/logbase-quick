@@ -15,9 +15,11 @@ public class FilterExpression implements Expression {
 
   private FilterExpressionNode rootNode;
   private final Stack execStack = new Stack();
+  private String stringExpression;
   private final Stack mainStack;
 
   public FilterExpression(String stringExpression) {
+    this.stringExpression = stringExpression;
     tokenize(stringExpression);
     mainStack = getPostOrder();
   }
@@ -266,4 +268,8 @@ public class FilterExpression implements Expression {
       return execStack.pop();
   }
 
+  @Override
+  public Expression copy() {
+    return new FilterExpression(this.stringExpression);
+  }
 }

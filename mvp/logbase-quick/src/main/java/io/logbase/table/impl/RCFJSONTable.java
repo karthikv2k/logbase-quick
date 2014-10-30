@@ -216,4 +216,9 @@ public class RCFJSONTable implements Table<JSONEvent> {
     }
     return memSize;
   }
+
+  @Override
+  public Column getColumn(String colName) {
+    return columns.get(colName);
+  }
 }

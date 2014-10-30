@@ -39,4 +39,6 @@ public interface Table<E extends Event> extends Comparable<Table> {
    * @return
    */
   public long memSize();
+
+  public Column getColumn(String colName);
 }

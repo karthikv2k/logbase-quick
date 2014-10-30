@@ -2,6 +2,7 @@ package io.logbase.querying.optiq;
 
 import io.logbase.column.Column;
 import io.logbase.functions.FunctionFactory.FunctionOperator;
+import io.logbase.table.Table;
 import io.logbase.view.View;
 
 public class OperatorUtil {
@@ -20,7 +21,7 @@ public class OperatorUtil {
   }
 
   public static Operation addOperationContext(Operation operation, Object master) {
-    View view = (View) master;
+    Table table = (Table) master;
 
     // TODO
     // master is view for us
@@ -54,7 +55,7 @@ public class OperatorUtil {
           // Some unsupported type
           throw new UnsupportedOperationException();
         }
-        column = view.getColumn(columnName);
+        column = table.getColumn(columnName);
         operation.setOperands(new Object[] { column, value });
       }
     }

@@ -12,4 +12,6 @@ public interface Expression {
 
   public Object getLastOperationOutput();
 
+  public Expression copy();
+
 }

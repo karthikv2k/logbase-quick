@@ -9,5 +9,5 @@ public class GlobalConfig {
   public static final int MAX_ARRAYS_IN_COLUMN = 1024;
   public static final int DEFAULT_READ_BUFFER_SIZE = 1024;
   public static final int MAX_TABLE_ROW_COUNT_CHECK = 100;
-  public static final int MAX_TABLE_SIZE_IN_BYTES = 100 * 1024 * 1024; // 10 MB
+  public static final int MAX_TABLE_SIZE_IN_BYTES = 10 * 1024 * 1024; // 10 MB
 }

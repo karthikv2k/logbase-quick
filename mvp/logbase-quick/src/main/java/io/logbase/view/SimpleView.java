@@ -6,6 +6,7 @@ import io.logbase.column.Column;
 import io.logbase.functions.FunctionFactory;
 import io.logbase.querying.optiq.Expression;
 import io.logbase.querying.optiq.ExpressionExecutor;
+import io.logbase.querying.optiq.FilterExpression;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 import io.logbase.utils.Utils;
@@ -73,15 +74,19 @@ public class SimpleView implements View {
 
     public CombinedTableIterator(Predicate<CharSequence> filter,
         Expression expression, View view) {
-      FunctionFactory factory = new FunctionFactory();
-      Column validRows = (Column) ExpressionExecutor.execute(expression,
-          factory, view);
-      init(filter, validRows);
+      init(filter, expression);
     }
 
-    private void init(Predicate<CharSequence> filter, Column validRows) {
+    private void init(Predicate<CharSequence> filter, Expression expression) {
       iterators = new TableIterator[tables.length];
+      Column validRows = null;
       for (int i = 0; i < iterators.length; i++) {
+        if (expression != null) {
+          FunctionFactory factory = new FunctionFactory();
+          Expression temp = expression.copy();
+          validRows = (Column) ExpressionExecutor.execute(temp,
+            factory, tables[i]);
+        }
         iterators[i] = tables[i].getIterator(filter, validRows);
       }
 
