@@ -86,8 +86,10 @@ public class SimpleView implements View {
           Expression temp = expression.copy();
           validRows = (Column) ExpressionExecutor.execute(temp,
             factory, tables[i]);
+          iterators[i] = tables[i].getIterator(filter, validRows);
+        } else {
+          iterators[i] = tables[i].getIterator(filter);
         }
-        iterators[i] = tables[i].getIterator(filter, validRows);
       }
 
       SortedSet<String> allColumns = new TreeSet<String>();

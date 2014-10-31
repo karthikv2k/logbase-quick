@@ -95,7 +95,7 @@ public class SimpleColumnReader implements ColumnReader<Object> {
       }
     }
 
-    for (long iter = previousIndex + 1; iter < index; iter++) {
+    for (long iter = previousIndex; iter < index; iter++) {
       if (isPresentReader.get(iter).booleanValue()) {
         if (hasArrays && arraySizeIteratorWrapper.hasNext()) {
           valueIndex+= arraySizeIteratorWrapper.next();

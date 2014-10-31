@@ -2,6 +2,7 @@ package io.logbase.table.impl;
 
 import com.google.common.base.Predicate;
 import com.google.gson.Gson;
+import io.logbase.collections.nativelists.BooleanListReader;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.TypeUtils;
@@ -168,7 +169,8 @@ public class RCFJSONTable implements Table<JSONEvent> {
 
   @Override
   public TableIterator getIterator(Predicate<CharSequence> filter, Column validRows) {
-    return new SimpleTableIterator(this, this.rowNum, filter, validRows);
+    return new SimpleTableReader(this, this.rowNum, filter,
+      (BooleanListReader) validRows.getIsPresentReader(this.rowNum));
   }
 
   @Override
