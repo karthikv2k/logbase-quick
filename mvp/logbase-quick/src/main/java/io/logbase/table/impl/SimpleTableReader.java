@@ -5,7 +5,6 @@ import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.collections.nativelists.BooleanListReader;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnReader;
-import io.logbase.functions.Predicates.PredicateType;
 import io.logbase.table.Table;
 import io.logbase.table.TableIterator;
 

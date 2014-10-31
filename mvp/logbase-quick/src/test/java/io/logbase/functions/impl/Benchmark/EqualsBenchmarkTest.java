@@ -7,9 +7,9 @@ import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.exceptions.UnsupportedFunctionPredicateException;
-import io.logbase.functions.Predicates.FunctionPredicate;
-import io.logbase.functions.Predicates.PredicateType;
-import io.logbase.functions.Predicates.impl.Equals;
+import io.logbase.functions.predicates.LBPredicate;
+import io.logbase.functions.predicates.PredicateType;
+import io.logbase.functions.predicates.impl.Equals;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -18,7 +18,7 @@ import org.junit.Test;
  */
 public class EqualsBenchmarkTest extends AbstractBenchmark{
   private static int rowCount = 10 * 1000 * 1000;
-  private FunctionPredicate predicate;
+  private LBPredicate predicate;
   private static Column intColumn, floatColumn, doubleColumn, longColumn, bitpackColumn;
 
   @BeforeClass

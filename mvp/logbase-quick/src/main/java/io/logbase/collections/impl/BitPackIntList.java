@@ -6,8 +6,7 @@ import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.Utils;
 import io.logbase.collections.nativelists.*;
-import io.logbase.exceptions.UnsupportedFunctionPredicateException;
-import io.logbase.functions.Predicates.FunctionPredicate;
+import io.logbase.functions.predicates.LBPredicate;
 
 import java.nio.ByteBuffer;
 import java.util.IntSummaryStatistics;
@@ -102,7 +101,7 @@ public class BitPackIntList implements IntList {
   }
 
   @Override
-  public void execute(FunctionPredicate predicate, BooleanList booleanList) {
+  public void execute(LBPredicate predicate, BooleanList booleanList) {
     IntListIterator iterator = this.primitiveIterator(this.size());
     BooleanListWriter booleanWriter = booleanList.primitiveWriter();
     int[] buffer = new int[1024];

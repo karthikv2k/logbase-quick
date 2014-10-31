@@ -1,11 +1,11 @@
-package io.logbase.functions.Predicates.impl;
+package io.logbase.functions.predicates.impl;
 
-import io.logbase.functions.Predicates.*;
+import io.logbase.functions.predicates.*;
 
 /**
  * Created by Kousik on 27/10/14.
  */
-public class NotEquals implements FunctionPredicate {
+public class NotEquals implements LBPredicate {
   private int intValue;
   private float floatValue;
   private double doubleValue;

@@ -1,11 +1,9 @@
-package io.logbase.functions.Predicates;
-
-import io.logbase.exceptions.UnsupportedFunctionPredicateException;
+package io.logbase.functions.predicates;
 
 /**
  * Created by Kousik on 27/10/14.
  */
-public interface FunctionPredicate{
+public interface LBPredicate{
 
   /**
    * Evaluates this predicate on the given double value.

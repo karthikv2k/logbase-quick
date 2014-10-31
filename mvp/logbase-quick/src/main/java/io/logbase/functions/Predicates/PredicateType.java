@@ -1,4 +1,4 @@
-package io.logbase.functions.Predicates;
+package io.logbase.functions.predicates;
 
 /**
  * Created by Kousik on 28/10/14.

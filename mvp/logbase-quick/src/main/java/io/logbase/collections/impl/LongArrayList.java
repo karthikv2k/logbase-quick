@@ -1,14 +1,11 @@
 package io.logbase.collections.impl;
 
 import io.logbase.buffer.BufferFactory;
-import io.logbase.collections.BatchList;
 import io.logbase.collections.BatchListIterator;
 import io.logbase.collections.BatchListReader;
 import io.logbase.collections.BatchListWriter;
 import io.logbase.collections.nativelists.*;
-import io.logbase.exceptions.UnsupportedFunctionPredicateException;
-import io.logbase.functions.Predicates.FunctionPredicate;
-import sun.misc.Unsafe;
+import io.logbase.functions.predicates.LBPredicate;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -90,7 +87,7 @@ public class LongArrayList implements LongList {
   }
 
   @Override
-  public void execute(FunctionPredicate predicate, BooleanList booleanList) {
+  public void execute(LBPredicate predicate, BooleanList booleanList) {
     LongListIterator iterator = this.primitiveIterator(this.size());
     BooleanListWriter booleanWriter = booleanList.primitiveWriter();
     long[] buffer = new long[1024];

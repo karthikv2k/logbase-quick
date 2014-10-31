@@ -1,12 +1,12 @@
-package io.logbase.functions.Predicates.impl;
+package io.logbase.functions.predicates.impl;
 
-import io.logbase.functions.Predicates.FunctionPredicate;
-import io.logbase.functions.Predicates.PredicateType;
+import io.logbase.functions.predicates.LBPredicate;
+import io.logbase.functions.predicates.PredicateType;
 
 /**
  * Created by Kousik on 28/10/14.
  */
-public class Search implements FunctionPredicate {
+public class Search implements LBPredicate {
 
   String searchString;
   PredicateType predicateType;

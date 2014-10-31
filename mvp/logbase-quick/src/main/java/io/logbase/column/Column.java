@@ -5,8 +5,8 @@ import io.logbase.collections.BatchListReader;
 import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.collections.nativelists.IntListIterator;
 import io.logbase.collections.nativelists.IntListReader;
-import io.logbase.functions.Predicates.FunctionExecutor;
-import io.logbase.functions.Predicates.FunctionPredicate;
+import io.logbase.functions.predicates.PredicateExecutor;
+import io.logbase.functions.predicates.LBPredicate;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import java.util.*;
  * @param <E>
  */
 
-public interface Column<E> extends Operand<Column>, FunctionExecutor{
+public interface Column<E> extends Operand<Column>, PredicateExecutor{
 
   public static Map EMPTY_MAP = new HashMap(1);
   public static List EMPTY_LIST = new LinkedList();

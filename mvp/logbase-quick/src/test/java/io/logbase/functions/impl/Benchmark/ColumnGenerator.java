@@ -5,7 +5,6 @@ import io.logbase.column.Column;
 import io.logbase.column.ColumnFactory;
 import io.logbase.column.TypeUtils;
 
-import java.nio.CharBuffer;
 
 /**
  * Create a pre populated column for a given type

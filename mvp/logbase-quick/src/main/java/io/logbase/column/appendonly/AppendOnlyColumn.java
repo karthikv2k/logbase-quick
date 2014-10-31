@@ -12,7 +12,7 @@ import io.logbase.column.SimpleColumnIterator;
 import io.logbase.column.SimpleColumnReader;
 import io.logbase.column.TypeUtils;
 import io.logbase.exceptions.UnsupportedFunctionPredicateException;
-import io.logbase.functions.Predicates.FunctionPredicate;
+import io.logbase.functions.predicates.LBPredicate;
 
 import java.util.Iterator;
 
@@ -217,7 +217,7 @@ public class AppendOnlyColumn<E> implements Column<E> {
   }
 
   @Override
-  public void execute(FunctionPredicate predicate, BooleanList list)
+  public void execute(LBPredicate predicate, BooleanList list)
     throws UnsupportedFunctionPredicateException {
     BooleanList validRows =  new BitsetList();
     BooleanListIterator isPresentIterator = (BooleanListIterator)isPresent.iterator(isPresent.size());

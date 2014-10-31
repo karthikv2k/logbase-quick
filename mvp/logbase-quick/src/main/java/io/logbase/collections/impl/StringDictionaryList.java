@@ -10,7 +10,7 @@ import io.logbase.collections.nativelists.BooleanList;
 import io.logbase.collections.nativelists.BooleanListWriter;
 import io.logbase.collections.nativelists.IntList;
 import io.logbase.collections.nativelists.IntListIterator;
-import io.logbase.functions.Predicates.FunctionPredicate;
+import io.logbase.functions.predicates.LBPredicate;
 
 
 /**
@@ -67,7 +67,7 @@ public class StringDictionaryList implements BatchList<String>{
   }
 
   @Override
-  public void execute(FunctionPredicate predicate, BooleanList list) {
+  public void execute(LBPredicate predicate, BooleanList list) {
 
     IntListIterator tokenCountIterator = tokenCount.primitiveIterator(tokenCount.size());
     IntListIterator tokenIndexIterator = tokenIndex.primitiveIterator(tokenIndex.size());
